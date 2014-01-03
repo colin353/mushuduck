@@ -12,7 +12,10 @@ class window.TradingStage
 			me.products[type] = new TradingProduct( $(@), player.products[type] )
 
 		# Create a sortable with the trading objects
-		$('.tradingstage-interface .inventory').sortable()
+		$('.tradingstage-interface .inventory').sortable( { 
+				helper: ->
+					$("<h1>AAAGHHH</h1>")
+			})
 
 
 class window.TradingProduct

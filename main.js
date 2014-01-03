@@ -11,6 +11,7 @@
         this.socket = window.socket;
       }
       this.response_handlers = [];
+      this.event_responders = [];
       me = this;
       this.socket.onmessage = function(message) {
         return me.onmessage.call(me, message);
@@ -30,6 +31,9 @@
       message = JSON.parse(message.data);
       if ((message.transaction_id != null) && (this.response_handlers[message.transaction_id] != null)) {
         return this.response_handlers[message.transaction_id].call(this, message.data);
+      } else if (message.eventName != null) {
+        console.log('Received event message: ', message.eventName);
+        return this.trigger_event(message.eventName, message.data);
       } else {
         return console.log('Received invalid message: ', message);
       }
@@ -37,6 +41,27 @@
 
     PyAPI.prototype.generate_transaction_id = function(message) {
       return "T" + Math.random();
+    };
+
+    PyAPI.prototype.register_for_event = function(response) {
+      if (this.event_responders[eventName] == null) {
+        this.event_responders[eventName] = [];
+      }
+      return this.event_responders[eventName].push(response);
+    };
+
+    PyAPI.prototype.trigger_event = function(eventName, data) {
+      var e, _i, _len, _ref, _results;
+
+      if (this.event_responders[eventName] != null) {
+        _ref = this.event_responders[eventName];
+        _results = [];
+        for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+          e = _ref[_i];
+          _results.push(e.call(window, data));
+        }
+        return _results;
+      }
     };
 
     PyAPI.prototype.transaction = function(message, responder) {
@@ -276,7 +301,11 @@
         type = $(this).attr('data-production-type');
         return me.products[type] = new TradingProduct($(this), player.products[type]);
       });
-      $('.tradingstage-interface .inventory').sortable();
+      $('.tradingstage-interface .inventory').sortable({
+        helper: function() {
+          return $("<h1>AAAGHHH</h1>");
+        }
+      });
     }
 
     return TradingStage;

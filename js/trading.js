@@ -11,7 +11,11 @@ window.TradingStage = (function() {
       type = $(this).attr('data-production-type');
       return me.products[type] = new TradingProduct($(this), player.products[type]);
     });
-    $('.tradingstage-interface .inventory').sortable();
+    $('.tradingstage-interface .inventory').sortable({
+      helper: function() {
+        return $("<h1>AAAGHHH</h1>");
+      }
+    });
   }
 
   return TradingStage;

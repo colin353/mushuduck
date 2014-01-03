@@ -10,6 +10,7 @@ class @PyAPI
 		# globally-accessible socket.
 		@socket = window.socket if !@socket?
 		@response_handlers = []
+		@event_responders = []
 
 		# Connect this PyAPI class to the onmessage
 		# event for the socket.
@@ -34,6 +35,10 @@ class @PyAPI
 		if message.transaction_id? and @response_handlers[ message.transaction_id ]?
 			# Call the response function.
 			@response_handlers[ message.transaction_id ].call @, message.data
+		else if message.eventName?
+			# This must be an event message!
+			console.log 'Received event message: ', message.eventName
+			@trigger_event message.eventName, message.data
 		else
 			console.log 'Received invalid message: ', message
 
@@ -43,6 +48,19 @@ class @PyAPI
 		# random behavior - it might be better to use a hashing algorithm
 		# in the future. Returns a string.
 		return "T" + Math.random()
+
+	# Register for an event using this function, to hear when the computer
+	# tells you something global. But you can't respond to it.
+	register_for_event: (response) ->
+		if !@event_responders[eventName]?
+			@event_responders[eventName] = []
+		@event_responders[eventName].push response 
+
+	# When an event comes in, this function executes all of the listeners.
+	trigger_event: (eventName, data) ->
+		if @event_responders[eventName]?
+			for e in @event_responders[eventName]
+				e.call(window,data)
 
 	# This function executes a transaction by transmitting a message, then waiting for 
 	# a response, then executing the responder function on the response.
