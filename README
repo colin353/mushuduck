@@ -15,3 +15,15 @@ WHAT IS THIS THING?
 ----------------------------------------------------
 
 I do not know.
+
+----------------------------------------------------
+COMPILING THE COFFEESCRIPT
+you need a coffeescript compiler (e.g. node.js) to 
+turn coffeescript into Javascript.
+----------------------------------------------------
+
+The preferred coffeescript compile routing is to move into the code directory, then run
+
+coffee -wc --join main.js js
+
+which will compile all of the files together into the main.js Javascript file.

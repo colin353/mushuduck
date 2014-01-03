@@ -73,6 +73,9 @@ class JActionableRequestHandler:
 			'version'		: VERSION
 		}
 
+	def getproce(self):
+		return 'yesterday'
+
 # The global actionablrequesthandler: there is only one instance of this, 
 # even though there may be many instances of JHandlers for different clients.
 # This means we can hog things like serial connections to thermometry devices, 
