@@ -29,8 +29,5 @@ $ ->
 
 # When everything is loaded and ready to go, this function is called.
 window.go = ->
-
-	pycon.transaction { 'action': 'getproce' }, (response) ->
- 		console.log response
-
+	# Start in the production stage
  	window.productionstage = new ProductionStage()

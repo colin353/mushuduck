@@ -4,28 +4,33 @@ class window.ProductionStage
 		@productions = []
 
 		$('.box').each ->
-			me.productions.push( new Production( $(@), me ) )
+			type = $(@).attr('data-production-type')
+			me.productions.push( new Production( $(@), me, player.productionfacilities[type] ) )
 
 		$('.ready').tap ->
-			pycon.transaction { 'action': 'ready' }, yes
+			me.ready() 
 
 		yes
 
-class window.Production
-	constructor: (@dom_object, @productionstage) ->
-		me = @
-		@capacity = 0
+	ready: ->
+		# Show the ready as GREEN instead of GRAY
+		$('.ready').css('background-color','green')
+		#pycon.transaction { 'action': 'ready' }, yes
 
+class Production
+	constructor: (@dom_object, @productionstage, @productionfacility) ->
+		me = @
+		
 		@dom_object.tap ->
  			me.invest.call me,1
 
 		yes
 
 	invest: (amount) ->
-		@capacity += amount
+		@productionfacility.capacity += amount
 		@needsRefresh()
 		yes
 
 	needsRefresh: ->
-		@dom_object.children('span').html @capacity
+		@dom_object.children('span').html @productionfacility.capacity
 		yes

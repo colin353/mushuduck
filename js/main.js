@@ -21,10 +21,5 @@ $(function() {
 });
 
 window.go = function() {
-  pycon.transaction({
-    'action': 'getproce'
-  }, function(response) {
-    return console.log(response);
-  });
   return window.productionstage = new ProductionStage();
 };

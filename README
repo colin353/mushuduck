@@ -17,6 +17,16 @@ WHAT IS THIS THING?
 I do not know.
 
 ----------------------------------------------------
+CONFIGURING IT BEFORE RUNNING
+----------------------------------------------------
+
+You need:
+
+1. Tornado
+2. Edit the configuration parameters in main.coffee
+3. Edit the configuration parameters in server.py
+
+----------------------------------------------------
 COMPILING THE COFFEESCRIPT
 you need a coffeescript compiler (e.g. node.js) to 
 turn coffeescript into Javascript.
