@@ -4,6 +4,7 @@ import tornado.websocket
 import time
 import inspect
 import json
+from game import Game
 
 # Configurable parameters for the server:
 # -------------------------------------- #
@@ -23,6 +24,7 @@ RESPONSE 	= 1
 class JHandler(tornado.websocket.WebSocketHandler):
 	def open(self):
 		print "Opening..."
+		staticGame.addPlayer(self)
 
 	def on_message(self, message):
 		print "Message received: %s " % message 
@@ -51,6 +53,7 @@ class JHandler(tornado.websocket.WebSocketHandler):
 
 	def on_close(self):
 		print "Closing..."
+		## todo: delete player
 
 # The JActionableRequestHandler class basically completes actions that the browser
 # asks of it. It should be spoken to through the "invoke" function, which basically
@@ -73,8 +76,11 @@ class JActionableRequestHandler:
 			'version'		: VERSION
 		}
 
-	def getproce(self):
-		return 'yesterday'
+	def ready(self):
+		# log players
+		print staticGame.players
+
+		# start new stage when all players are ready
 
 # The global actionablrequesthandler: there is only one instance of this, 
 # even though there may be many instances of JHandlers for different clients.
@@ -96,6 +102,9 @@ application = tornado.web.Application( [
 	(r"/()", DebugStaticFileHandler, {'path': 'web.html'} ),
 	(r"/(.*)", DebugStaticFileHandler, {'path': '.'}),
 ])
+
+# make a game
+staticGame = Game()
 
 # This starts the application
 application.listen(PORT)
