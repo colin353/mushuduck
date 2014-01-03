@@ -345,4 +345,17 @@
 
   })();
 
+  $(function() {
+    console.log('Gryo begin tracking');
+    gyro.frequency = 200;
+    window.orientation = 0;
+    return gyro.startTracking(function(o) {
+      if (window.orientation === 0) {
+        return window.orientation = o;
+      } else {
+
+      }
+    });
+  });
+
 }).call(this);
