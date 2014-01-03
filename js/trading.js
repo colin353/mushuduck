@@ -12,8 +12,18 @@ window.TradingStage = (function() {
       return me.products[type] = new TradingProduct($(this), player.products[type]);
     });
     $('.tradingstage-interface .inventory').sortable({
-      helper: function() {
-        return $("<h1>AAAGHHH</h1>");
+      helper: function(e, ui) {
+        return $("<div class='square'></div>").css('background-color', player.products[ui.attr('data-production-type')].color);
+      },
+      start: function(e, ui) {
+        return ui.item.show();
+      },
+      change: function() {
+        return $(this).sortable("refreshPositions");
+      },
+      placeholder: 'test',
+      stop: function(e, ui) {
+        return $(this).sortable('cancel');
       }
     });
   }

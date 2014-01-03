@@ -11,6 +11,12 @@ class window.Player
 		for p in [ 'tomato', 'blueberry', 'purple', 'corn' ]
 			@products[p] = new Product(p)
 			@productionfacilities[p] = new ProductionFacility(@products[p])
+
+		@products['tomato'].color = 'red'
+		@products['blueberry'].color = 'blue'
+		@products['purple'].color = 'purple'
+		@products['corn'].color = 'orange'
+
 		yes
 
 	doYes: ->
@@ -20,6 +26,7 @@ class window.Product
 	constructor: (@name) ->
 		@amount = 0
 		@price = 0
+		@color = "green"
 		yes
 
 

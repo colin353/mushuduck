@@ -12,6 +12,10 @@ window.Player = (function() {
       this.products[p] = new Product(p);
       this.productionfacilities[p] = new ProductionFacility(this.products[p]);
     }
+    this.products['tomato'].color = 'red';
+    this.products['blueberry'].color = 'blue';
+    this.products['purple'].color = 'purple';
+    this.products['corn'].color = 'orange';
     true;
   }
 
@@ -28,6 +32,7 @@ window.Product = (function() {
     this.name = name;
     this.amount = 0;
     this.price = 0;
+    this.color = "green";
     true;
   }
 

@@ -236,6 +236,10 @@
         this.products[p] = new Product(p);
         this.productionfacilities[p] = new ProductionFacility(this.products[p]);
       }
+      this.products['tomato'].color = 'red';
+      this.products['blueberry'].color = 'blue';
+      this.products['purple'].color = 'purple';
+      this.products['corn'].color = 'orange';
       true;
     }
 
@@ -252,6 +256,7 @@
       this.name = name;
       this.amount = 0;
       this.price = 0;
+      this.color = "green";
       true;
     }
 
@@ -302,8 +307,18 @@
         return me.products[type] = new TradingProduct($(this), player.products[type]);
       });
       $('.tradingstage-interface .inventory').sortable({
-        helper: function() {
-          return $("<h1>AAAGHHH</h1>");
+        helper: function(e, ui) {
+          return $("<div class='square'></div>").css('background-color', player.products[ui.attr('data-production-type')].color);
+        },
+        start: function(e, ui) {
+          return ui.item.show();
+        },
+        change: function() {
+          return $(this).sortable("refreshPositions");
+        },
+        placeholder: 'test',
+        stop: function(e, ui) {
+          return $(this).sortable('cancel');
         }
       });
     }
