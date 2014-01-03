@@ -18,7 +18,18 @@ class window.Player
 
 class window.Product
 	constructor: (@name) ->
+		@amount = 0
+		@price = 0
 		yes
+
+
+	# Eventually, this function will go and get the price for a product.
+	getPrice: ->
+		return @price = Math.round( Math.random()*100 , 2 )
+
+	# Return the productionfacility associated with the product
+	generator: ->
+		player.productionfacilities[@name]
 
 class window.ProductionFacility
 	constructor: (product) ->

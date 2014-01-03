@@ -94,6 +94,41 @@
 		background-color: red;
 	}
 
+	.sell {
+		height:33%;
+		background-color: gold;
+	}
+
+	.trading {
+		height: 34%;
+		background-color: gray;
+		display: block;
+	}
+
+	.inventory {
+		position:relative;
+		height: 33%;
+		display: block;
+	}
+
+	.inventory .box {
+		width: 25%;
+		height: 100%;
+	}
+
+	.box .amount {
+		background-color: white;
+		padding: 5px;
+		display: inline-block;
+		margin-top: 0;
+		min-width: 10%;
+		float:left;
+	}
+
+	.productionstage-interface {
+		display: none;
+	}
+
 	.box.blue { background-color: blue; }
 	.box.purple { background-color: purple; }
 	.box.orange { background-color: orange; }
@@ -105,11 +140,19 @@
 	<span class='ready'>READY</span>
 </div>
 
-	<div class='interface'>
+<div class='interface'>	
 
-		<div class='message'>
-			<span></span>
-		</div>
+	<div class='message'>
+		<span></span>
+	</div>
+
+	<!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 
+	STAGE 1: PRODUCTION STAGE
+	In this stage, the player can choose how to spend
+	his gold in order to improve his production.
+	~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~!-->
+
+	<div class='productionstage-interface'>
 
 		<div data-production-type='tomato' class='box red'>
 			<span></span>
@@ -128,6 +171,51 @@
 		</div>
 
 	</div>
+
+	<!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 
+	STAGE 2: TRADING STAGE
+	In this stage, the player can choose how to spend
+	his gold in order to improve his production.
+	~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~!-->
+	
+	<div class='tradingstage-interface'>
+
+
+		<div class='sell'>
+			<span>SELL</span>
+		</div>
+
+		<div class='inventory'>
+
+			<div data-production-type='tomato' class='box red'>
+				<span class='amount'>10</span>
+				<span class='price'>4</span>
+			</div>
+
+			<div data-production-type='blueberry' class='box blue'>
+				<span class='amount'>1</span>
+				<span class='price'>4</span>
+			</div>
+
+			<div data-production-type='purple' class='box purple'>
+				<span class='amount'>2</span>
+				<span class='price'>4</span>
+			</div>
+
+			<div data-production-type='corn' class='box orange'>
+				<span class='amount'>4</span>
+				<span class='price'>4</span>
+			</div>
+
+		</div>
+
+		<div class='trading'>
+			<span>TRADE</span>
+		</div>
+
+	</div>
+
+</div>
 
 </body>
 </html>

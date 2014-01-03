@@ -7,7 +7,7 @@ window.ProductionStage = (function() {
 
     me = this;
     this.productions = [];
-    $('.box').each(function() {
+    $('.productionstage-interface .box').each(function() {
       var type;
 
       type = $(this).attr('data-production-type');

@@ -105,7 +105,7 @@
   });
 
   window.go = function() {
-    return window.productionstage = new ProductionStage();
+    return window.tradingstage = new TradingStage();
   };
 
   window.ProductionStage = (function() {
@@ -114,7 +114,7 @@
 
       me = this;
       this.productions = [];
-      $('.box').each(function() {
+      $('.productionstage-interface .box').each(function() {
         var type;
 
         type = $(this).attr('data-production-type');
@@ -225,8 +225,18 @@
   window.Product = (function() {
     function Product(name) {
       this.name = name;
+      this.amount = 0;
+      this.price = 0;
       true;
     }
+
+    Product.prototype.getPrice = function() {
+      return this.price = Math.round(Math.random() * 100, 2);
+    };
+
+    Product.prototype.generator = function() {
+      return player.productionfacilities[this.name];
+    };
 
     return Product;
 
@@ -253,5 +263,42 @@
   window.player = new Player();
 
   player.gold = 5;
+
+  window.TradingStage = (function() {
+    function TradingStage() {
+      var me;
+
+      me = this;
+      this.products = [];
+      $('.tradingstage-interface .box').each(function() {
+        var type;
+
+        type = $(this).attr('data-production-type');
+        return me.products[type] = new TradingProduct($(this), player.products[type]);
+      });
+      $('.tradingstage-interface .inventory').sortable();
+    }
+
+    return TradingStage;
+
+  })();
+
+  window.TradingProduct = (function() {
+    function TradingProduct(dom_element, product) {
+      this.dom_element = dom_element;
+      this.product = product;
+      this.product.getPrice();
+      this.needsRefresh();
+      true;
+    }
+
+    TradingProduct.prototype.needsRefresh = function() {
+      this.dom_element.children('.amount').html(this.product.amount);
+      return this.dom_element.children('.price').html("$" + this.product.price);
+    };
+
+    return TradingProduct;
+
+  })();
 
 }).call(this);

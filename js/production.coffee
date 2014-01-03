@@ -3,7 +3,7 @@ class window.ProductionStage
 		me = @
 		@productions = []
 
-		$('.box').each ->
+		$('.productionstage-interface .box').each ->
 			type = $(@).attr('data-production-type')
 			me.productions.push( new Production( $(@), me, player.productionfacilities[type] ) )
 

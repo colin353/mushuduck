@@ -26,8 +26,18 @@ window.Player = (function() {
 window.Product = (function() {
   function Product(name) {
     this.name = name;
+    this.amount = 0;
+    this.price = 0;
     true;
   }
+
+  Product.prototype.getPrice = function() {
+    return this.price = Math.round(Math.random() * 100, 2);
+  };
+
+  Product.prototype.generator = function() {
+    return player.productionfacilities[this.name];
+  };
 
   return Product;
 

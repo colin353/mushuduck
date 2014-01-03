@@ -30,4 +30,4 @@ $ ->
 # When everything is loaded and ready to go, this function is called.
 window.go = ->
 	# Start in the production stage
- 	window.productionstage = new ProductionStage()
+ 	window.tradingstage = new TradingStage()
