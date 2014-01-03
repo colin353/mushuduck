@@ -12,10 +12,20 @@ class window.TradingStage
 			me.products[type] = new TradingProduct( $(@), player.products[type] )
 
 		# Create a sortable with the trading objects
-		$('.tradingstage-interface .inventory').sortable( { 
-				helper: ->
-					$("<h1>AAAGHHH</h1>")
-			})
+		$('.tradingstage-interface .inventory').sortable { 
+				helper: (e, ui) ->
+					$("<div class='square'></div>").css('background-color', player.products[ui.attr('data-production-type')].color)
+				,
+				start: (e, ui) ->
+					ui.item.show()
+				,
+				change: ->
+					$(@).sortable( "refreshPositions" );
+				,
+				placeholder: 'test',
+				stop: (e,ui) ->
+					$(@).sortable('cancel')
+		}
 
 
 class window.TradingProduct
