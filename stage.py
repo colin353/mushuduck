@@ -4,6 +4,7 @@ class Stage:
 		pass
 
 	def begin(self):
+		pass
 
 	def end(self):
 		pass
