@@ -255,7 +255,8 @@
       return window.stage.price_updated.call(stage);
     });
     return pycon.register_for_event('TimerBegin', function(data) {
-      return window.stage.timer_begin.call(stage, data.duration);
+      console.log('Event handled: ', stage);
+      return window.stage.timer_begin.call(window.stage, data.duration);
     });
   };
 
@@ -586,6 +587,25 @@
       return _results;
     };
 
+    TradingStage.prototype.timer_begin = function(countdown) {
+      var count_down;
+
+      console.log('Time started! Time = ', countdown);
+      this.time = countdown;
+      count_down = function() {
+        if (stage.type !== 'TradingStage') {
+          return;
+        }
+        stage.time -= 1;
+        if (stage.time > 0) {
+          setTimeout(count_down, 1000);
+        }
+        return updateCountdown();
+      };
+      setTimeout(count_down, 1000);
+      return updateCountdown();
+    };
+
     return TradingStage;
 
   })(Stage);
@@ -631,23 +651,6 @@
       } else {
         return false;
       }
-    };
-
-    TradingProduct.prototype.timer_begin = function(countdown) {
-      var count_down;
-
-      this.time = countdown;
-      count_down = function() {
-        if (stage.type !== 'TradingStage') {
-          return;
-        }
-        stage.time -= 1;
-        if (stage.time > 0) {
-          setTimeout(count_down, 1000);
-        }
-        return updateCountdown();
-      };
-      return setTimeout(count_down, 1000);
     };
 
     TradingProduct.prototype.needsRefresh = function() {

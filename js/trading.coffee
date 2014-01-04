@@ -143,6 +143,25 @@ class window.TradingStage extends Stage
 				# Hide trading products that are zero.
 				$(".tradingstage-interface .tradecount[data-production-type='#{name}']").hide()
 
+	timer_begin: (countdown) ->
+			console.log 'Time started! Time = ', countdown
+			# Record the time in the countdown.
+			@time = countdown 
+			count_down = ->
+				# We don't want to worry about timing if the stage isn't trading.
+				return if stage.type != 'TradingStage'
+				# Count down.
+				stage.time -= 1
+				if stage.time > 0 
+					# Set a timer to give us the next countdown
+					setTimeout count_down, 1000 
+				# Draw to the screen.
+				updateCountdown()
+					
+			# Wait one second before starting so that everything lines up.
+			setTimeout count_down,1000
+			updateCountdown()
+
 class window.TradingProduct
 	constructor: (@dom_element, @product) ->
 		@product.getPrice()
@@ -170,24 +189,6 @@ class window.TradingProduct
 			return yes
 		else
 			return no
-
-	timer_begin: (countdown) ->
-		# Record the time in the countdown.
-		@time = countdown 
-
-		count_down = ->
-			# We don't want to worry about timing if the stage isn't trading.
-			return if stage.type != 'TradingStage'
-			# Count down.
-			stage.time -= 1
-			if stage.time > 0 
-				# Set a timer to give us the next countdown
-				setTimeout count_down, 1000 
-			# Draw to the screen.
-			updateCountdown()
-
-		# Wait one second before starting so that everything lines up.
-		setTimeout count_down,1000
 
 	needsRefresh: ->
 		# The two fields that require refreshing are:

@@ -78,4 +78,5 @@ window.go = ->
 
 	# Begin the timer? We just pass this directly into the stage.
 	pycon.register_for_event 'TimerBegin', (data) ->
-		window.stage.timer_begin.call stage, data.duration
+		console.log 'Event handled: ',stage
+		window.stage.timer_begin.call window.stage, data.duration
