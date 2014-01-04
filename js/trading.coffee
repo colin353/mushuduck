@@ -157,9 +157,10 @@ class window.TradingProduct
 	sell: ->
 		if @product.amount > 0
 			@product.amount -= 1
+			me = @
 			pycon.transaction {action: 'sell', data: { productToSell: @product.name } }, (data) ->
 				player.giveGold data.pay
-				@needsRefresh()
+				me.needsRefresh.call me
 			return yes
 		else
 			return no

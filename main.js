@@ -32,9 +32,11 @@
     PyAPI.prototype.onmessage = function(message) {
       message = JSON.parse(message.data);
       if ((message.transaction_id != null) && (this.response_handlers[message.transaction_id] != null)) {
+        console.log('Received transaction data: ', message.data);
         return this.response_handlers[message.transaction_id].call(this, message.data);
       } else if (message.eventName != null) {
         console.log('Received event message: ', message.eventName);
+        console.log('Event data: ', message.data);
         return this.trigger_event(message.eventName, message.data);
       } else {
         return console.log('Received invalid message: ', message);
@@ -94,6 +96,10 @@
     };
 
     Stage.prototype.trade_complete = function() {
+      return true;
+    };
+
+    Stage.prototype.price_updated = function() {
       return true;
     };
 
@@ -598,8 +604,11 @@
     };
 
     TradingProduct.prototype.sell = function() {
+      var me;
+
       if (this.product.amount > 0) {
         this.product.amount -= 1;
+        me = this;
         pycon.transaction({
           action: 'sell',
           data: {
@@ -607,7 +616,7 @@
           }
         }, function(data) {
           player.giveGold(data.pay);
-          return this.needsRefresh();
+          return me.needsRefresh.call(me);
         });
         return true;
       } else {

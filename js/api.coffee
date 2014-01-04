@@ -34,10 +34,12 @@ class @PyAPI
 		message = JSON.parse message.data
 		if message.transaction_id? and @response_handlers[ message.transaction_id ]?
 			# Call the response function.
+			console.log 'Received transaction data: ', message.data
 			@response_handlers[ message.transaction_id ].call @, message.data
 		else if message.eventName?
 			# This must be an event message!
 			console.log 'Received event message: ', message.eventName
+			console.log 'Event data: ', message.data
 			@trigger_event message.eventName, message.data
 		else
 			console.log 'Received invalid message: ', message

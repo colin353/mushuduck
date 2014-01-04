@@ -27,9 +27,11 @@ this.PyAPI = (function() {
   PyAPI.prototype.onmessage = function(message) {
     message = JSON.parse(message.data);
     if ((message.transaction_id != null) && (this.response_handlers[message.transaction_id] != null)) {
+      console.log('Received transaction data: ', message.data);
       return this.response_handlers[message.transaction_id].call(this, message.data);
     } else if (message.eventName != null) {
       console.log('Received event message: ', message.eventName);
+      console.log('Event data: ', message.data);
       return this.trigger_event(message.eventName, message.data);
     } else {
       return console.log('Received invalid message: ', message);

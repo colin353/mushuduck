@@ -7,3 +7,6 @@ class window.Stage
 
 	trade_complete: ->
 		yes
+
+	price_updated: ->
+		yes

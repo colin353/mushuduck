@@ -71,12 +71,12 @@ class Game(object):
 
 		# the player will receive money corresponding to the old price, before market value update
 		pay = self.prices[productToSell]
-
 		# calculate new price
 		self.prices[productToSell] -= 5
+		self.prices = self.prices
 
 		# return pay (old price) to player
-		return pay
+		return {'pay': pay}
 
 	def bump(self, playerHandler, items):
 

@@ -175,8 +175,11 @@ window.TradingProduct = (function() {
   };
 
   TradingProduct.prototype.sell = function() {
+    var me;
+
     if (this.product.amount > 0) {
       this.product.amount -= 1;
+      me = this;
       pycon.transaction({
         action: 'sell',
         data: {
@@ -184,7 +187,7 @@ window.TradingProduct = (function() {
         }
       }, function(data) {
         player.giveGold(data.pay);
-        return this.needsRefresh();
+        return me.needsRefresh.call(me);
       });
       return true;
     } else {
