@@ -11,6 +11,9 @@ class Stage(object):
 	def begin(self):
 		pass
 
+	def afterBegin(self):
+		pass
+
 	def end(self):
 		pass
 
@@ -25,14 +28,16 @@ class TradingStage(Stage):
 
 	def __init__(self, game):
 		super(TradingStage, self).__init__(game)
-		threading.Timer(self.duration, self.timerEnd).start()
 
 	def begin(self):
 		# initialize prices if not already set
 		if not self.game.prices:
 			self.game.prices = {'tomato':10, 'blueberry':10, 'purple':10, 'corn':10}
 
+	def afterBegin(self):
+		threading.Timer(self.duration, self.timerEnd).start()
 		self.game.sendEventToAllPlayers('TimerBegin', {'duration':self.duration})
+
 
 	def type(self):
 		return 'Trading'

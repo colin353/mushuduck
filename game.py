@@ -53,6 +53,9 @@ class Game(object):
 		# notify player
 		self.sendEventToAllPlayers('stageBegin', {'stageType':self.currentStage.type()})
 
+		# hack?: run afterbegin
+		self.currentStage.afterBegin()
+
 	def markReady(self, playerHandler):
 		# get player obj from handler
 		player = self.playerWithHandler(playerHandler)
