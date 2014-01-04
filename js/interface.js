@@ -7,4 +7,6 @@ handleResize = function() {
 
 $(window).bind('resize', handleResize);
 
-handleResize();
+window.updateStatusBar = function() {
+  return $('.money').html('$' + player.gold);
+};

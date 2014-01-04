@@ -4,7 +4,7 @@
 class window.Player
 	constructor: ->
 		# Player starts with ten gold
-		@gold = 10
+		@gold = 0
 		# Initialize the production facilities
 		@products = []
 		@productionfacilities = []
@@ -19,16 +19,19 @@ class window.Player
 
 		yes
 
+	giveGold: (amount) ->
+		@gold += amount
+		updateStatusBar()
+
 	doYes: ->
 		yes
 
 class window.Product
 	constructor: (@name) ->
-		@amount = 0
+		@amount = 5
 		@price = 0
 		@color = "green"
 		yes
-
 
 	# Eventually, this function will go and get the price for a product.
 	getPrice: ->
@@ -52,4 +55,4 @@ class window.ProductionFacility
 			return no
 
 window.player = new Player()
-player.gold = 5
+player.giveGold 5

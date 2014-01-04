@@ -71,10 +71,11 @@
       this.response_handlers[transaction_id] = function(response) {
         return responder.call(this, response);
       };
-      return this.socket.send(JSON.stringify({
+      this.socket.send(JSON.stringify({
         data: message,
         transaction_id: transaction_id
       }));
+      return console.log('Transaction sent: ', message);
     };
 
     return PyAPI;
@@ -140,11 +141,14 @@
       if (change > 20 && !window.censor_gyroscope) {
         window.censor_gyroscope = true;
         pycon.transaction({
-          action: 'bump'
+          action: 'bump',
+          data: {
+            tomato: 5,
+            purple: 1
+          }
         }, function() {
           return true;
         });
-        $(".money").html(change);
         return setTimeout(function() {
           return window.censor_gyroscope = false;
         }, 500);
@@ -158,7 +162,9 @@
 
   $(window).bind('resize', handleResize);
 
-  handleResize();
+  window.updateStatusBar = function() {
+    return $('.money').html('$' + player.gold);
+  };
 
   window.config = [];
 
@@ -230,7 +236,7 @@
     function Player() {
       var p, _i, _len, _ref;
 
-      this.gold = 10;
+      this.gold = 0;
       this.products = [];
       this.productionfacilities = [];
       _ref = ['tomato', 'blueberry', 'purple', 'corn'];
@@ -246,6 +252,11 @@
       true;
     }
 
+    Player.prototype.giveGold = function(amount) {
+      this.gold += amount;
+      return updateStatusBar();
+    };
+
     Player.prototype.doYes = function() {
       return true;
     };
@@ -257,7 +268,7 @@
   window.Product = (function() {
     function Product(name) {
       this.name = name;
-      this.amount = 0;
+      this.amount = 5;
       this.price = 0;
       this.color = "green";
       true;
@@ -295,7 +306,7 @@
 
   window.player = new Player();
 
-  player.gold = 5;
+  player.giveGold(5);
 
   window.ProductionStage = (function() {
     function ProductionStage() {
@@ -378,7 +389,14 @@
       });
       $('.tradingstage-interface .inventory').sortable({
         helper: function(e, ui) {
-          return $("<div class='square'></div>").css('background-color', player.products[ui.attr('data-production-type')].color);
+          var type;
+
+          type = ui.attr('data-production-type');
+          if (me.products[type].product.amount <= 0) {
+            return $('<div></div>');
+          } else {
+            return $("<div class='square'></div>").css('background-color', player.products[ui.attr('data-production-type')].color);
+          }
         },
         start: function(e, ui) {
           return ui.item.show();
@@ -389,10 +407,44 @@
         },
         placeholder: 'test',
         stop: function(e, ui) {
-          return $(this).sortable('cancel');
+          var item, offset;
+
+          offset = ui.originalPosition.top - ui.position.top;
+          console.log('moved to position: ', offset);
+          item = me.products[ui.item.attr('data-production-type')];
+          if (offset > 100) {
+            return item.sell.call(item);
+          } else if (offset < -100) {
+            return item.trade.call(item);
+          }
         }
       });
+      $('.tradingstage-interface .trading .span.tradecount').each(function() {
+        var color, type;
+
+        $(this).html("<div class='square'></div> x <span class='count'>0</span>");
+        type = $(this).attr('data-production-type');
+        color = player.products[type].color;
+        $(this).children('.square').css('background-color', color);
+        return $(this).hide();
+      });
     }
+
+    TradingStage.prototype.refreshTradingPlatform = function() {
+      var p, _i, _len, _ref, _results;
+
+      _ref = this.products;
+      _results = [];
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        p = _ref[_i];
+        if (p.for_trade > 0) {
+          _results.push($(".tradingstage-interface .tradecount[data-production-type='" + p.product.name + "']").show());
+        } else {
+          _results.push(void 0);
+        }
+      }
+      return _results;
+    };
 
     return TradingStage;
 
@@ -404,8 +456,33 @@
       this.product = product;
       this.product.getPrice();
       this.needsRefresh();
+      this.for_trade = 0;
       true;
     }
+
+    TradingProduct.prototype.trade = function() {
+      if (this.product.amount > 0) {
+        this.for_trade += 1;
+        this.product.amount -= 1;
+        this.needsRefresh();
+        stage.refreshTradingPlatform.call(stage);
+        return true;
+      } else {
+        return false;
+      }
+    };
+
+    TradingProduct.prototype.sell = function() {
+      console.log('Sale conducted: ');
+      if (this.product.amount > 0) {
+        this.product.amount -= 1;
+        player.giveGold(this.product.price);
+        this.needsRefresh();
+        return true;
+      } else {
+        return false;
+      }
+    };
 
     TradingProduct.prototype.needsRefresh = function() {
       this.dom_element.children('.amount').html(this.product.amount);

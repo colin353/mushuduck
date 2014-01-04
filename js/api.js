@@ -68,10 +68,11 @@ this.PyAPI = (function() {
     this.response_handlers[transaction_id] = function(response) {
       return responder.call(this, response);
     };
-    return this.socket.send(JSON.stringify({
+    this.socket.send(JSON.stringify({
       data: message,
       transaction_id: transaction_id
     }));
+    return console.log('Transaction sent: ', message);
   };
 
   return PyAPI;

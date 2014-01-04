@@ -6,4 +6,5 @@ handleResize = ->
 
 $(window).bind 'resize', handleResize
 
-handleResize()
+window.updateStatusBar = ->
+	$('.money').html '$' + player.gold

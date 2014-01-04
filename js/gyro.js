@@ -31,11 +31,14 @@ $(function() {
     if (change > 20 && !window.censor_gyroscope) {
       window.censor_gyroscope = true;
       pycon.transaction({
-        action: 'bump'
+        action: 'bump',
+        data: {
+          tomato: 5,
+          purple: 1
+        }
       }, function() {
         return true;
       });
-      $(".money").html(change);
       return setTimeout(function() {
         return window.censor_gyroscope = false;
       }, 500);

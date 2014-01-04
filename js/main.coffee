@@ -3,7 +3,7 @@
 window.config = []
 window.config.websocket_url = "ws://192.168.0.106:8888/json"
 window.config.server_version = 0
-# -------------------------------------- #
+# -------------------------------------- #`
 
 $ ->
  	# First step: connect to the specified WebSocket

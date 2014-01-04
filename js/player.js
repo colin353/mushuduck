@@ -3,7 +3,7 @@ window.Player = (function() {
   function Player() {
     var p, _i, _len, _ref;
 
-    this.gold = 10;
+    this.gold = 0;
     this.products = [];
     this.productionfacilities = [];
     _ref = ['tomato', 'blueberry', 'purple', 'corn'];
@@ -19,6 +19,11 @@ window.Player = (function() {
     true;
   }
 
+  Player.prototype.giveGold = function(amount) {
+    this.gold += amount;
+    return updateStatusBar();
+  };
+
   Player.prototype.doYes = function() {
     return true;
   };
@@ -30,7 +35,7 @@ window.Player = (function() {
 window.Product = (function() {
   function Product(name) {
     this.name = name;
-    this.amount = 0;
+    this.amount = 5;
     this.price = 0;
     this.color = "green";
     true;
@@ -68,4 +73,4 @@ window.ProductionFacility = (function() {
 
 window.player = new Player();
 
-player.gold = 5;
+player.giveGold(5);
