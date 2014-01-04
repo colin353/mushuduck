@@ -4,6 +4,7 @@ window.TradingStage = (function() {
     var me;
 
     me = this;
+    $('.tradingstage-interface').show();
     this.products = [];
     $('.tradingstage-interface .box').each(function() {
       var type;

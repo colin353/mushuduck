@@ -7,6 +7,7 @@ window.ProductionStage = (function() {
 
     me = this;
     this.productions = [];
+    $('.productionstage-interface').show();
     $('.productionstage-interface .box').each(function() {
       var type;
 
@@ -20,7 +21,12 @@ window.ProductionStage = (function() {
   }
 
   ProductionStage.prototype.ready = function() {
-    return $('.ready').css('background-color', 'green');
+    $('.ready').css('background-color', 'green');
+    return pycon.transaction({
+      'action': 'ready'
+    }, function() {
+      return true;
+    });
   };
 
   return ProductionStage;
