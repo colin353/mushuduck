@@ -353,12 +353,17 @@
   })();
 
   $(function() {
+    var moving_average_samples;
+
     console.log('Gryo begin tracking');
     window.acc = {
       x: 0,
       y: 0,
       z: 0
     };
+    window.avg_acc = false;
+    moving_average_samples = 50;
+    window.censor_gyroscope = false;
     return window.ondevicemotion = function(e) {
       var change, i, string, x, y, z, _i, _ref;
 
@@ -371,14 +376,19 @@
         string += 'XXX';
       }
       console.log(string);
-      $(".money").html(change);
       window.acc = {
         x: x,
         y: y,
         z: z
       };
-      if (change > 30) {
-        return alert("You win!");
+      if (change > 20 && !window.censor_gyroscope) {
+        window.censor_gyroscope = true;
+        $(".money").html(change);
+        alert("You win!");
+        return setTimeout(function() {
+          window.censor_gyroscope = false;
+          return console.log('what the fuck');
+        }, 500);
       }
     };
   });
