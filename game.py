@@ -2,17 +2,36 @@ from stage import ProductionStage, TradingStage
 import json
 import time
 
-class Game:
+class Game(object):
 	stageSequence = [ProductionStage, TradingStage]
 
 	def __init__(self):
-		self.prices = {'tomato':10, 'blueberry':10, 'purple':10, 'corn':10}
+		self._prices = None
 		self.players = []
 		self.turnNumber = 1
 		self.currentStageNumber = 0
 		self.currentStage = None
 		self.nextStage()
 		self.lastRecordedBump = None
+
+	@property
+	def prices(self):
+		return self._prices
+
+	@prices.setter
+	def prices(self, value):
+		print "-- prices being set!"
+
+		# if in trading stage, notify players of price update
+		if self.currentStage.__class__ == TradingStage:
+			self.sendEventToAllPlayers('PriceUpdated', {'prices':value, 'oldPrices':self._prices})
+
+		# update price ivar
+		self._prices = value
+
+	@prices.deleter
+	def prices(self):
+		del self._prices
 
 	def nextStage(self):
 
@@ -26,13 +45,33 @@ class Game:
 			# increment stage number
 			self.currentStageNumber = (self.currentStageNumber + 1) % len(self.stageSequence)
 			
-		self.currentStage = self.stageSequence[self.currentStageNumber]()
+		self.currentStage = self.stageSequence[self.currentStageNumber](self)
 		
 		# begin new stage
 		self.currentStage.begin()
 
 		# notify player
 		self.sendEventToAllPlayers('stageBegin', {'stageType':self.currentStage.type()})
+
+	def markReady(self, playerHandler):
+		# get player obj from handler
+		player = self.playerWithHandler(playerHandler)
+		print self.players
+
+		if player:
+			# add player to readyList
+			self.currentStage.readyList.append(player)
+			# if all players are ready, move the to the next stage
+			if all([p in self.currentStage.readyList for p in self.players]):
+				self.nextStage()
+
+	#### methods for trading stage
+
+	def sell(self, playerHandler, items):
+		# todo: finish this
+
+		# get player
+		player = self.playerWithHandler(playerHandler)
 
 	def bump(self, playerHandler, items):
 
@@ -49,28 +88,6 @@ class Game:
 		else:
 			print "First bump by %s." % newBump.player
 			self.lastRecordedBump = newBump
-
-	def updatePricesToAll(self):
-		# todo: finish this
-		pass
-
-	def sell(self, playerHandler, items):
-		# todo: finish this
-
-		# get player
-		player = self.playerWithHandler(playerHandler)
-
-	def markReady(self, playerHandler):
-		# get player obj from handler
-		player = self.playerWithHandler(playerHandler)
-		print self.players
-
-		if player:
-			# add player to readyList
-			self.currentStage.readyList.append(player)
-			# if all players are ready, move the to the next stage
-			if all([p in self.currentStage.readyList for p in self.players]):
-				self.nextStage()
 
 	def facilitateTradeWithBumps(self, bump1, bump2):
 		print "Zomg trading!"
