@@ -1,5 +1,4 @@
 from stage import ProductionStage, TradingStage
-from events import EventDispatcher
 import json
 import time
 
@@ -7,33 +6,13 @@ class Game:
 	stageSequence = [ProductionStage, TradingStage]
 
 	def __init__(self):
+		self.prices = {'tomato':10, 'blueberry':10, 'purple':10, 'corn':10}
 		self.players = []
 		self.turnNumber = 1
 		self.currentStageNumber = 0
 		self.currentStage = None
 		self.nextStage()
-		self.dispatcher = EventDispatcher()
 		self.lastRecordedBump = None
-
-	def addPlayerWithHandler(self, handler):
-		newPlayer = Player(handler)
-		self.players.append(newPlayer)
-		## hack: todo: need to get all players before first round begins
-		data = {'stageType':self.currentStage.type()}
-		self.dispatcher.send(newPlayer.socketHandler, json.dumps({'eventName':"stageBegin" , 'data':data }))
-
-		# notify players that player count has increased
-		data = {'count':len(self.players)}
-		self.dispatchToAll(json.dumps({'eventName':"playerCountChanged" , 'data':data }))
-
-	def removePlayerWithHandler(self, handler):
-		playerToRemove = self.playerWithHandler(handler)
-		if playerToRemove in self.players:
-			self.players.remove(playerToRemove)
-			# notify players that player count has decreased
-			data = {'count':len(self.players)}
-			self.dispatchToAll(json.dumps({'eventName':"playerCountChanged" , 'data':data }))
-
 
 	def nextStage(self):
 
@@ -42,8 +21,7 @@ class Game:
 			self.currentStage.end()
 
 			# notify players
-			data = {'stageType':self.currentStage.type()}
-			self.dispatchToAll(json.dumps( {'eventName':"stageEnd" , 'data':data }))
+			self.sendEventToAllPlayers('stageEnd', {'stageType':self.currentStage.type()})
 
 			# increment stage number
 			self.currentStageNumber = (self.currentStageNumber + 1) % len(self.stageSequence)
@@ -54,8 +32,7 @@ class Game:
 		self.currentStage.begin()
 
 		# notify player
-		data = {'stageType':self.currentStage.type()}
-		self.dispatchToAll(json.dumps({'eventName':"stageBegin" , 'data':data }))
+		self.sendEventToAllPlayers('stageBegin', {'stageType':self.currentStage.type()})
 
 	def bump(self, playerHandler, items):
 
@@ -73,9 +50,15 @@ class Game:
 			print "First bump by %s." % newBump.player
 			self.lastRecordedBump = newBump
 
-	def dispatchToAll(self, message):
-		for player in self.players:
-			self.dispatcher.send(player.socketHandler, message)
+	def updatePricesToAll(self):
+		# todo: finish this
+		pass
+
+	def sell(self, playerHandler, items):
+		# todo: finish this
+
+		# get player
+		player = self.playerWithHandler(playerHandler)
 
 	def markReady(self, playerHandler):
 		# get player obj from handler
@@ -89,25 +72,53 @@ class Game:
 			if all([p in self.currentStage.readyList for p in self.players]):
 				self.nextStage()
 
+	def facilitateTradeWithBumps(self, bump1, bump2):
+		print "Zomg trading!"
+
+		# send items to respective players
+		self.sendEventToPlayer(bump1.player, 'TradeCompleted', {'items':bump2.items})
+		self.sendEventToPlayer(bump2.player, 'TradeCompleted', {'items':bump1.items})
+
+	#### player management methods ####
+
+	def addPlayerWithHandler(self, handler):
+		newPlayer = Player(handler)
+		self.players.append(newPlayer)
+		## hack: todo: need to get all players before first round begins
+		self.sendEventToPlayer(newPlayer, 'stageBegin', {'stageType':self.currentStage.type()})
+
+		# notify players that player count has increased
+		self.sendEventToAllPlayers('playerCountChanged', {'count':len(self.players)})
+
+	def removePlayerWithHandler(self, handler):
+		playerToRemove = self.playerWithHandler(handler)
+		if playerToRemove in self.players:
+			self.players.remove(playerToRemove)
+			
+		# notify players that player count has increased
+		self.sendEventToAllPlayers('playerCountChanged', {'count':len(self.players)})
+
 	def playerWithHandler(self, handler):
 		# generate list of matching players
 		matchingPlayers = [player for player in self.players if player.socketHandler==handler]
 		# yield matching player or yield None
 		return matchingPlayers[0] if matchingPlayers else None
 
-	def facilitateTradeWithBumps(self, bump1, bump2):
-		print "Zomg trading!"
+	#### message sending methods ####
 
-		# create events that swap items
-		event1 = {'eventName':'TradeCompleted', 'data':{'items':bump2.items}}
-		event2 = {'eventName':'TradeCompleted', 'data':{'items':bump1.items}}
+	def sendMessageToPlayer(self, player, message):
+		player.socketHandler.write_message(message)
 
-		# send to respective players
-		self.dispatcher.send(bump1.player.socketHandler, event1)
-		self.dispatcher.send(bump2.player.socketHandler, event2)
+	def sendMessageToAllPlayers(self, message):
+		for player in self.players:
+			self.sendMessageToPlayer(player, message)
 
+	def sendEventToPlayer(self, player, eventName, data=None):
+		self.sendMessageToPlayer(player, json.dumps({'eventName':eventName, 'data':data}))
 
-
+	def sendEventToAllPlayers(self, eventName, data=None):
+		for player in self.players:
+			self.sendEventToPlayer(player, eventName, data)
 
 class Player:
 
