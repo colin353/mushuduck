@@ -1,8 +1,20 @@
 # Configuration parameters:
+# they are now pulled from a configuration.json file.
 # -------------------------------------- #
-window.config = []
-window.config.websocket_url = "ws://192.168.0.106:8888/json"
-window.config.server_version = 0
+
+window.config = $.ajax({
+    type: "GET",
+    url: "/configuration.json",
+    async: false
+}).responseText
+
+try 
+	window.config = JSON.parse window.config
+catch error
+	throw "Configuration loaded from 'configuration.json' is invalid."
+
+
+
 # -------------------------------------- #`
 
 $ ->
@@ -65,3 +77,5 @@ window.go = ->
 			player.products[name].price = price if player.products[name]?
 		# Inform the stage that it should act
 		window.stage.price_updated.call stage
+
+#	pycon.register_for_event 'SetTimer'
