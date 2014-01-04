@@ -67,11 +67,16 @@ class Game(object):
 
 	#### methods for trading stage
 
-	def sell(self, playerHandler, items):
-		# todo: finish this
+	def sell(self, productToSell):
 
-		# get player
-		player = self.playerWithHandler(playerHandler)
+		# the player will receive money corresponding to the old price, before market value update
+		pay = self.prices[productToSell]
+
+		# calculate new price
+		self.prices[productToSell] -= 5
+
+		# return pay (old price) to player
+		return pay
 
 	def bump(self, playerHandler, items):
 
