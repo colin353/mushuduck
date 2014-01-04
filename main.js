@@ -363,7 +363,7 @@
     };
 
     ProductionFacility.prototype.upgrade = function() {
-      this.capacity = this.capacity * 2;
+      this.capacity = this.capacity + 1;
       return this.level += 1;
     };
 
@@ -650,7 +650,7 @@
           return;
         }
         me.yield_production.call(me);
-        return setTimeout(do_production, 500);
+        return setTimeout(do_production, 2000);
       };
       setTimeout(count_down, 1000);
       setTimeout(do_production, 500);

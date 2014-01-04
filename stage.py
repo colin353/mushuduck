@@ -21,14 +21,14 @@ class ProductionStage(Stage):
 
 	def __init__(self, game):
 		super(ProductionStage, self).__init__(game)
-		readyList = []
+		self.readyList = []
 
 
 	def type(self):
 		return 'Production'
 
 class TradingStage(Stage):
-	duration = 120.0
+	duration = 60.0
 
 	def __init__(self, game):
 		super(TradingStage, self).__init__(game)
@@ -59,7 +59,7 @@ class TradingStage(Stage):
 
 	def timerEnd(self):
 		# clean up recorded time
-		del self.startTime
+		#del self.startTime
 		# notify players that timer ended
 		self.game.sendEventToAllPlayers('TimerEnd')
 		# wait 2s before changing stage

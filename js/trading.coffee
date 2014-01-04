@@ -168,7 +168,7 @@ class window.TradingStage extends Stage
 				# We don't want to worry about timing if the stage isn't trading.
 				return if stage.type != 'TradingStage'
 				me.yield_production.call me
-				setTimeout( do_production, 500)
+				setTimeout( do_production, 2000)
 			
 			# Wait one second before starting so that everything lines up.
 			setTimeout count_down,1000
