@@ -42,6 +42,7 @@ class window.TradingStage
 						item.sell.call item
 					else if offset < -100
 						item.trade.call item
+					$(@).sortable 'cancel'
 		}
 
 		# Set up the trading window to show all of the appropriate things:
@@ -51,6 +52,20 @@ class window.TradingStage
 			color = player.products[type].color
 			$(@).children('.square').css('background-color',color)
 			$(@).hide()
+
+		# Allow for clearing of the trading panel
+
+		$('.trading').on 'taphold', ->
+			console.log 'tapped and held'
+			me.clearTrades.call me
+
+	clearTrades: ->
+		for name.p of @products
+			if p.for_trade > 0
+				p.product.amount += p.for_trade
+				p.needsRefresh.call p
+
+		@refreshTradingPlatform()
 
 	refreshTradingPlatform: ->
 		for name,p of @products

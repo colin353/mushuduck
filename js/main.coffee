@@ -20,9 +20,7 @@ $ ->
  		window.pycon = new PyAPI window.socket
 
  		window.go()
-
- 	
-
+ 		
  	# Since the socket should never close, this is always unexpected.
  	socket.onclose = ->
  		console.log "Socket connection was closed, unexpectedly."
@@ -39,7 +37,7 @@ window.go = ->
 	pycon.register_for_event 'stageBegin', (data) ->
 		if stage? 
 			window.stage.end()
-			
+
 		if data.stageType == 'Production'
 			window.stage = new ProductionStage()
 		else if data.stageType == 'Trading'

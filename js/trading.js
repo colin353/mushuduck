@@ -38,10 +38,11 @@ window.TradingStage = (function() {
         console.log('moved to position: ', offset);
         item = me.products[ui.item.attr('data-production-type')];
         if (offset > 100) {
-          return item.sell.call(item);
+          item.sell.call(item);
         } else if (offset < -100) {
-          return item.trade.call(item);
+          item.trade.call(item);
         }
+        return $(this).sortable('cancel');
       }
     });
     $('.tradingstage-interface .trading span.tradecount').each(function() {
@@ -53,7 +54,12 @@ window.TradingStage = (function() {
       $(this).children('.square').css('background-color', color);
       return $(this).hide();
     });
+    $('.trading').on('taphold', function() {
+      return me.clearTrades();
+    });
   }
+
+  TradingStage.prototype.clearTrades = function() {};
 
   TradingStage.prototype.refreshTradingPlatform = function() {
     var name, p, _ref, _results;

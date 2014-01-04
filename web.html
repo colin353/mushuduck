@@ -34,9 +34,41 @@
 		font-size: 50pt;
 	}
 
+	/* Mobile version */
+	@media all and (max-width: 1000px) {
+		html,body {
+			font-size: 30pt;
+		}
+		.tradecount {
+			margin: 10	px;
+		}
+
+		.square {
+			width: 25px;
+			height: 25px;
+		}
+	}
+
+	/* Desktop, ipad version */
+	@media all and (min-width: 600px) {
+		html,body {
+			font-size: 50pt;
+		}
+
+		.tradecount {
+			margin: 40px;
+		}
+
+		.square {
+			height: 50px;
+			width: 50px;
+		}
+
+	}
+
+	/* Everybody */
+
 	.square {
-		height: 50px;
-		width: 50px;
 		display: inline-block;
 	}
 
@@ -104,12 +136,12 @@
 	}
 
 	.sell {
-		height:33%;
+		height:20%;
 		background-color: gold;
 	}
 
 	.trading {
-		height: 34%;
+		height: 40%;
 		background-color: gray;
 		display: block;
 	}
@@ -145,7 +177,6 @@
 
 	.tradecount {
 		display:inline-block;
-		margin: 50px;
 	}
 
 	.box.blue { background-color: blue; }
