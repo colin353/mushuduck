@@ -141,17 +141,12 @@
     moving_average_samples = 50;
     window.censor_gyroscope = false;
     return window.ondevicemotion = function(e) {
-      var change, i, string, x, y, z, _i, _ref;
+      var change, x, y, z;
 
       x = e.accelerationIncludingGravity.x;
       y = e.accelerationIncludingGravity.y;
       z = e.accelerationIncludingGravity.z;
       change = Math.abs(acc.x - x) + Math.abs(acc.y - y) + Math.abs(acc.z - z);
-      string = '';
-      for (i = _i = 1, _ref = Math.round(change); 1 <= _ref ? _i <= _ref : _i >= _ref; i = 1 <= _ref ? ++_i : --_i) {
-        string += 'XXX';
-      }
-      console.log(string);
       window.acc = {
         x: x,
         y: y,

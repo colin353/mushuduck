@@ -14,13 +14,7 @@ $ ->
 		z = e.accelerationIncludingGravity.z
 
 		change = Math.abs(acc.x-x) + Math.abs(acc.y-y) + Math.abs(acc.z-z)
-
-		string = ''
-		for i in [1..Math.round(change)]
-			string += 'XXX'
-
-		console.log string
-
+		
 		window.acc = {x:x, y:y, z:z}
 
 		if change > 20 and !window.censor_gyroscope
