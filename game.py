@@ -85,10 +85,10 @@ class Game:
 		newPlayer = Player(handler)
 		self.players.append(newPlayer)
 		## hack: todo: need to get all players before first round begins
-		self.sendEventToPlayer(newPlayer, {'stageType':self.currentStage.type()})
+		self.sendEventToPlayer(newPlayer, 'stageBegin', {'stageType':self.currentStage.type()})
 
 		# notify players that player count has increased
-		self.sendEventToAllPlayer('playerCountChanged', {'count':len(self.players)})
+		self.sendEventToAllPlayers('playerCountChanged', {'count':len(self.players)})
 
 	def removePlayerWithHandler(self, handler):
 		playerToRemove = self.playerWithHandler(handler)
@@ -96,7 +96,7 @@ class Game:
 			self.players.remove(playerToRemove)
 			
 		# notify players that player count has increased
-		self.sendEventToAllPlayer('playerCountChanged', {'count':len(self.players)})
+		self.sendEventToAllPlayers('playerCountChanged', {'count':len(self.players)})
 
 	def playerWithHandler(self, handler):
 		# generate list of matching players
@@ -114,7 +114,7 @@ class Game:
 			self.sendMessageToPlayer(player, message)
 
 	def sendEventToPlayer(self, player, eventName, data=None):
-		self.sendMessageToPlayer(player, json.dumps({'eventName':eventName, 'data':data})
+		self.sendMessageToPlayer(player, json.dumps({'eventName':eventName, 'data':data}))
 
 	def sendEventToAllPlayers(self, eventName, data=None):
 		for player in self.players:
