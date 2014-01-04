@@ -26,9 +26,9 @@ class JHandler(tornado.websocket.WebSocketHandler):
 		print "Opening..."
 		staticGame.addPlayerWithHandler(self)
 
-	def on_message(self, message):
-		print "Message received: %s " % message 
-		data = json.loads( message )
+	def on_message(self, msg):
+		print "Message received: %s " % msg 
+		message = json.loads(msg)
 
 		# The default response: it should be overwritten, or else some
 		# kind of internal problem occured.
@@ -37,10 +37,13 @@ class JHandler(tornado.websocket.WebSocketHandler):
 		# If the message is a transaction, it'll contain a 
 		# transaction ID. Then we need to do whatever it is asking
 		# for and then response using the same transaction ID.
-		if 'transaction_id' in data:
-			# The result is an actionable transaction. 
-			if 'action' in data['data']:
-				response = actionablerequesthandler.invoke( data['data']['action'], self)
+		if 'transaction_id' in message:
+			messageData = message['data']
+			# The result is an actionable transaction with optional data. 
+			transactionAction = messageData['action'] if 'action' in messageData else None
+			transactionData = messageData['data'] if 'data' in messageData else None
+			if transactionAction:
+				response = actionablerequesthandler.invoke(transactionAction, self, transactionData)
 			else:
 				response = "Invalid action: no action specified";
 		else:
@@ -49,7 +52,7 @@ class JHandler(tornado.websocket.WebSocketHandler):
 		# Need to respond with the correct format. The format must include
 		# the actual data response under "data" and the transaction id that
 		# it is responding to under "transaction_id" in order to be valid.
-		self.write_message( json.dumps ( {'data': response, 'transaction_id': data['transaction_id'] } ) )
+		self.write_message( json.dumps ( {'data': response, 'transaction_id': message['transaction_id'] } ) )
 
 	def on_close(self):
 		print "Closing..."
@@ -63,28 +66,32 @@ class JHandler(tornado.websocket.WebSocketHandler):
 # functions, and then the system will JSON your return value.
 class JActionableRequestHandler:
 
-	def invoke(self, action, sender):
+	def invoke(self, action, sender, data):
 		print "Attempted to invoke action %s" % action
+
+		# create dictionary of arguments to be passed into the corresponding function call of the action
+		args = {'sender':sender, 'data':data}
+		args = dict((arg,value) for arg,value in args.iteritems() if value is not None)
+
 		if hasattr(self, action):
-			self.sender = sender
-			return getattr(self, action)()
+			return getattr(self, action)(**args)
 		else:
 			return "Invalid action: action %s is not implemented." % action
 
 	# This function tells us some information about the current running version
 	# of the server, etc. 
-	def validate_version(self):
+	def validate_version(self, sender):
 		return {
 			'start_date'	: "Program started: %s " % RUN_DATE,
 			'version'		: VERSION
 		}
 
-	def bump(self):
-		staticGame.bump(self.sender)
+	def bump(self, sender, data):
+		staticGame.bump(sender, data)
 		return { }
 
-	def ready(self):
-		staticGame.markReady(self.sender)
+	def ready(self, sender):
+		staticGame.markReady(sender)
 		return { }
 
 # The global actionablrequesthandler: there is only one instance of this, 
