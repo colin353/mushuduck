@@ -86,19 +86,24 @@ class JActionableRequestHandler:
 			'version'		: VERSION
 		}
 
+	def sell(self, sender, data):
+		if 'productToSell' in data:
+			return staticGame.sell(data['productToSell'])
+		else:
+			return "the action 'sell' failed to include a string named 'productToSell'"
+			
 	def bump(self, sender, data):
 
 		if 'items' in data:
-			items = data['items']
+			staticGame.bump(sender, data['items'])
+			return {}
 		else:
-			sender.write_message("the action 'bump' failed to include a dictionary named 'item'")
+			return "the action 'bump' failed to include a dictionary named 'item'"
 
-		staticGame.bump(sender, items)
-		return { }
 
 	def ready(self, sender):
 		staticGame.markReady(sender)
-		return { }
+		return {}
 
 # The global actionablrequesthandler: there is only one instance of this, 
 # even though there may be many instances of JHandlers for different clients.
