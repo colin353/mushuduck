@@ -21,13 +21,14 @@ $(function() {
 });
 
 window.go = function() {
-  window.stage = window.productionstage = new ProductionStage();
   pycon.register_for_event('playerCountChanged', function(data) {
     console.log('Player count changed: ', data);
     return $('.playercount').html(data.count);
   });
   return pycon.register_for_event('stageBegin', function(data) {
-    window.stage.end();
+    if (typeof stage !== "undefined" && stage !== null) {
+      window.stage.end();
+    }
     if (data.stageType === 'Production') {
       return window.stage = new ProductionStage();
     } else if (data.stageType === 'Trading') {

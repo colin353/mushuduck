@@ -31,14 +31,15 @@ $ ->
 # When everything is loaded and ready to go, this function is called.
 window.go = ->
 	# Start in the production stage
-	window.stage = window.productionstage = new ProductionStage()
 
 	pycon.register_for_event 'playerCountChanged', (data) ->
 		console.log 'Player count changed: ', data
 		$('.playercount').html data.count 
 
 	pycon.register_for_event 'stageBegin', (data) ->
-		window.stage.end()
+		if stage? 
+			window.stage.end()
+			
 		if data.stageType == 'Production'
 			window.stage = new ProductionStage()
 		else if data.stageType == 'Trading'

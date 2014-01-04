@@ -8,7 +8,7 @@ class window.TradingStage
 		$('.tradingstage-interface').show()
 
 		# Register all of the trading products boxes
-		@products = []
+		@products = {}
 
 		$('.tradingstage-interface .box').each ->
 			type = $(@).attr('data-production-type')
@@ -45,7 +45,7 @@ class window.TradingStage
 		}
 
 		# Set up the trading window to show all of the appropriate things:
-		$('.tradingstage-interface .trading .span.tradecount').each ->
+		$('.tradingstage-interface .trading span.tradecount').each ->
 			$(@).html "<div class='square'></div> x <span class='count'>0</span>"
 			type = $(@).attr('data-production-type')
 			color = player.products[type].color
@@ -53,9 +53,10 @@ class window.TradingStage
 			$(@).hide()
 
 	refreshTradingPlatform: ->
-		for p in @products
+		for name,p of @products
+			console.log 'Refreshing trading platform for ',p.product.name 
 			if p.for_trade > 0
-				$(".tradingstage-interface .tradecount[data-production-type='#{p.product.name}']").show()
+				$(".tradingstage-interface .tradecount[data-production-type='#{name}']").show().children('.count').html p.for_trade
 
 class window.TradingProduct
 	constructor: (@dom_element, @product) ->
@@ -75,7 +76,6 @@ class window.TradingProduct
 			return no
 
 	sell: ->
-		console.log 'Sale conducted: '
 		if @product.amount > 0
 			@product.amount -= 1
 			player.giveGold @product.price

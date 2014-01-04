@@ -17,6 +17,7 @@ class window.ProductionStage
 
 	end: ->
 		$(@stage_name).hide()
+		$('.ready').unbind()
 
 	ready: ->
 		# Show the ready as GREEN instead of GRAY

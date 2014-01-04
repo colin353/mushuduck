@@ -22,7 +22,8 @@ window.ProductionStage = (function() {
   }
 
   ProductionStage.prototype.end = function() {
-    return $(this.stage_name).hide();
+    $(this.stage_name).hide();
+    return $('.ready').unbind();
   };
 
   ProductionStage.prototype.ready = function() {

@@ -188,13 +188,14 @@
   });
 
   window.go = function() {
-    window.stage = window.productionstage = new ProductionStage();
     pycon.register_for_event('playerCountChanged', function(data) {
       console.log('Player count changed: ', data);
       return $('.playercount').html(data.count);
     });
     return pycon.register_for_event('stageBegin', function(data) {
-      window.stage.end();
+      if (typeof stage !== "undefined" && stage !== null) {
+        window.stage.end();
+      }
       if (data.stageType === 'Production') {
         return window.stage = new ProductionStage();
       } else if (data.stageType === 'Trading') {
@@ -329,7 +330,8 @@
     }
 
     ProductionStage.prototype.end = function() {
-      return $(this.stage_name).hide();
+      $(this.stage_name).hide();
+      return $('.ready').unbind();
     };
 
     ProductionStage.prototype.ready = function() {
@@ -380,7 +382,7 @@
 
       me = this;
       $('.tradingstage-interface').show();
-      this.products = [];
+      this.products = {};
       $('.tradingstage-interface .box').each(function() {
         var type;
 
@@ -419,7 +421,7 @@
           }
         }
       });
-      $('.tradingstage-interface .trading .span.tradecount').each(function() {
+      $('.tradingstage-interface .trading span.tradecount').each(function() {
         var color, type;
 
         $(this).html("<div class='square'></div> x <span class='count'>0</span>");
@@ -431,14 +433,15 @@
     }
 
     TradingStage.prototype.refreshTradingPlatform = function() {
-      var p, _i, _len, _ref, _results;
+      var name, p, _ref, _results;
 
       _ref = this.products;
       _results = [];
-      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-        p = _ref[_i];
+      for (name in _ref) {
+        p = _ref[name];
+        console.log('Refreshing trading platform for ', p.product.name);
         if (p.for_trade > 0) {
-          _results.push($(".tradingstage-interface .tradecount[data-production-type='" + p.product.name + "']").show());
+          _results.push($(".tradingstage-interface .tradecount[data-production-type='" + name + "']").show().children('.count').html(p.for_trade));
         } else {
           _results.push(void 0);
         }
@@ -473,7 +476,6 @@
     };
 
     TradingProduct.prototype.sell = function() {
-      console.log('Sale conducted: ');
       if (this.product.amount > 0) {
         this.product.amount -= 1;
         player.giveGold(this.product.price);
