@@ -600,8 +600,15 @@
     TradingProduct.prototype.sell = function() {
       if (this.product.amount > 0) {
         this.product.amount -= 1;
-        player.giveGold(this.product.price);
-        this.needsRefresh();
+        pycon.transaction({
+          action: 'sell',
+          data: {
+            productToSell: this.product.name
+          }
+        }, function(data) {
+          player.giveGold(data.pay);
+          return this.needsRefresh();
+        });
         return true;
       } else {
         return false;
