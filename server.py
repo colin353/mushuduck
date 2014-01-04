@@ -40,7 +40,7 @@ class JHandler(tornado.websocket.WebSocketHandler):
 		if 'transaction_id' in data:
 			# The result is an actionable transaction. 
 			if 'action' in data['data']:
-				response = actionablerequesthandler.invoke( data['data']['action'] )
+				response = actionablerequesthandler.invoke( data['data']['action'], self)
 			else:
 				response = "Invalid action: no action specified";
 		else:
@@ -61,9 +61,11 @@ class JHandler(tornado.websocket.WebSocketHandler):
 # does whatever is necessary. You could also return a hash from the actionable
 # functions, and then the system will JSON your return value.
 class JActionableRequestHandler:
-	def invoke(self, action):
+
+	def invoke(self, action, sender):
 		print "Attempted to invoke action %s" % action
 		if hasattr(self, action):
+			self.sender = sender
 			return getattr(self, action)()
 		else:
 			return "Invalid action: action %s is not implemented." % action
@@ -77,10 +79,7 @@ class JActionableRequestHandler:
 		}
 
 	def ready(self):
-		# log players
-		print staticGame.players
-
-		# start new stage when all players are ready
+		staticGame.markReady(self.sender)
 
 # The global actionablrequesthandler: there is only one instance of this, 
 # even though there may be many instances of JHandlers for different clients.
