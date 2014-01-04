@@ -87,7 +87,13 @@ class JActionableRequestHandler:
 		}
 
 	def bump(self, sender, data):
-		staticGame.bump(sender, data)
+
+		if 'items' in data:
+			items = data['items']
+		else:
+			sender.write_message("the action 'bump' failed to include a dictionary named 'item'")
+
+		staticGame.bump(sender, items)
 		return { }
 
 	def ready(self, sender):
