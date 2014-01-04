@@ -1,7 +1,7 @@
 # Configuration parameters:
 # -------------------------------------- #
 window.config = []
-window.config.websocket_url = "ws://192.168.0.106:8888/json"
+window.config.websocket_url = "ws://192.168.0.109:8888/json"
 window.config.server_version = 0
 # -------------------------------------- #
 

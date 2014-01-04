@@ -77,10 +77,7 @@ class JActionableRequestHandler:
 		}
 
 	def ready(self):
-		# log players
-		print staticGame.players
-
-		# start new stage when all players are ready
+		staticGame.markReady(self)
 
 # The global actionablrequesthandler: there is only one instance of this, 
 # even though there may be many instances of JHandlers for different clients.

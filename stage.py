@@ -10,6 +10,7 @@ class Stage:
 		pass
 
 class ProductionStage(Stage):
+	readyList = []
 
 	def type(self):
 		return 'Production'

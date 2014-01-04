@@ -46,6 +46,15 @@ class Game:
 		for player in self.players:
 			self.dispatcher.send(player.socketHandler, message)
 
+	def markReady(self, player):
+		# add player to readyList
+		self.currentStage.readyList.append(player)
+		# if all players are ready, move the to the next stage
+		if all([player in readyList for player in self.players]):
+			self.nextStage()
+
+
+
 
 class Player:
 
