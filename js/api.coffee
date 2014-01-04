@@ -51,7 +51,7 @@ class @PyAPI
 
 	# Register for an event using this function, to hear when the computer
 	# tells you something global. But you can't respond to it.
-	register_for_event: (response) ->
+	register_for_event: (eventName, response) ->
 		if !@event_responders[eventName]?
 			@event_responders[eventName] = []
 		@event_responders[eventName].push response 

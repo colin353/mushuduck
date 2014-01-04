@@ -40,7 +40,7 @@ this.PyAPI = (function() {
     return "T" + Math.random();
   };
 
-  PyAPI.prototype.register_for_event = function(response) {
+  PyAPI.prototype.register_for_event = function(eventName, response) {
     if (this.event_responders[eventName] == null) {
       this.event_responders[eventName] = [];
     }

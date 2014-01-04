@@ -25,9 +25,12 @@ $ ->
 
 		if change > 20 and !window.censor_gyroscope
 			window.censor_gyroscope = true
+			
+			pycon.transaction {action: 'bump' }, ->
+				yes
+
 			$(".money").html change
-			alert "You win!"
+			
 			setTimeout( ->
 				window.censor_gyroscope = false
-				console.log 'what the fuck'
 			,500)

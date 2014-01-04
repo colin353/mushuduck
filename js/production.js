@@ -7,8 +7,9 @@ window.ProductionStage = (function() {
 
     me = this;
     this.productions = [];
-    $('.productionstage-interface').show();
-    $('.productionstage-interface .box').each(function() {
+    this.stage_name = '.productionstage-interface';
+    $(this.stage_name).show();
+    $("" + this.stage_name + " .box").each(function() {
       var type;
 
       type = $(this).attr('data-production-type');
@@ -19,6 +20,10 @@ window.ProductionStage = (function() {
     });
     true;
   }
+
+  ProductionStage.prototype.end = function() {
+    return $(this.stage_name).hide();
+  };
 
   ProductionStage.prototype.ready = function() {
     $('.ready').css('background-color', 'green');

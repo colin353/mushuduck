@@ -30,11 +30,14 @@ $(function() {
     };
     if (change > 20 && !window.censor_gyroscope) {
       window.censor_gyroscope = true;
+      pycon.transaction({
+        action: 'bump'
+      }, function() {
+        return true;
+      });
       $(".money").html(change);
-      alert("You win!");
       return setTimeout(function() {
-        window.censor_gyroscope = false;
-        return console.log('what the fuck');
+        return window.censor_gyroscope = false;
       }, 500);
     }
   };

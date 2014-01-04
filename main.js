@@ -43,7 +43,7 @@
       return "T" + Math.random();
     };
 
-    PyAPI.prototype.register_for_event = function(response) {
+    PyAPI.prototype.register_for_event = function(eventName, response) {
       if (this.event_responders[eventName] == null) {
         this.event_responders[eventName] = [];
       }
@@ -108,6 +108,58 @@
     }
   };
 
+  $(function() {
+    var moving_average_samples;
+
+    console.log('Gryo begin tracking');
+    window.acc = {
+      x: 0,
+      y: 0,
+      z: 0
+    };
+    window.avg_acc = false;
+    moving_average_samples = 50;
+    window.censor_gyroscope = false;
+    return window.ondevicemotion = function(e) {
+      var change, i, string, x, y, z, _i, _ref;
+
+      x = e.accelerationIncludingGravity.x;
+      y = e.accelerationIncludingGravity.y;
+      z = e.accelerationIncludingGravity.z;
+      change = Math.abs(acc.x - x) + Math.abs(acc.y - y) + Math.abs(acc.z - z);
+      string = '';
+      for (i = _i = 1, _ref = Math.round(change); 1 <= _ref ? _i <= _ref : _i >= _ref; i = 1 <= _ref ? ++_i : --_i) {
+        string += 'XXX';
+      }
+      console.log(string);
+      window.acc = {
+        x: x,
+        y: y,
+        z: z
+      };
+      if (change > 20 && !window.censor_gyroscope) {
+        window.censor_gyroscope = true;
+        pycon.transaction({
+          action: 'bump'
+        }, function() {
+          return true;
+        });
+        $(".money").html(change);
+        return setTimeout(function() {
+          return window.censor_gyroscope = false;
+        }, 500);
+      }
+    };
+  });
+
+  handleResize = function() {
+    return $('.statusbar').css('font-size', (0.9 * $('.statusbar').height()) + 'px');
+  };
+
+  $(window).bind('resize', handleResize);
+
+  handleResize();
+
   window.config = [];
 
   window.config.websocket_url = "ws://192.168.0.106:8888/json";
@@ -130,69 +182,22 @@
   });
 
   window.go = function() {
-    return window.productionstage = new ProductionStage();
+    window.stage = window.productionstage = new ProductionStage();
+    pycon.register_for_event('playerCountChanged', function(data) {
+      console.log('Player count changed: ', data);
+      return $('.playercount').html(data.count);
+    });
+    return pycon.register_for_event('stageBegin', function(data) {
+      window.stage.end();
+      if (data.stageType === 'Production') {
+        return window.stage = new ProductionStage();
+      } else if (data.stageType === 'Trading') {
+        return window.stage = new TradingStage();
+      } else {
+        throw 'illegal :(';
+      }
+    });
   };
-
-  window.ProductionStage = (function() {
-    function ProductionStage() {
-      var me;
-
-      me = this;
-      this.productions = [];
-      $('.productionstage-interface').show();
-      $('.productionstage-interface .box').each(function() {
-        var type;
-
-        type = $(this).attr('data-production-type');
-        return me.productions.push(new Production($(this), me, player.productionfacilities[type]));
-      });
-      $('.ready').tap(function() {
-        return me.ready();
-      });
-      true;
-    }
-
-    ProductionStage.prototype.ready = function() {
-      $('.ready').css('background-color', 'green');
-      return pycon.transaction({
-        'action': 'ready'
-      }, function() {
-        return true;
-      });
-    };
-
-    return ProductionStage;
-
-  })();
-
-  Production = (function() {
-    function Production(dom_object, productionstage, productionfacility) {
-      var me;
-
-      this.dom_object = dom_object;
-      this.productionstage = productionstage;
-      this.productionfacility = productionfacility;
-      me = this;
-      this.dom_object.tap(function() {
-        return me.invest.call(me, 1);
-      });
-      true;
-    }
-
-    Production.prototype.invest = function(amount) {
-      this.productionfacility.capacity += amount;
-      this.needsRefresh();
-      return true;
-    };
-
-    Production.prototype.needsRefresh = function() {
-      this.dom_object.children('span').html(this.productionfacility.capacity);
-      return true;
-    };
-
-    return Production;
-
-  })();
 
   window.Message = (function() {
     function Message() {
@@ -220,14 +225,6 @@
   })();
 
   window.message = new Message();
-
-  handleResize = function() {
-    return $('.statusbar').css('font-size', (0.9 * $('.statusbar').height()) + 'px');
-  };
-
-  $(window).bind('resize', handleResize);
-
-  handleResize();
 
   window.Player = (function() {
     function Player() {
@@ -300,6 +297,72 @@
 
   player.gold = 5;
 
+  window.ProductionStage = (function() {
+    function ProductionStage() {
+      var me;
+
+      me = this;
+      this.productions = [];
+      this.stage_name = '.productionstage-interface';
+      $(this.stage_name).show();
+      $("" + this.stage_name + " .box").each(function() {
+        var type;
+
+        type = $(this).attr('data-production-type');
+        return me.productions.push(new Production($(this), me, player.productionfacilities[type]));
+      });
+      $('.ready').tap(function() {
+        return me.ready();
+      });
+      true;
+    }
+
+    ProductionStage.prototype.end = function() {
+      return $(this.stage_name).hide();
+    };
+
+    ProductionStage.prototype.ready = function() {
+      $('.ready').css('background-color', 'green');
+      return pycon.transaction({
+        'action': 'ready'
+      }, function() {
+        return true;
+      });
+    };
+
+    return ProductionStage;
+
+  })();
+
+  Production = (function() {
+    function Production(dom_object, productionstage, productionfacility) {
+      var me;
+
+      this.dom_object = dom_object;
+      this.productionstage = productionstage;
+      this.productionfacility = productionfacility;
+      me = this;
+      this.dom_object.tap(function() {
+        return me.invest.call(me, 1);
+      });
+      true;
+    }
+
+    Production.prototype.invest = function(amount) {
+      this.productionfacility.capacity += amount;
+      this.needsRefresh();
+      return true;
+    };
+
+    Production.prototype.needsRefresh = function() {
+      this.dom_object.children('span').html(this.productionfacility.capacity);
+      return true;
+    };
+
+    return Production;
+
+  })();
+
   window.TradingStage = (function() {
     function TradingStage() {
       var me;
@@ -351,46 +414,5 @@
     return TradingProduct;
 
   })();
-
-  $(function() {
-    var moving_average_samples;
-
-    console.log('Gryo begin tracking');
-    window.acc = {
-      x: 0,
-      y: 0,
-      z: 0
-    };
-    window.avg_acc = false;
-    moving_average_samples = 50;
-    window.censor_gyroscope = false;
-    return window.ondevicemotion = function(e) {
-      var change, i, string, x, y, z, _i, _ref;
-
-      x = e.accelerationIncludingGravity.x;
-      y = e.accelerationIncludingGravity.y;
-      z = e.accelerationIncludingGravity.z;
-      change = Math.abs(acc.x - x) + Math.abs(acc.y - y) + Math.abs(acc.z - z);
-      string = '';
-      for (i = _i = 1, _ref = Math.round(change); 1 <= _ref ? _i <= _ref : _i >= _ref; i = 1 <= _ref ? ++_i : --_i) {
-        string += 'XXX';
-      }
-      console.log(string);
-      window.acc = {
-        x: x,
-        y: y,
-        z: z
-      };
-      if (change > 20 && !window.censor_gyroscope) {
-        window.censor_gyroscope = true;
-        $(".money").html(change);
-        alert("You win!");
-        return setTimeout(function() {
-          window.censor_gyroscope = false;
-          return console.log('what the fuck');
-        }, 500);
-      }
-    };
-  });
 
 }).call(this);

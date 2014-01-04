@@ -1,12 +1,7 @@
 # Configuration parameters:
 # -------------------------------------- #
-<<<<<<< HEAD
 window.config = []
-window.config.websocket_url = "ws://192.168.0.109:8888/json"
-=======
-window.config = [] 
 window.config.websocket_url = "ws://192.168.0.106:8888/json"
->>>>>>> 15f3416562ea41868156cda71996d039ebffc3e5
 window.config.server_version = 0
 # -------------------------------------- #
 
@@ -26,6 +21,7 @@ $ ->
 
  		window.go()
 
+ 	
 
  	# Since the socket should never close, this is always unexpected.
  	socket.onclose = ->
@@ -35,4 +31,17 @@ $ ->
 # When everything is loaded and ready to go, this function is called.
 window.go = ->
 	# Start in the production stage
- 	window.productionstage = new ProductionStage()
+	window.stage = window.productionstage = new ProductionStage()
+
+	pycon.register_for_event 'playerCountChanged', (data) ->
+		console.log 'Player count changed: ', data
+		$('.playercount').html data.count 
+
+	pycon.register_for_event 'stageBegin', (data) ->
+		window.stage.end()
+		if data.stageType == 'Production'
+			window.stage = new ProductionStage()
+		else if data.stageType == 'Trading'
+			window.stage = new TradingStage()
+		else
+			throw 'illegal :('

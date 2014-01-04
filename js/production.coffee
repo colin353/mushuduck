@@ -2,10 +2,11 @@ class window.ProductionStage
 	constructor: ->
 		me = @
 		@productions = []
+		@stage_name = '.productionstage-interface'
 
-		$('.productionstage-interface').show()
+		$(@stage_name).show()
 
-		$('.productionstage-interface .box').each ->
+		$("#{@stage_name} .box").each ->
 			type = $(@).attr('data-production-type')
 			me.productions.push( new Production( $(@), me, player.productionfacilities[type] ) )
 
@@ -13,6 +14,9 @@ class window.ProductionStage
 			me.ready() 
 
 		yes
+
+	end: ->
+		$(@stage_name).hide()
 
 	ready: ->
 		# Show the ready as GREEN instead of GRAY

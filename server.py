@@ -24,7 +24,7 @@ RESPONSE 	= 1
 class JHandler(tornado.websocket.WebSocketHandler):
 	def open(self):
 		print "Opening..."
-		staticGame.addPlayer(self)
+		staticGame.addPlayerWithHandler(self)
 
 	def on_message(self, message):
 		print "Message received: %s " % message 
@@ -53,6 +53,7 @@ class JHandler(tornado.websocket.WebSocketHandler):
 
 	def on_close(self):
 		print "Closing..."
+		staticGame.removePlayerWithHandler(self)
 		## todo: delete player
 
 # The JActionableRequestHandler class basically completes actions that the browser
@@ -77,6 +78,10 @@ class JActionableRequestHandler:
 			'start_date'	: "Program started: %s " % RUN_DATE,
 			'version'		: VERSION
 		}
+
+	def bump(self):
+		staticGame.bump()
+		return { }
 
 	def ready(self):
 		staticGame.markReady(self.sender)
