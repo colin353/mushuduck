@@ -1,4 +1,5 @@
 # This function makes a nice-looking message pop up
+# NO LONGER IN USE!
 
 class window.Message
 	constructor: ->

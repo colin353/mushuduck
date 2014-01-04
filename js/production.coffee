@@ -16,7 +16,7 @@ class window.ProductionStage extends Stage
 		$('.ready').tap ->
 			me.ready() 
 
-		yes
+		super
 
 	end: ->
 		$(@stage_name).hide()

@@ -42,7 +42,7 @@ window.Product = (function() {
   }
 
   Product.prototype.getPrice = function() {
-    return this.price = Math.round(Math.random() * 100, 2);
+    return this.price;
   };
 
   Product.prototype.generator = function() {

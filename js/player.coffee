@@ -35,7 +35,7 @@ class window.Product
 
 	# Eventually, this function will go and get the price for a product.
 	getPrice: ->
-		return @price = Math.round( Math.random()*100 , 2 )
+		return @price # = Math.round( Math.random()*100 , 2 )
 
 	# Return the productionfacility associated with the product
 	generator: ->

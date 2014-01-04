@@ -23,7 +23,7 @@ window.ProductionStage = (function(_super) {
     $('.ready').tap(function() {
       return me.ready();
     });
-    true;
+    ProductionStage.__super__.constructor.apply(this, arguments);
   }
 
   ProductionStage.prototype.end = function() {

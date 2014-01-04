@@ -32,7 +32,6 @@ window.TradingStage = (function(_super) {
       start: function(e, ui) {
         return ui.item.show();
       },
-      connectWith: '.trade',
       change: function() {
         return $(this).sortable("refreshPositions");
       },
@@ -61,9 +60,9 @@ window.TradingStage = (function(_super) {
       return $(this).hide();
     });
     $('.trading').on("taphold", function() {
-      console.log('tapped and held');
       return me.clearTrades.call(me);
     });
+    TradingStage.__super__.constructor.apply(this, arguments);
   }
 
   TradingStage.prototype.bump = function() {
@@ -121,6 +120,18 @@ window.TradingStage = (function(_super) {
     return this.refreshTradingPlatform();
   };
 
+  TradingStage.prototype.price_updated = function() {
+    var name, p, _ref, _results;
+
+    _ref = this.products;
+    _results = [];
+    for (name in _ref) {
+      p = _ref[name];
+      _results.push(p.needsRefresh.call(p));
+    }
+    return _results;
+  };
+
   TradingStage.prototype.refreshTradingPlatform = function() {
     var name, p, _ref, _results;
 
@@ -128,7 +139,6 @@ window.TradingStage = (function(_super) {
     _results = [];
     for (name in _ref) {
       p = _ref[name];
-      console.log('Refreshing trading platform for ', p.product.name);
       if (p.for_trade > 0) {
         _results.push($(".tradingstage-interface .tradecount[data-production-type='" + name + "']").show().children('.count').html(p.for_trade));
       } else {

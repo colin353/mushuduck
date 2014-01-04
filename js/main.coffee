@@ -28,12 +28,13 @@ $ ->
 
 # When everything is loaded and ready to go, this function is called.
 window.go = ->
-	# Start in the production stage
-
+	# When the player count changes we need to update the status bar.
 	pycon.register_for_event 'playerCountChanged', (data) ->
 		console.log 'Player count changed: ', data
 		$('.playercount').html data.count 
 
+	# When the program starts, the server will issue a "stageBegin" to me
+	# to indicate the current stage. Here's where I register for that.
 	pycon.register_for_event 'stageBegin', (data) ->
 		if stage? 
 			window.stage.end()
@@ -45,8 +46,22 @@ window.go = ->
 		else
 			throw 'illegal :('
 
+	# When a trade is found to be completed with somebody, then we
+	# need to inform the current stage so that it can do what it likes
+	# with that information.
 	pycon.register_for_event 'TradeCompleted', (data) ->
 		if stage?
 			window.stage.trade_complete.call stage,data
 		else 
 			console.log 'Received illegal trade...?'
+
+	# When the prices are updated by the server (for any spontaneous reason)
+	# then this function is called. We update the prices immediately in the
+	# data object and then inform the current stage so it can do whatever it needs
+	# to do about it.
+	pycon.register_for_event 'PriceUpdated', (data) ->
+		# Update the current prices in the data object
+		for name,price of data.prices
+			player.products[name].price = price if player.products[name]?
+		# Inform the stage that it should act
+		window.stage.price_updated.call stage

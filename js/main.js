@@ -37,11 +37,23 @@ window.go = function() {
       throw 'illegal :(';
     }
   });
-  return pycon.register_for_event('TradeCompleted', function(data) {
+  pycon.register_for_event('TradeCompleted', function(data) {
     if (typeof stage !== "undefined" && stage !== null) {
       return window.stage.trade_complete.call(stage, data);
     } else {
       return console.log('Received illegal trade...?');
     }
+  });
+  return pycon.register_for_event('PriceUpdated', function(data) {
+    var name, price, _ref;
+
+    _ref = data.prices;
+    for (name in _ref) {
+      price = _ref[name];
+      if (player.products[name] != null) {
+        player.products[name].price = price;
+      }
+    }
+    return window.stage.price_updated.call(stage);
   });
 };
