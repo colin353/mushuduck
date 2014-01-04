@@ -108,6 +108,7 @@ class Game(object):
 		self.players.append(newPlayer)
 		## hack: todo: need to get all players before first round begins
 		self.sendEventToPlayer(newPlayer, 'stageBegin', {'stageType':self.currentStage.type()})
+		self.sendEventToPlayer('PriceUpdated', {'prices':self.prices})
 
 		# notify players that player count has increased
 		self.sendEventToAllPlayers('playerCountChanged', {'count':len(self.players)})
