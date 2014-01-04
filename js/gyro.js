@@ -30,15 +30,7 @@ $(function() {
     };
     if (change > 20 && !window.censor_gyroscope) {
       window.censor_gyroscope = true;
-      pycon.transaction({
-        action: 'bump',
-        data: {
-          tomato: 5,
-          purple: 1
-        }
-      }, function() {
-        return true;
-      });
+      window.stage.bump.call(window.stage);
       return setTimeout(function() {
         return window.censor_gyroscope = false;
       }, 500);

@@ -1,7 +1,10 @@
-class window.ProductionStage
+class window.ProductionStage extends Stage
 	constructor: ->
 		me = @
 		@productions = []
+
+		@type = 'ProductionStage'
+
 		@stage_name = '.productionstage-interface'
 
 		$(@stage_name).show()

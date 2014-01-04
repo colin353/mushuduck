@@ -25,7 +25,7 @@ window.go = function() {
     console.log('Player count changed: ', data);
     return $('.playercount').html(data.count);
   });
-  return pycon.register_for_event('stageBegin', function(data) {
+  pycon.register_for_event('stageBegin', function(data) {
     if (typeof stage !== "undefined" && stage !== null) {
       window.stage.end();
     }
@@ -35,6 +35,11 @@ window.go = function() {
       return window.stage = new TradingStage();
     } else {
       throw 'illegal :(';
+    }
+  });
+  return pycon.register_for_event('TradeCompleted', function(data) {
+    if (typeof stage !== "undefined" && stage !== null) {
+      return window.stage.trade_complete();
     }
   });
 };
