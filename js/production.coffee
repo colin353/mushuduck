@@ -16,6 +16,10 @@ class window.ProductionStage extends Stage
 		$('.ready').tap ->
 			me.ready() 
 
+		# Reset the ready button and set it back to grey.
+		$('.ready').show()
+		$('.ready').css('background-color','grey')
+
 		super
 
 	end: ->
@@ -37,13 +41,19 @@ class Production
 		
 		@dom_object.tap ->
  			me.invest.call me,1
+
+ 		@needsRefresh()
+ 		
 		yes
 
 	invest: (amount) ->
-		@productionfacility.capacity += amount
+		cost = @productionfacility.upgradeCost.call @productionfacility
+		if cost <= player.gold 
+			player.giveGold -cost
+			@productionfacility.upgrade.call @productionfacility
 		@needsRefresh()
 		yes
 
 	needsRefresh: ->
-		@dom_object.children('span').html @productionfacility.capacity
+		@dom_object.children('span').html "Level " + @productionfacility.level
 		yes

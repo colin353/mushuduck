@@ -180,7 +180,6 @@
   };
 
   window.updateCountdown = function() {
-    console.log('attempting to update the time');
     return $('.countdown').html(stage.time);
   };
 
@@ -247,10 +246,11 @@
       }
       return window.stage.price_updated.call(stage);
     });
-    return pycon.register_for_event('TimerBegin', function(data) {
+    pycon.register_for_event('TimerBegin', function(data) {
       console.log('Event handled: ', stage);
       return window.stage.timer_begin.call(window.stage, data.duration);
     });
+    return updateStatusBar();
   };
 
   window.Message = (function() {
@@ -334,9 +334,29 @@
 
   window.ProductionFacility = (function() {
     function ProductionFacility(product) {
-      this.capacity = 0;
+      this.product = product;
+      this.capacity = 1;
+      this.level = 0;
       true;
     }
+
+    ProductionFacility.prototype.run_factory = function() {
+      if (Math.random() < this.capacity * 0.02) {
+        this.product.amount += 1;
+        return true;
+      } else {
+        return false;
+      }
+    };
+
+    ProductionFacility.prototype.upgradeCost = function() {
+      return 5 * this.capacity;
+    };
+
+    ProductionFacility.prototype.upgrade = function() {
+      this.capacity = this.capacity * 2;
+      return this.level += 1;
+    };
 
     ProductionFacility.prototype.generateProduct = function() {
       if (this.capacity * Math.random() > 1) {
@@ -372,6 +392,8 @@
       $('.ready').tap(function() {
         return me.ready();
       });
+      $('.ready').show();
+      $('.ready').css('background-color', 'grey');
       ProductionStage.__super__.constructor.apply(this, arguments);
     }
 
@@ -405,17 +427,23 @@
       this.dom_object.tap(function() {
         return me.invest.call(me, 1);
       });
+      this.needsRefresh();
       true;
     }
 
     Production.prototype.invest = function(amount) {
-      this.productionfacility.capacity += amount;
+      var cost;
+      cost = this.productionfacility.upgradeCost.call(this.productionfacility);
+      if (cost <= player.gold) {
+        player.giveGold(-cost);
+        this.productionfacility.upgrade.call(this.productionfacility);
+      }
       this.needsRefresh();
       return true;
     };
 
     Production.prototype.needsRefresh = function() {
-      this.dom_object.children('span').html(this.productionfacility.capacity);
+      this.dom_object.children('span').html("Level " + this.productionfacility.level);
       return true;
     };
 
@@ -565,9 +593,23 @@
       return _results;
     };
 
+    TradingStage.prototype.yield_production = function() {
+      var facility, name, p, _ref, _results;
+      console.log('Yielding production...', this.products);
+      _ref = this.products;
+      _results = [];
+      for (name in _ref) {
+        p = _ref[name];
+        facility = player.productionfacilities[name];
+        facility.run_factory.call(facility);
+        _results.push(p.needsRefresh.call(p));
+      }
+      return _results;
+    };
+
     TradingStage.prototype.timer_begin = function(countdown) {
-      var count_down;
-      console.log('Time started! Time = ', countdown);
+      var count_down, do_production, me;
+      me = this;
       this.time = countdown;
       count_down = function() {
         if (stage.type !== 'TradingStage') {
@@ -579,7 +621,15 @@
         }
         return updateCountdown();
       };
+      do_production = function() {
+        if (stage.type !== 'TradingStage') {
+          return;
+        }
+        me.yield_production.call(me);
+        return setTimeout(do_production, 500);
+      };
       setTimeout(count_down, 1000);
+      setTimeout(do_production, 500);
       return updateCountdown();
     };
 

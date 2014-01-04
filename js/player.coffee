@@ -42,9 +42,24 @@ class window.Product
 		player.productionfacilities[@name]
 
 class window.ProductionFacility
-	constructor: (product) ->
-		@capacity = 0
+	constructor: (@product) ->
+		@capacity = 1
+		@level = 0
 		yes
+
+	run_factory: ->
+		if Math.random() < @capacity*0.02
+			@product.amount += 1
+			return yes
+		else 
+			return no
+
+	upgradeCost: ->
+		return 5*@capacity
+
+	upgrade: ->
+		@capacity = @capacity * 2
+		@level += 1
 
 	# This function will presumably be called every time interval in order
 	# to cause production to occur.

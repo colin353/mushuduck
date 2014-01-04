@@ -12,5 +12,4 @@ window.updateStatusBar = ->
 
 window.updateCountdown = ->
 	# Write in the time.
-	console.log 'attempting to update the time'
 	$('.countdown').html stage.time	
