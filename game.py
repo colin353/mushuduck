@@ -13,6 +13,11 @@ class Game(object):
 		self.currentStage = None
 		self.nextStage()
 		self.lastRecordedBump = None
+		self.effectiveNumberSoldLastRound = {'tomato':0.2, 'blueberry':0.2, 'purple':0.2, 'corn':0.2}
+
+	@property
+	def roundedPrices(self):
+		return dict((k,round(v)) for k,v in self.prices.iteritems()) if self.prices else None
 
 	@property
 	def prices(self):
@@ -22,12 +27,15 @@ class Game(object):
 	def prices(self, value):
 		print "-- prices being set!"
 
-		# if in trading stage, notify players of price update
 		if self.currentStage.__class__ == TradingStage:
-			self.sendEventToAllPlayers('PriceUpdated', {'prices':value, 'oldPrices':self._prices})
+			oldRoundedPrices = self.roundedPrices
 
 		# update price ivar
 		self._prices = value
+
+		# if in trading stage, notify players of price update
+		if self.currentStage.__class__ == TradingStage:
+			self.sendEventToAllPlayers('PriceUpdated', {'prices':self.roundedPrices, 'oldPrices':oldRoundedPrices})
 
 	@prices.deleter
 	def prices(self):
@@ -73,13 +81,36 @@ class Game(object):
 	def sell(self, productToSell):
 
 		# the player will receive money corresponding to the old price, before market value update
-		pay = self.prices[productToSell]
+		pay = self.roundedPrices[productToSell]
+		# update supply
+		self.numberSold[productToSell] += 1
 		# calculate new price
-		self.prices[productToSell] -= 5
-		self.prices = self.prices
+		self.updatePrices()
 
 		# return pay (old price) to player
 		return {'pay': pay}
+
+	def updatePrices(self):
+		print "...updating prices"
+		# needs to be in trading stage
+		if self.currentStage.__class__ is not TradingStage:
+			return
+
+		newPrices = {}
+		delta = 0.1
+		A = 1.0
+		T = self.currentStage.duration
+		t = self.currentStage.timeElapsed()
+		print "t=%f, T=%f" % (t,T)
+		for product,N in self.numberSold.iteritems():
+			print "...calculating prices for %s" % product
+			w = 1.0-(t/T)*(1.0-delta)
+			sbar = w*self.effectiveNumberSoldLastRound[product] + ((1-w)*N)/t
+			self.effectiveNumberSold = sbar
+			print "N=%d, w=%f, sbar=%f, s0=%f" % (N, w, sbar, self.effectiveNumberSoldLastRound[product])
+			newPrices[product] = A/sbar
+
+		self.prices = newPrices
 
 	def bump(self, playerHandler, items):
 
