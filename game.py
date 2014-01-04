@@ -22,7 +22,7 @@ class Game:
 
 	def nextStage(self):
 
-		if self.currentStage is not None:
+		if self.currentStage:
 			# clean up stage
 			self.currentStage.end()
 
@@ -31,7 +31,7 @@ class Game:
 			self.dispatchToAll(json.dumps( {'eventName':"stageEnd" , 'data':data }))
 
 			# increment stage number
-			self.currentStageNumber = (self.currentStageNumber + 1) % length(self.stageSequence)
+			self.currentStageNumber = (self.currentStageNumber + 1) % len(self.stageSequence)
 			
 		self.currentStage = self.stageSequence[self.currentStageNumber]()
 		
@@ -46,13 +46,23 @@ class Game:
 		for player in self.players:
 			self.dispatcher.send(player.socketHandler, message)
 
-	def markReady(self, player):
-		# add player to readyList
-		self.currentStage.readyList.append(player)
-		# if all players are ready, move the to the next stage
-		if all([player in readyList for player in self.players]):
-			self.nextStage()
+	def markReady(self, playerHandler):
+		# get player obj from handler
+		player = self.playerWithHandler(playerHandler)
+		print self.players
 
+		if player:
+			# add player to readyList
+			self.currentStage.readyList.append(player)
+			# if all players are ready, move the to the next stage
+			if all([p in self.currentStage.readyList for p in self.players]):
+				self.nextStage()
+
+	def playerWithHandler(self, handler):
+		# generate list of matching players
+		matchingPlayers = [player for player in self.players if player.socketHandler==handler]
+		# yield matching player or yield None
+		return matchingPlayers[0] if matchingPlayers else None
 
 
 
