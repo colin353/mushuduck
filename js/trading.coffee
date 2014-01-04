@@ -172,9 +172,8 @@ class window.TradingProduct
 			return no
 
 	timer_begin: (countdown) ->
-
 		# Record the time in the countdown.
-		stage.time = countdown 
+		@time = countdown 
 
 		count_down = ->
 			# We don't want to worry about timing if the stage isn't trading.

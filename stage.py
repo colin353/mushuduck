@@ -2,7 +2,7 @@ import game
 import threading
 import time
 
-class Stage:
+class Stage(object):
 
 	def __init__(self, game):
 		self.game = game
@@ -25,7 +25,7 @@ class TradingStage(Stage):
 
 	def __init__(self, game):
 		super(TradingStage, self).__init__(game)
-		threading.Timer(self.duration, timerEnd).start()
+		threading.Timer(self.duration, self.timerEnd).start()
 
 	def begin(self):
 		# initialize prices if not already set
@@ -37,7 +37,7 @@ class TradingStage(Stage):
 	def type(self):
 		return 'Trading'
 
-	def timerEnd():
+	def timerEnd(self):
 		self.game.sendEventToAllPlayers('TimerEnd')
 		time.sleep(2)
 		self.game.nextStage()
