@@ -72,7 +72,7 @@ class JActionableRequestHandler:
 		# create dictionary of arguments to be passed into the corresponding function call of the action
 		args = {'sender':sender, 'data':data}
 		args = dict((arg,value) for arg,value in args.iteritems() if value is not None)
-
+		print args
 		if hasattr(self, action):
 			return getattr(self, action)(**args)
 		else:

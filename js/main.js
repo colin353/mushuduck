@@ -39,7 +39,9 @@ window.go = function() {
   });
   return pycon.register_for_event('TradeCompleted', function(data) {
     if (typeof stage !== "undefined" && stage !== null) {
-      return window.stage.trade_complete();
+      return window.stage.trade_complete.call(stage, data);
+    } else {
+      return console.log('Received illegal trade...?');
     }
   });
 };

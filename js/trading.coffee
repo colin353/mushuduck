@@ -68,9 +68,9 @@ class window.TradingStage extends Stage
 		items = {}
 		for name,p of @products
 			if p.for_trade > 0
-				items.name = p.for_trade
+				items[name] = p.for_trade
 
-		pycon.transaction {action: 'bump', items:items }, ->
+		pycon.transaction {action: 'bump', data: { items:items } }, ->
 			yes
 
 	clearTrades: ->
@@ -80,6 +80,20 @@ class window.TradingStage extends Stage
 				p.for_trade = 0
 				p.needsRefresh.call p
 
+		@refreshTradingPlatform()
+
+	trade_complete: (data) ->
+		# Clear out what is in there right now
+		for name,p of @products
+			p.for_trade = 0
+
+		# Enter in the new data
+		for name,amount of data.items
+			if @products[name]?
+				@products[name].for_trade = amount
+				@products[name].needsRefresh.call @products[name]
+
+		# Refresh everything.
 		@refreshTradingPlatform()
 
 	refreshTradingPlatform: ->

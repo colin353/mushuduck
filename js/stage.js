@@ -8,6 +8,10 @@ window.Stage = (function() {
     return true;
   };
 
+  Stage.prototype.trade_complete = function() {
+    return true;
+  };
+
   return Stage;
 
 })();
