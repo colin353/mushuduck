@@ -84,6 +84,23 @@
 
   })();
 
+  window.Stage = (function() {
+    function Stage() {
+      true;
+    }
+
+    Stage.prototype.bump = function() {
+      return true;
+    };
+
+    Stage.prototype.trade_complete = function() {
+      return true;
+    };
+
+    return Stage;
+
+  })();
+
   window.jevents = [];
 
   window.jevent = function(eventName, eventAction) {
@@ -200,7 +217,9 @@
     });
     return pycon.register_for_event('TradeCompleted', function(data) {
       if (typeof stage !== "undefined" && stage !== null) {
-        return window.stage.trade_complete();
+        return window.stage.trade_complete.call(stage, data);
+      } else {
+        return console.log('Received illegal trade...?');
       }
     });
   };
@@ -387,6 +406,10 @@
       return true;
     };
 
+    Stage.prototype.trade_complete = function() {
+      return true;
+    };
+
     return Stage;
 
   })();
@@ -484,6 +507,25 @@
           p.product.amount += p.for_trade;
           p.for_trade = 0;
           p.needsRefresh.call(p);
+        }
+      }
+      return this.refreshTradingPlatform();
+    };
+
+    TradingStage.prototype.trade_complete = function(data) {
+      var amount, name, p, _ref, _ref1;
+
+      _ref = this.products;
+      for (name in _ref) {
+        p = _ref[name];
+        p.for_trade = 0;
+      }
+      _ref1 = data.items;
+      for (name in _ref1) {
+        amount = _ref1[name];
+        if (this.products[name] != null) {
+          this.products[name].for_trade = amount;
+          this.products[name].needsRefresh.call(this.products[name]);
         }
       }
       return this.refreshTradingPlatform();

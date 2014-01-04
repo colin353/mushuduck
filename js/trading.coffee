@@ -82,6 +82,20 @@ class window.TradingStage extends Stage
 
 		@refreshTradingPlatform()
 
+	trade_complete: (data) ->
+		# Clear out what is in there right now
+		for name,p of @products
+			p.for_trade = 0
+
+		# Enter in the new data
+		for name,amount of data.items
+			if @products[name]?
+				@products[name].for_trade = amount
+				@products[name].needsRefresh.call @products[name]
+
+		# Refresh everything.
+		@refreshTradingPlatform()
+
 	refreshTradingPlatform: ->
 		for name,p of @products
 			console.log 'Refreshing trading platform for ',p.product.name 

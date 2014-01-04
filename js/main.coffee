@@ -47,5 +47,6 @@ window.go = ->
 
 	pycon.register_for_event 'TradeCompleted', (data) ->
 		if stage?
-			window.stage.trade_complete()
-			
+			window.stage.trade_complete.call stage,data
+		else 
+			console.log 'Received illegal trade...?'

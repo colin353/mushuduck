@@ -100,6 +100,25 @@ window.TradingStage = (function(_super) {
     return this.refreshTradingPlatform();
   };
 
+  TradingStage.prototype.trade_complete = function(data) {
+    var amount, name, p, _ref, _ref1;
+
+    _ref = this.products;
+    for (name in _ref) {
+      p = _ref[name];
+      p.for_trade = 0;
+    }
+    _ref1 = data.items;
+    for (name in _ref1) {
+      amount = _ref1[name];
+      if (this.products[name] != null) {
+        this.products[name].for_trade = amount;
+        this.products[name].needsRefresh.call(this.products[name]);
+      }
+    }
+    return this.refreshTradingPlatform();
+  };
+
   TradingStage.prototype.refreshTradingPlatform = function() {
     var name, p, _ref, _results;
 
