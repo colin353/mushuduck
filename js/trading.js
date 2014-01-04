@@ -62,8 +62,14 @@ window.TradingStage = (function(_super) {
     $('.trading').on("taphold", function() {
       return me.clearTrades.call(me);
     });
+    $('.countdown').show();
     TradingStage.__super__.constructor.apply(this, arguments);
   }
+
+  TradingStage.prototype.end = function() {
+    $('.countdown').hide();
+    return TradingStage.__super__.end.apply(this, arguments);
+  };
 
   TradingStage.prototype.bump = function() {
     var items, name, p, _ref;
@@ -193,6 +199,23 @@ window.TradingProduct = (function() {
     } else {
       return false;
     }
+  };
+
+  TradingProduct.prototype.timer_begin = function(countdown) {
+    var count_down;
+
+    stage.time = countdown;
+    count_down = function() {
+      if (stage.type !== 'TradingStage') {
+        return;
+      }
+      stage.time -= 1;
+      if (stage.time > 0) {
+        setTimeout(count_down, 1000);
+      }
+      return updateCountdown();
+    };
+    return setTimeout(count_down, 1000);
   };
 
   TradingProduct.prototype.needsRefresh = function() {

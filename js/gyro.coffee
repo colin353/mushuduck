@@ -1,7 +1,5 @@
 
-$ ->
-	console.log 'Gryo begin tracking'
-	
+$ ->	
 	window.acc = {x:0, y:0, z:0}
 	window.avg_acc = false
 	moving_average_samples = 50
@@ -14,7 +12,7 @@ $ ->
 		z = e.accelerationIncludingGravity.z
 
 		change = Math.abs(acc.x-x) + Math.abs(acc.y-y) + Math.abs(acc.z-z)
-		
+
 		window.acc = {x:x, y:y, z:z}
 
 		if change > 20 and !window.censor_gyroscope

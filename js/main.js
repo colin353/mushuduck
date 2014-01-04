@@ -53,7 +53,7 @@ window.go = function() {
       return console.log('Received illegal trade...?');
     }
   });
-  return pycon.register_for_event('PriceUpdated', function(data) {
+  pycon.register_for_event('PriceUpdated', function(data) {
     var name, price, _ref;
 
     _ref = data.prices;
@@ -64,5 +64,8 @@ window.go = function() {
       }
     }
     return window.stage.price_updated.call(stage);
+  });
+  return pycon.register_for_event('TimerBegin', function(data) {
+    return window.stage.timer_begin.call(stage, data.duration);
   });
 };

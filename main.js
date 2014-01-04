@@ -88,6 +88,7 @@
 
   window.Stage = (function() {
     function Stage() {
+      this.time = 0;
       true;
     }
 
@@ -100,6 +101,14 @@
     };
 
     Stage.prototype.price_updated = function() {
+      return true;
+    };
+
+    Stage.prototype.timer_begin = function() {
+      return true;
+    };
+
+    Stage.prototype.end = function() {
       return true;
     };
 
@@ -137,7 +146,6 @@
   $(function() {
     var moving_average_samples;
 
-    console.log('Gryo begin tracking');
     window.acc = {
       x: 0,
       y: 0,
@@ -175,6 +183,10 @@
 
   window.updateStatusBar = function() {
     return $('.money').html('$' + player.gold);
+  };
+
+  window.updateCountdown = function() {
+    return $('.countdown').html(stage.time);
   };
 
   window.config = $.ajax({
@@ -229,7 +241,7 @@
         return console.log('Received illegal trade...?');
       }
     });
-    return pycon.register_for_event('PriceUpdated', function(data) {
+    pycon.register_for_event('PriceUpdated', function(data) {
       var name, price, _ref;
 
       _ref = data.prices;
@@ -240,6 +252,9 @@
         }
       }
       return window.stage.price_updated.call(stage);
+    });
+    return pycon.register_for_event('TimerBegin', function(data) {
+      return window.stage.timer_begin.call(stage, data.duration);
     });
   };
 
@@ -371,7 +386,9 @@
 
     ProductionStage.prototype.end = function() {
       $(this.stage_name).hide();
-      return $('.ready').unbind();
+      $('.ready').unbind();
+      $('.ready').hide();
+      return ProductionStage.__super__.end.apply(this, arguments);
     };
 
     ProductionStage.prototype.ready = function() {
@@ -431,6 +448,10 @@
     };
 
     Stage.prototype.price_updated = function() {
+      return true;
+    };
+
+    Stage.prototype.timer_begin = function() {
       return true;
     };
 
@@ -498,8 +519,14 @@
       $('.trading').on("taphold", function() {
         return me.clearTrades.call(me);
       });
+      $('.countdown').show();
       TradingStage.__super__.constructor.apply(this, arguments);
     }
+
+    TradingStage.prototype.end = function() {
+      $('.countdown').hide();
+      return TradingStage.__super__.end.apply(this, arguments);
+    };
 
     TradingStage.prototype.bump = function() {
       var items, name, p, _ref;
@@ -629,6 +656,23 @@
       } else {
         return false;
       }
+    };
+
+    TradingProduct.prototype.timer_begin = function(countdown) {
+      var count_down;
+
+      stage.time = countdown;
+      count_down = function() {
+        if (stage.type !== 'TradingStage') {
+          return;
+        }
+        stage.time -= 1;
+        if (stage.time > 0) {
+          setTimeout(count_down, 1000);
+        }
+        return updateCountdown();
+      };
+      return setTimeout(count_down, 1000);
     };
 
     TradingProduct.prototype.needsRefresh = function() {

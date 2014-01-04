@@ -1,5 +1,6 @@
 class window.Stage
 	constructor: ->
+		@time = 0
 		yes
 		
 	bump: ->
@@ -9,4 +10,10 @@ class window.Stage
 		yes
 
 	price_updated: ->
+		yes
+
+	timer_begin: ->
+		yes
+
+	end: ->
 		yes

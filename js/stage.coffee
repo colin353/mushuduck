@@ -12,3 +12,6 @@ class window.Stage
 
 	price_updated: ->
 		yes
+
+	timer_begin: ->
+		yes

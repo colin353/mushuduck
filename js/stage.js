@@ -17,6 +17,10 @@ window.Stage = (function() {
     return true;
   };
 
+  Stage.prototype.timer_begin = function() {
+    return true;
+  };
+
   return Stage;
 
 })();

@@ -7,3 +7,7 @@ $(window).bind('resize', function() {
 window.updateStatusBar = function() {
   return $('.money').html('$' + player.gold);
 };
+
+window.updateCountdown = function() {
+  return $('.countdown').html(stage.time);
+};

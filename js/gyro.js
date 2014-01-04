@@ -2,7 +2,6 @@
 $(function() {
   var moving_average_samples;
 
-  console.log('Gryo begin tracking');
   window.acc = {
     x: 0,
     y: 0,

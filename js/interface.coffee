@@ -9,3 +9,7 @@ $(window).bind 'resize', ->
 window.updateStatusBar = ->
 	# Push the current amount of gold to the status bar.
 	$('.money').html '$' + player.gold
+
+window.updateCountdown = ->
+	# Write in the time.
+	$('.countdown').html stage.time

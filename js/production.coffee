@@ -21,6 +21,9 @@ class window.ProductionStage extends Stage
 	end: ->
 		$(@stage_name).hide()
 		$('.ready').unbind()
+		$('.ready').hide()
+
+		super
 
 	ready: ->
 		# Show the ready as GREEN instead of GRAY
@@ -34,7 +37,6 @@ class Production
 		
 		@dom_object.tap ->
  			me.invest.call me,1
-
 		yes
 
 	invest: (amount) ->

@@ -13,8 +13,6 @@ try
 catch error
 	throw "Configuration loaded from 'configuration.json' is invalid."
 
-
-
 # -------------------------------------- #`
 
 $ ->
@@ -78,4 +76,6 @@ window.go = ->
 		# Inform the stage that it should act
 		window.stage.price_updated.call stage
 
-#	pycon.register_for_event 'SetTimer'
+	# Begin the timer? We just pass this directly into the stage.
+	pycon.register_for_event 'TimerBegin', (data) ->
+		window.stage.timer_begin.call stage, data.duration

@@ -28,7 +28,9 @@ window.ProductionStage = (function(_super) {
 
   ProductionStage.prototype.end = function() {
     $(this.stage_name).hide();
-    return $('.ready').unbind();
+    $('.ready').unbind();
+    $('.ready').hide();
+    return ProductionStage.__super__.end.apply(this, arguments);
   };
 
   ProductionStage.prototype.ready = function() {
