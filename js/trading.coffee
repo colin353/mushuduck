@@ -21,14 +21,15 @@ class window.TradingStage
 				start: (e, ui) ->
 					ui.item.show()
 				,
+				connectWith: '.trade',
 				change: ->
 					$(@).sortable( "refreshPositions" );
 				,
 				placeholder: 'test',
 				stop: (e,ui) ->
+					# Where is the position of the thing?
 					$(@).sortable('cancel')
 		}
-
 
 class window.TradingProduct
 	constructor: (@dom_element, @product) ->

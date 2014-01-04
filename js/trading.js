@@ -19,6 +19,7 @@ window.TradingStage = (function() {
       start: function(e, ui) {
         return ui.item.show();
       },
+      connectWith: '.trade',
       change: function() {
         return $(this).sortable("refreshPositions");
       },
