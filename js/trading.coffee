@@ -68,9 +68,9 @@ class window.TradingStage extends Stage
 		items = {}
 		for name,p of @products
 			if p.for_trade > 0
-				items.name = p.for_trade
+				items[name] = p.for_trade
 
-		pycon.transaction {action: 'bump', items:items }, ->
+		pycon.transaction {action: 'bump', data: { items:items } }, ->
 			yes
 
 	clearTrades: ->

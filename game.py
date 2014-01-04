@@ -103,8 +103,8 @@ class Game:
 		event2 = {'eventName':'TradeCompleted', 'data':{'items':bump1.items}}
 
 		# send to respective players
-		self.dispatcher.send(bump1.player, event2)
-		self.dispatcher.send(bump2.player, event1)
+		self.dispatcher.send(bump1.player.socketHandler, event1)
+		self.dispatcher.send(bump2.player.socketHandler, event2)
 
 
 

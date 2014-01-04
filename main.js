@@ -486,12 +486,14 @@
       for (name in _ref) {
         p = _ref[name];
         if (p.for_trade > 0) {
-          items.name = p.for_trade;
+          items[name] = p.for_trade;
         }
       }
       return pycon.transaction({
         action: 'bump',
-        items: items
+        data: {
+          items: items
+        }
       }, function() {
         return true;
       });
