@@ -26,8 +26,7 @@ $ ->
 		if change > 20 and !window.censor_gyroscope
 			window.censor_gyroscope = true
 			
-			pycon.transaction {action: 'bump', data: {tomato: 5, purple: 1} }, ->
-				yes
+			window.stage.bump.call window.stage
 			
 			setTimeout( ->
 				window.censor_gyroscope = false

@@ -1,9 +1,11 @@
 # This class handles the setup and so forth of the 
 # trading stage.
 
-class window.TradingStage 
+class window.TradingStage extends Stage
 	constructor: ->
 		me = @
+
+		@type = 'TradingStage'
 
 		$('.tradingstage-interface').show()
 
@@ -55,14 +57,27 @@ class window.TradingStage
 
 		# Allow for clearing of the trading panel
 
-		$('.trading').on 'taphold', ->
+		$('.trading').on "taphold", ->
 			console.log 'tapped and held'
 			me.clearTrades.call me
 
+	# The bump function is called when the accelerometer detects a big
+	# change of acceleration. 
+	bump: ->
+		# Assemble a list of items for the trade and ship them off
+		items = {}
+		for name,p of @products
+			if p.for_trade > 0
+				items.name = p.for_trade
+
+		pycon.transaction {action: 'bump', items:items }, ->
+			yes
+
 	clearTrades: ->
-		for name.p of @products
+		for name,p of @products
 			if p.for_trade > 0
 				p.product.amount += p.for_trade
+				p.for_trade = 0
 				p.needsRefresh.call p
 
 		@refreshTradingPlatform()
@@ -72,6 +87,8 @@ class window.TradingStage
 			console.log 'Refreshing trading platform for ',p.product.name 
 			if p.for_trade > 0
 				$(".tradingstage-interface .tradecount[data-production-type='#{name}']").show().children('.count').html p.for_trade
+			else 
+				$(".tradingstage-interface .tradecount[data-production-type='#{name}']").hide()
 
 class window.TradingProduct
 	constructor: (@dom_element, @product) ->

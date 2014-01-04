@@ -44,3 +44,8 @@ window.go = ->
 			window.stage = new TradingStage()
 		else
 			throw 'illegal :('
+
+	pycon.register_for_event 'TradeCompleted', (data) ->
+		if stage?
+			window.stage.trade_complete()
+			
