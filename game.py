@@ -80,6 +80,10 @@ class Game(object):
 
 	def sell(self, productToSell):
 
+		# deny if not in trading stage
+		if self.currentStage.__class__ is not TradingStage:
+			return "Illegal sale: not in trading stage"
+
 		# the player will receive money corresponding to the old price, before market value update
 		pay = self.roundedPrices[productToSell]
 		# update supply
