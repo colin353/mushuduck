@@ -619,7 +619,6 @@
     TradingStage.prototype.yield_production = function() {
       var facility, name, p, _ref, _results;
 
-      console.log('Yielding production...', this.products);
       _ref = this.products;
       _results = [];
       for (name in _ref) {
@@ -687,6 +686,9 @@
     TradingProduct.prototype.sell = function() {
       var me;
 
+      if (window.stage.type !== 'TradingStage') {
+        return;
+      }
       if (this.product.amount > 0) {
         this.product.amount -= 1;
         me = this;

@@ -144,7 +144,6 @@ class window.TradingStage extends Stage
 				$(".tradingstage-interface .tradecount[data-production-type='#{name}']").hide()
 
 	yield_production: ->
-		console.log 'Yielding production...',@products
 		for name,p of @products
 			facility = player.productionfacilities[name]
 			facility.run_factory.call facility
@@ -194,6 +193,9 @@ class window.TradingProduct
 			return no
 
 	sell: ->
+		# Selling is illegal if we are out of turn.
+		return if window.stage.type != 'TradingStage'
+
 		if @product.amount > 0
 			@product.amount -= 1
 			me = @
