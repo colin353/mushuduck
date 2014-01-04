@@ -80,3 +80,5 @@ window.go = ->
 	pycon.register_for_event 'TimerBegin', (data) ->
 		console.log 'Event handled: ',stage
 		window.stage.timer_begin.call window.stage, data.duration
+
+	updateStatusBar()

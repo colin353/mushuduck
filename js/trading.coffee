@@ -143,8 +143,15 @@ class window.TradingStage extends Stage
 				# Hide trading products that are zero.
 				$(".tradingstage-interface .tradecount[data-production-type='#{name}']").hide()
 
+	yield_production: ->
+		console.log 'Yielding production...',@products
+		for name,p of @products
+			facility = player.productionfacilities[name]
+			facility.run_factory.call facility
+			p.needsRefresh.call p
+
 	timer_begin: (countdown) ->
-			console.log 'Time started! Time = ', countdown
+			me = @
 			# Record the time in the countdown.
 			@time = countdown 
 			count_down = ->
@@ -157,9 +164,16 @@ class window.TradingStage extends Stage
 					setTimeout count_down, 1000 
 				# Draw to the screen.
 				updateCountdown()
-					
+
+			do_production = ->
+				# We don't want to worry about timing if the stage isn't trading.
+				return if stage.type != 'TradingStage'
+				me.yield_production.call me
+				setTimeout( do_production, 500)
+			
 			# Wait one second before starting so that everything lines up.
 			setTimeout count_down,1000
+			setTimeout do_production, 500
 			updateCountdown()
 
 class window.TradingProduct
