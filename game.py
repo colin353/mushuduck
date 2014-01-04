@@ -35,7 +35,6 @@ class Game:
 			self.dispatchToAll(json.dumps({'eventName':"playerCountChanged" , 'data':data }))
 
 
-
 	def nextStage(self):
 
 		if self.currentStage:
@@ -58,10 +57,7 @@ class Game:
 		data = {'stageType':self.currentStage.type()}
 		self.dispatchToAll(json.dumps({'eventName':"stageBegin" , 'data':data }))
 
-	def bump(self, playerHandler, data):
-
-		# todo: write checks
-		items = None
+	def bump(self, playerHandler, items):
 
 		# create new bump
 		newBump = Bump(self.playerWithHandler(playerHandler), items)
@@ -101,7 +97,15 @@ class Game:
 
 	def facilitateTradeWithBumps(self, bump1, bump2):
 		print "Zomg trading!"
-		pass
+
+		# create events that swap items
+		event1 = {'eventName':'TradeCompleted', 'data':{'items':bump2.items}}
+		event2 = {'eventName':'TradeCompleted', 'data':{'items':bump1.items}}
+
+		# send to respective players
+		self.dispatcher.send(bump1.player, event2)
+		self.dispatcher.send(bump2.player, event1)
+
 
 
 
