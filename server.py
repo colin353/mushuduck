@@ -80,11 +80,12 @@ class JActionableRequestHandler:
 		}
 
 	def bump(self):
-		staticGame.bump()
+		staticGame.bump(self.sender)
 		return { }
 
 	def ready(self):
 		staticGame.markReady(self.sender)
+		return { }
 
 # The global actionablrequesthandler: there is only one instance of this, 
 # even though there may be many instances of JHandlers for different clients.

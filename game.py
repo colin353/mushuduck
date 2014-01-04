@@ -5,8 +5,6 @@ import time
 
 class Game:
 	stageSequence = [ProductionStage, TradingStage]
-	bump_in_progress = False
-	bump_time = 0
 
 	def __init__(self):
 		self.players = []
@@ -15,6 +13,8 @@ class Game:
 		self.currentStage = None
 		self.nextStage()
 		self.dispatcher = EventDispatcher()
+		self.mostRecentBumpPlayer = None
+		self.mostRecentBumpTime = -1
 
 	def addPlayerWithHandler(self, handler):
 		newPlayer = Player(handler)
@@ -59,14 +59,25 @@ class Game:
 		data = {'stageType':self.currentStage.type()}
 		self.dispatchToAll(json.dumps({'eventName':"stageBegin" , 'data':data }))
 
-	def bump(self):
-		if not self.bump_in_progress:
-			self.bump_time = int(round(time.time() * 1000))
-			print "Begin bump tracking!"
-			self.bump_in_progress = True
+	def bump(self, playerHandler):
+
+		# get player from handler
+		player = self.playerWithHandler(playerHandler)
+		currentTime = int(round(time.time() * 1000))
+		interval = currentTime - self.mostRecentBumpTime
+
+		# if there is already a recorded bump within 100ms, zomg trade
+		if self.mostRecentBumpPlayer and interval < 100:
+			print "Second bump by %s. Time to previous bump is %d ms." % (player, interval)
+			
+			# facilitate trading
+			self.facilitateTrade(player, self.mostRecentBumpPlayer)
+
+		# otherwise, record as first bump
 		else:
-			print "Bump succesfully identified! Time: %d ms" % (int(round(time.time() * 1000)) - self.bump_time)
-			self.bump_in_progress = False
+			print "First bump by %s." % player
+			self.mostRecentBumpTime = currentTime
+			self.mostRecentBumpPlayer = player
 
 	def dispatchToAll(self, message):
 		for player in self.players:
@@ -89,6 +100,10 @@ class Game:
 		matchingPlayers = [player for player in self.players if player.socketHandler==handler]
 		# yield matching player or yield None
 		return matchingPlayers[0] if matchingPlayers else None
+
+	def facilitateTrade(self, player1, player2):
+		print "Zomg trading!"
+		pass
 
 
 
