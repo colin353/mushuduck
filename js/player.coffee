@@ -30,7 +30,7 @@ class window.Product
 	constructor: (@name) ->
 		@amount = 5
 		@price = 0
-		@color = "green"
+		@color = "green" 
 		yes
 
 	# Eventually, this function will go and get the price for a product.
@@ -41,7 +41,7 @@ class window.Product
 	generator: ->
 		player.productionfacilities[@name]
 
-class window.ProductionFacility
+class window.ProductionFacility 
 	constructor: (@product) ->
 		@capacity = 1
 		@level = 0

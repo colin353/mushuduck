@@ -24,7 +24,7 @@ class ProductionStage(Stage):
 		return 'Production'
 
 class TradingStage(Stage):
-	duration = 10.0
+	duration = 120.0
 
 	def __init__(self, game):
 		super(TradingStage, self).__init__(game)
@@ -44,7 +44,6 @@ class TradingStage(Stage):
 	def end(self):
 		del self.game.numberSold
 		self.game.effectiveNumberSoldLastRound = self.game.effectiveNumberSold
-		del self.game.effectiveNumberSold
 
 	def type(self):
 		return 'Trading'

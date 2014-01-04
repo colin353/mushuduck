@@ -14,6 +14,7 @@ class Game(object):
 		self.nextStage()
 		self.lastRecordedBump = None
 		self.effectiveNumberSoldLastRound = {'tomato':0.2, 'blueberry':0.2, 'purple':0.2, 'corn':0.2}
+		self.effectiveNumberSold = {}
 
 	@property
 	def roundedPrices(self):
@@ -97,7 +98,7 @@ class Game(object):
 			return
 
 		newPrices = {}
-		delta = 0.1
+		delta = 0.5
 		A = 1.0
 		T = self.currentStage.duration
 		t = self.currentStage.timeElapsed()
@@ -106,7 +107,7 @@ class Game(object):
 			print "...calculating prices for %s" % product
 			w = 1.0-(t/T)*(1.0-delta)
 			sbar = w*self.effectiveNumberSoldLastRound[product] + ((1-w)*N)/t
-			self.effectiveNumberSold = sbar
+			self.effectiveNumberSold[product] = sbar
 			print "N=%d, w=%f, sbar=%f, s0=%f" % (N, w, sbar, self.effectiveNumberSoldLastRound[product])
 			newPrices[product] = A/sbar
 
