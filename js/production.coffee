@@ -3,6 +3,8 @@ class window.ProductionStage
 		me = @
 		@productions = []
 
+		$('.productionstage-interface').show()
+
 		$('.productionstage-interface .box').each ->
 			type = $(@).attr('data-production-type')
 			me.productions.push( new Production( $(@), me, player.productionfacilities[type] ) )
@@ -15,7 +17,8 @@ class window.ProductionStage
 	ready: ->
 		# Show the ready as GREEN instead of GRAY
 		$('.ready').css('background-color','green')
-		#pycon.transaction { 'action': 'ready' }, yes
+		pycon.transaction { 'action': 'ready' }, ->
+			yes
 
 class Production
 	constructor: (@dom_object, @productionstage, @productionfacility) ->

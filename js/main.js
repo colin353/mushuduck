@@ -21,5 +21,5 @@ $(function() {
 });
 
 window.go = function() {
-  return window.tradingstage = new TradingStage();
+  return window.productionstage = new ProductionStage();
 };

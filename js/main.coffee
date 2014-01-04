@@ -1,6 +1,6 @@
 # Configuration parameters:
 # -------------------------------------- #
-window.config = []
+window.config = [] 
 window.config.websocket_url = "ws://192.168.0.106:8888/json"
 window.config.server_version = 0
 # -------------------------------------- #
@@ -30,4 +30,4 @@ $ ->
 # When everything is loaded and ready to go, this function is called.
 window.go = ->
 	# Start in the production stage
- 	window.tradingstage = new TradingStage()
+ 	window.productionstage = new ProductionStage()

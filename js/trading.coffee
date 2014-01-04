@@ -5,6 +5,8 @@ class window.TradingStage
 	constructor: ->
 		me = @
 
+		$('.tradingstage-interface').show()
+
 		# Register all of the trading products boxes
 		@products = []
 		$('.tradingstage-interface .box').each ->
