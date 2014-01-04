@@ -13,8 +13,7 @@ class Game:
 		self.currentStage = None
 		self.nextStage()
 		self.dispatcher = EventDispatcher()
-		self.mostRecentBumpPlayer = None
-		self.mostRecentBumpTime = -1
+		self.lastRecordedBump = None
 
 	def addPlayerWithHandler(self, handler):
 		newPlayer = Player(handler)
@@ -59,25 +58,24 @@ class Game:
 		data = {'stageType':self.currentStage.type()}
 		self.dispatchToAll(json.dumps({'eventName':"stageBegin" , 'data':data }))
 
-	def bump(self, playerHandler):
+	def bump(self, playerHandler, data):
 
-		# get player from handler
-		player = self.playerWithHandler(playerHandler)
-		currentTime = int(round(time.time() * 1000))
-		interval = currentTime - self.mostRecentBumpTime
+		# todo: write checks
+		items = None
 
-		# if there is already a recorded bump within 100ms, zomg trade
-		if self.mostRecentBumpPlayer and interval < 100:
-			print "Second bump by %s. Time to previous bump is %d ms." % (player, interval)
-			
+		# create new bump
+		newBump = Bump(self.playerWithHandler(playerHandler), items)
+
+		# if there is already a recorded bump with similar time, then zomg trade
+		if self.lastRecordedBump and newBump.closeTo(self.lastRecordedBump):
+
 			# facilitate trading
-			self.facilitateTrade(player, self.mostRecentBumpPlayer)
+			self.facilitateTradeWithBumps(newBump, self.lastRecordedBump)
 
 		# otherwise, record as first bump
 		else:
-			print "First bump by %s." % player
-			self.mostRecentBumpTime = currentTime
-			self.mostRecentBumpPlayer = player
+			print "First bump by %s." % newBump.player
+			self.lastRecordedBump = newBump
 
 	def dispatchToAll(self, message):
 		for player in self.players:
@@ -101,7 +99,7 @@ class Game:
 		# yield matching player or yield None
 		return matchingPlayers[0] if matchingPlayers else None
 
-	def facilitateTrade(self, player1, player2):
+	def facilitateTradeWithBumps(self, bump1, bump2):
 		print "Zomg trading!"
 		pass
 
@@ -111,4 +109,15 @@ class Player:
 
 	def __init__(self, handler):
 		self.socketHandler = handler
+
+
+class Bump:
+
+	def __init__(self, player, items):
+		self.player = player
+		self.time = int(round(time.time() * 1000))
+		self.items = items
+
+	def closeTo(self, other):
+		return abs(self.time - other.time) < 100
 
