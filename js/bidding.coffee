@@ -10,7 +10,8 @@ class window.BiddingStage extends Stage
 		$('.winning').hide()
 
 		$('.bid').tap ->
-			pycon.transaction {action: 'bid', data: { bidIndex:0, bidAmount:10 }}
+			pycon.transaction {action: 'bid', data: { bidIndex:0, bidAmount:10 }}, -> 
+				yes
 
 		yes
 
@@ -21,4 +22,7 @@ class window.BiddingStage extends Stage
 	losing: ->
 		$('.winning').hide()
 		$('.losing').show()
+
+	newBidAnnouncement: (data) ->
+		
 
