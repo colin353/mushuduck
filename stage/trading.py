@@ -1,33 +1,8 @@
-import game
+import stage
 import threading
 import time
 
-class Stage(object):
-
-	def __init__(self, game):
-		self.game = game
-		pass
-
-	def begin(self):
-		pass
-
-	def afterBegin(self):
-		pass
-
-	def end(self):
-		pass
-
-class ProductionStage(Stage):
-
-	def __init__(self, game):
-		super(ProductionStage, self).__init__(game)
-		readyList = []
-
-
-	def type(self):
-		return 'Production'
-
-class TradingStage(Stage):
+class TradingStage(stage.Stage):
 	duration = 120.0
 
 	def __init__(self, game):
