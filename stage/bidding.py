@@ -29,9 +29,13 @@ class BiddingStage(stage.Stage):
 		else:
 			return "the action 'bid' failed to include a string named 'bidIndex'"
 
+		# if first bid, initialize key in self.bids
+		if bidIndex not in self.bids:
+			self.bids[bidIndex] = []
+
 		# check if bid is successful
-		if bidIndex in self.bids and bidAmount is self.bids[bidIndex][-1]:
-			# if bid is the first, or has amount that is the same as the top bid, return failure
+		if self.bids[bidIndex] and bidAmount is self.bids[bidIndex][-1].amount:
+			# if bid amount is the same as that of the top bid, return failure
 			return {'success':False}
 		else:
 			# otherwise, record top bid
@@ -50,6 +54,6 @@ class BiddingStage(stage.Stage):
 class Bid(object):
 
 	def __init__(self, bidder, index, amount):
-		self.bidder = player
+		self.bidder = bidder
 		self.index = index
 		self.amount = amount
