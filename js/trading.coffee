@@ -80,7 +80,7 @@ class window.TradingStage extends Stage
 		# Allow for clearing of the trading panel
 		$('.trading').on "taphold", ->
 			me.clearTrades.call me
-			
+
 		$('.countdown').show()
 
 		super
@@ -133,6 +133,9 @@ class window.TradingStage extends Stage
 		for name,p of @products
 			p.needsRefresh.call p
 
+	products_updated: ->
+		@price_updated()
+
 	# This is called whenever there is some stale data relating to the trading
 	# panel. This function will update the trading panel to have the new data.
 	refreshTradingPlatform: ->
@@ -149,6 +152,8 @@ class window.TradingStage extends Stage
 			facility = player.productionfacilities[name]
 			facility.run_factory.call facility
 			p.needsRefresh.call p
+
+
 
 	timer_begin: (countdown) ->
 			me = @

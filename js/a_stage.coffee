@@ -17,3 +17,6 @@ class window.Stage
 
 	end: ->
 		yes
+
+	products_updated: ->
+		yes

@@ -112,6 +112,10 @@
       return true;
     };
 
+    Stage.prototype.products_updated = function() {
+      return true;
+    };
+
     return Stage;
 
   })();
@@ -624,6 +628,10 @@
       return _results;
     };
 
+    TradingStage.prototype.products_updated = function() {
+      return this.price_updated();
+    };
+
     TradingStage.prototype.refreshTradingPlatform = function() {
       var name, p, _ref, _results;
 
@@ -776,10 +784,48 @@
       return $('.losing').show();
     };
 
-    BiddingStage.prototype.newBidAnnouncement = function(data) {};
+    BiddingStage.prototype.newBidAnnouncement = function(data) {
+      return true;
+    };
 
     return BiddingStage;
 
   })(Stage);
+
+  window.Card = (function() {
+    function Card() {
+      true;
+    }
+
+    Card.prototype.activate = function() {
+      return true;
+    };
+
+    return Card;
+
+  })();
+
+  window.ConversionCard = (function(_super) {
+    __extends(ConversionCard, _super);
+
+    function ConversionCard(item_from, from_number, item_to, to_number) {
+      this.item_from = item_from;
+      this.from_number = from_number;
+      this.item_to = item_to;
+      this.to_number = to_number;
+      ConversionCard.__super__.constructor.apply(this, arguments);
+    }
+
+    ConversionCard.prototype.activate = function() {
+      if (player.products[this.item_from].amount > this.from_number) {
+        player.products[this.item_from].amount -= this.from_number;
+        player.products[this.item_to].amount += this.to_number;
+        return window.stage.products_updated.call(stage);
+      }
+    };
+
+    return ConversionCard;
+
+  })(window.Card);
 
 }).call(this);
