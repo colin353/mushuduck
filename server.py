@@ -4,7 +4,7 @@ import tornado.websocket
 import time
 import inspect
 import json
-from game import Game
+import game
 import helpers
 
 # Configurable parameters for the server:
@@ -24,12 +24,12 @@ RESPONSE 	= 1
 # will interface with measurement devices.
 class JHandler(tornado.websocket.WebSocketHandler):
 	def open(self):
-		print "Opening..."
 		staticGame.addPlayerWithHandler(self)
+		print "==> Player%s joined" % staticGame.playerWithHandler(self).id
 
 	def on_message(self, msg):
 		message = json.loads(msg)
-		print "Message received with data:%s" % message
+		print "==> Message received with data:\n%s" % helpers.treeDict(message)
 
 		# The default response: it should be overwritten, or else some
 		# kind of internal problem occured.
@@ -56,9 +56,8 @@ class JHandler(tornado.websocket.WebSocketHandler):
 		self.write_message( json.dumps ( {'data': response, 'transaction_id': message['transaction_id'] } ) )
 
 	def on_close(self):
-		print "Closing..."
 		staticGame.removePlayerWithHandler(self)
-		## todo: delete player
+		print "==> Player%s left" % staticGame.playerWithHandler(self).id
 
 # The JActionableRequestHandler class basically completes actions that the browser
 # asks of it. It should be spoken to through the "invoke" function, which basically
@@ -68,12 +67,12 @@ class JHandler(tornado.websocket.WebSocketHandler):
 class JActionableRequestHandler:
 
 	def invoke(self, action, sender, data):
-		print "Attempted to invoke action %s" % action
+		senderId = staticGame.playerWithHandler(sender).id
+		print "==> Action '%s' received from player%s with data:\n%s" % (action, senderId, helpers.treeDict(data))
 
 		# create dictionary of arguments to be passed into the corresponding function call of the action
 		args = {'sender':sender, 'data':data}
 		args = dict((arg,value) for arg,value in args.iteritems() if value is not None)
-		print args
 		if hasattr(self, action):
 			return getattr(self, action)(**args)
 		else:
@@ -137,7 +136,7 @@ application = tornado.web.Application( [
 ])
 
 # make a game
-staticGame = Game()
+staticGame = game.Game()
 
 # This starts the application
 application.listen(PORT)

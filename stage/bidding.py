@@ -24,9 +24,8 @@ class BiddingStage(stage.Stage):
 			self.game.sendEventToAllPlayers('NewCard', {'index':self.currentAuction.next()})
 			self.startBidTimer()
 		except StopIteration:
-			print "No more auctions"
+			print "==> No more auctions"
 			self.game.nextStage()
-
 
 	def bid(self, sender, data):
 		

@@ -32,20 +32,20 @@ class TradingStage(stage.Stage):
 	### action handling
 
 	def updatePrices(self):
-		print "...updating prices"
+		#print "...updating prices"
 		
 		newPrices = {}
 		delta = 0.5
 		A = 1.0
 		T = self.duration + 0.01
 		t = self.timeElapsed() + 0.01
-		print "t=%f, T=%f" % (t,T)
+		#print "t=%f, T=%f" % (t,T)
 		for product,N in self.numberSold.iteritems():
-			print "...calculating prices for %s" % product
+			#print "...calculating prices for %s" % product
 			w = 1.0-(t/T)*(1.0-delta)
 			sbar = w*self.game.effectiveNumberSoldLastRound[product] + ((1-w)*N)/t
 			self.effectiveNumberSold[product] = sbar
-			print "N=%d, w=%f, sbar=%f, s0=%f" % (N, w, sbar, self.game.effectiveNumberSoldLastRound[product])
+			#print "N=%d, w=%f, sbar=%f, s0=%f" % (N, w, sbar, self.game.effectiveNumberSoldLastRound[product])
 			newPrices[product] = min(A/sbar, 99)
 		self.game.prices = newPrices
 

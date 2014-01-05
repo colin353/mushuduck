@@ -24,7 +24,7 @@ class Game(object):
 
 	@prices.setter
 	def prices(self, value):
-		print "-- prices being set!"
+		#print "-- prices being set!"
 
 		if self.currentStage.__class__ == trading.TradingStage:
 			oldRoundedPrices = self.roundedPrices
@@ -115,6 +115,8 @@ class Game(object):
 			self.sendEventToPlayer(player, eventName, data)
 
 class Player:
-
+	cur_id = 0
 	def __init__(self, handler):
 		self.socketHandler = handler
+		self.id = self.cur_id
+		Player.cur_id += 1
