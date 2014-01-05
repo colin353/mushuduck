@@ -17,11 +17,13 @@ class BiddingStage(stage.Stage):
 		
 		if 'bidAmount' in data:
 			bidAmount = data['bidAmount']
-		else return "the action 'bid' failed to include a string named 'bidAmount'"
+		else:
+			return "the action 'bid' failed to include a string named 'bidAmount'"
 		
 		if 'bidIndex' in data:
 			bidIndex = data['bidIndex']
-		else return "the action 'bid' failed to include a string named 'bidIndex'"
+		else:
+			return "the action 'bid' failed to include a string named 'bidIndex'"
 		
 		self.currentBidIndex = bidIndex
 
