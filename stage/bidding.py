@@ -64,7 +64,7 @@ class BiddingStage(stage.Stage):
 			winningBid = self.bids[-1]
 			winner = winningBid.bidder
 			eventData = {'winningBidAmount':winningBid.amount, 'winningBidIndex':winningBid.index}
-			self.game.sendEventToPlayer(winner, eventData)
+			self.game.sendEventToPlayer(winner, 'YouWon', eventData)
 		else:
 			# if no one bidded, nothing happens
 			pass
