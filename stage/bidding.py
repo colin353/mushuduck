@@ -2,12 +2,11 @@ import stage
 import threading
 
 class BiddingStage(stage.Stage):
-	bidDuration = 5.0
+	bidDuration = 10.0
 
 	def __init__(self, game):
 		super(BiddingStage, self).__init__(game)
-		# bids is a dictionary of stacks of bids indexed by the indices of the bids
-		self.bids = {}
+		self.bids = []
 
 	def type(self):
 		return 'Bidding'
@@ -16,6 +15,7 @@ class BiddingStage(stage.Stage):
 		# initialize a new bid
 		# todo: change to be dynamic and random
 		self.game.sendEventToAllPlayers('NewCard', {'index':0})
+		self.startBidTimer()
 
 	def bid(self, sender, data):
 		
@@ -31,19 +31,15 @@ class BiddingStage(stage.Stage):
 		else:
 			return "the action 'bid' failed to include a string named 'bidIndex'"
 
-		# if first bid, initialize key in self.bids
-		if bidIndex not in self.bids:
-			self.bids[bidIndex] = []
-
 		# check if bid is successful
-		if self.bids[bidIndex] and bidAmount is self.bids[bidIndex][-1].amount:
+		if self.bids and bidAmount is self.bids[-1].amount:
 			# if bid amount is the same as that of the top bid, return failure
 			return {'success':False}
 		else:
 			# otherwise, record top bid
 			bidder = self.game.playerWithHandler(sender)
 			newBid = Bid(bidder, bidIndex, bidAmount)
-			self.bids[bidIndex].append(newBid)
+			self.bids.append(newBid)
 
 			# announce new bid
 			for player in self.game.players:
@@ -51,14 +47,38 @@ class BiddingStage(stage.Stage):
 				self.game.sendEventToPlayer(player, 'NewBid', {'winning':winning, 'winningBidAmount':bidAmount})
 
 			# start bid timer and announce to players
-			threading.Timer(self.bidDuration, self.endBid).start()
-			self.game.sendEventToAllPlayers('TimerBegin', {'duration':self.bidDuration})
+			self.stopBidTimer()
+			self.startBidTimer()
 
 			# return success
 			return {'success':True}
 
-	def endBid(self):
-		self.game.sendEventToAllPlayers('TimerEnd')
+	def bidEnded(self):
+
+		# stop and announce bid timer
+		self.stopBidTimer()
+
+		# announce winner if any
+		if self.bids:
+			# bit ending implies that last bid wins, so announce winner
+			winningBid = self.bids[-1]
+			winner = winningBid.bidder
+			eventData = {'winningBidAmount':winningBid.amount, 'winningBidIndex':winningBid.index}
+			self.game.sendEventToPlayer(winner, eventData)
+		else:
+			# if no one bidded, nothing happens
+			pass
+
+	def startBidTimer(self):
+		# start and announce to players
+		self.bidTimer = threading.Timer(self.bidDuration, self.bidEnded)
+		self.bidTimer.start()
+		self.game.sendEventToAllPlayers('TimerBegin', {'duration':self.bidDuration})
+
+	def stopBidTimer(self):
+		# stop announce to players
+		self.bidTimer.cancel()
+		self.game.sendEventToAllPlayers('TimerEnd', {'duration':self.bidDuration})
 
 class Bid(object):
 
