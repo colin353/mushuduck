@@ -51,7 +51,7 @@ class BiddingStage(stage.Stage):
 				self.game.sendEventToPlayer(player, 'NewBid', {'winning':winning, 'winningBidAmount':bidAmount})
 
 			# start bid timer and announce to players
-			threading.Timer(self.bidDuration, self.endBid)
+			threading.Timer(self.bidDuration, self.endBid).start()
 			self.game.sendEventToAllPlayers('TimerBegin', {'duration':self.bidDuration})
 
 			# return success

@@ -5,6 +5,7 @@ import time
 import inspect
 import json
 from game import Game
+import helpers
 
 # Configurable parameters for the server:
 # -------------------------------------- #
@@ -27,8 +28,8 @@ class JHandler(tornado.websocket.WebSocketHandler):
 		staticGame.addPlayerWithHandler(self)
 
 	def on_message(self, msg):
-		print "Message received: %s " % msg 
 		message = json.loads(msg)
+		print "Message received with data:%s" % message
 
 		# The default response: it should be overwritten, or else some
 		# kind of internal problem occured.
@@ -93,6 +94,7 @@ class JActionableRequestHandler:
 		return {}
 
 	### bidding stage actions ###
+
 	def bid(self, sender, data):
 		# note: I will handle everything inside BiddingStage
 		return staticGame.messageStage('bid', sender, data)
