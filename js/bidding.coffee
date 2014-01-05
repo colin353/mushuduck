@@ -49,6 +49,9 @@ class window.BiddingStage extends Stage
 		@card = new card_deck[index]()
 		$('.card').children('.title').html @card.title
 		$('.card').children('.subtitle').html @card.subtitle
+		$('.losing').hide()
+		$('.winning').hide()
+		$('.bid').show()
 		@current_bid = @card.price
 		@updateBidButton()
 
