@@ -58,7 +58,7 @@ class window.ProductionFacility
 		return 5*@capacity
 
 	upgrade: ->
-		@capacity = @capacity * 2
+		@capacity = @capacity + 1
 		@level += 1
 
 	# This function will presumably be called every time interval in order

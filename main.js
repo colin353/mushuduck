@@ -625,7 +625,7 @@
           return;
         }
         me.yield_production.call(me);
-        return setTimeout(do_production, 500);
+        return setTimeout(do_production, 2000);
       };
       setTimeout(count_down, 1000);
       setTimeout(do_production, 500);

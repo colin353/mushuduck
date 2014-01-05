@@ -104,8 +104,8 @@ class Game(object):
 		newPrices = {}
 		delta = 0.5
 		A = 1.0
-		T = self.currentStage.duration
-		t = self.currentStage.timeElapsed()
+		T = self.currentStage.duration + 0.01
+		t = self.currentStage.timeElapsed() + 0.01
 		print "t=%f, T=%f" % (t,T)
 		for product,N in self.numberSold.iteritems():
 			print "...calculating prices for %s" % product
