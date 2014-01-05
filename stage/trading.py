@@ -46,8 +46,7 @@ class TradingStage(stage.Stage):
 			sbar = w*self.game.effectiveNumberSoldLastRound[product] + ((1-w)*N)/t
 			self.effectiveNumberSold[product] = sbar
 			print "N=%d, w=%f, sbar=%f, s0=%f" % (N, w, sbar, self.game.effectiveNumberSoldLastRound[product])
-			newPrices[product] = A/sbar
-
+			newPrices[product] = min(A/sbar, 99)
 		self.game.prices = newPrices
 
 	def sell(self, productToSell):
