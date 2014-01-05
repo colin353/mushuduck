@@ -11,11 +11,22 @@ class BiddingStage(stage.Stage):
 	def type(self):
 		return 'Bidding'
 
+	def begin(self):
+		# todo: change to random
+		self.auctions = [1,0]
+		self.currentAuction = iter(self.auctions)
+
 	def afterBegin(self):
-		# initialize a new bid
-		# todo: change to be dynamic and random
-		self.game.sendEventToAllPlayers('NewCard', {'index':0})
-		self.startBidTimer()
+		self.nextAuction()
+
+	def nextAuction(self):
+		try:
+			self.game.sendEventToAllPlayers('NewCard', {'index':self.currentAuction.next()})
+			self.startBidTimer()
+		except StopIteration:
+			print "No more auctions"
+			self.game.nextStage()
+
 
 	def bid(self, sender, data):
 		
@@ -68,6 +79,9 @@ class BiddingStage(stage.Stage):
 		else:
 			# if no one bidded, nothing happens
 			pass
+
+		# go to next auction
+		self.nextAuction()
 
 	def startBidTimer(self):
 		# start and announce to players
