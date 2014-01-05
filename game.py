@@ -1,9 +1,9 @@
-from stage import ProductionStage, TradingStage
+from stage import production, trading
 import json
 import time
 
 class Game(object):
-	stageSequence = [ProductionStage, TradingStage]
+	stageSequence = [production.ProductionStage, trading.TradingStage]
 
 	def __init__(self):
 		self._prices = None
@@ -12,9 +12,7 @@ class Game(object):
 		self.currentStageNumber = 0
 		self.currentStage = None
 		self.nextStage()
-		self.lastRecordedBump = None
 		self.effectiveNumberSoldLastRound = {'tomato':0.2, 'blueberry':0.2, 'purple':0.2, 'corn':0.2}
-		self.effectiveNumberSold = {}
 
 	@property
 	def roundedPrices(self):
@@ -28,19 +26,21 @@ class Game(object):
 	def prices(self, value):
 		print "-- prices being set!"
 
-		if self.currentStage.__class__ == TradingStage:
+		if self.currentStage.__class__ == trading.TradingStage:
 			oldRoundedPrices = self.roundedPrices
 
 		# update price ivar
 		self._prices = value
 
 		# if in trading stage, notify players of price update
-		if self.currentStage.__class__ == TradingStage:
+		if self.currentStage.__class__ == trading.TradingStage:
 			self.sendEventToAllPlayers('PriceUpdated', {'prices':self.roundedPrices, 'oldPrices':oldRoundedPrices})
 
 	@prices.deleter
 	def prices(self):
 		del self._prices
+
+	### stage management ###
 
 	def nextStage(self):
 
@@ -65,82 +65,14 @@ class Game(object):
 		# hack?: run afterbegin
 		self.currentStage.afterBegin()
 
-	def markReady(self, playerHandler):
-		# get player obj from handler
-		player = self.playerWithHandler(playerHandler)
-		print self.players
-
-		if player:
-			# add player to readyList
-			self.currentStage.readyList.append(player)
-			# if all players are ready, move the to the next stage
-			if all([p in self.currentStage.readyList for p in self.players]):
-				self.nextStage()
-
-	#### methods for trading stage
-
-	def sell(self, productToSell):
-
-		# deny if not in trading stage
-		if self.currentStage.__class__ is not TradingStage:
-			return "Illegal sale: not in trading stage"
-
-		# the player will receive money corresponding to the old price, before market value update
-		pay = self.roundedPrices[productToSell]
-		# update supply
-		self.numberSold[productToSell] += 1
-		# calculate new price
-		self.updatePrices()
-
-		# return pay (old price) to player
-		return {'pay': pay}
-
-	def updatePrices(self):
-		print "...updating prices"
-		# needs to be in trading stage
-		if self.currentStage.__class__ is not TradingStage:
-			return
-
-		newPrices = {}
-		delta = 0.5
-		A = 1.0
-		T = self.currentStage.duration + 0.01
-		t = self.currentStage.timeElapsed() + 0.01
-		print "t=%f, T=%f" % (t,T)
-		for product,N in self.numberSold.iteritems():
-			print "...calculating prices for %s" % product
-			w = 1.0-(t/T)*(1.0-delta)
-			sbar = w*self.effectiveNumberSoldLastRound[product] + ((1-w)*N)/t
-			self.effectiveNumberSold[product] = sbar
-			print "N=%d, w=%f, sbar=%f, s0=%f" % (N, w, sbar, self.effectiveNumberSoldLastRound[product])
-			newPrices[product] = A/sbar
-
-		self.prices = newPrices
-
-	def bump(self, playerHandler, items):
-
-		# create new bump
-		newBump = Bump(self.playerWithHandler(playerHandler), items)
-
-		# if there is already a recorded bump with similar time, then zomg trade
-		if self.lastRecordedBump and newBump.closeTo(self.lastRecordedBump):
-
-			# facilitate trading
-			self.facilitateTradeWithBumps(newBump, self.lastRecordedBump)
-
-		# otherwise, record as first bump
+	def messageStage(self, action, *args):
+		method = getattr(self.currentStage, action, None)
+		if callable(method):
+			return method(*args)
 		else:
-			print "First bump by %s." % newBump.player
-			self.lastRecordedBump = newBump
+			return "%s does not respond to action %d" % (self.currentStage.type(), action)
 
-	def facilitateTradeWithBumps(self, bump1, bump2):
-		print "Zomg trading!"
-
-		# send items to respective players
-		self.sendEventToPlayer(bump1.player, 'TradeCompleted', {'items':bump2.items})
-		self.sendEventToPlayer(bump2.player, 'TradeCompleted', {'items':bump1.items})
-
-	#### player management methods ####
+	### player management methods ###
 
 	def addPlayerWithHandler(self, handler):
 		newPlayer = Player(handler)
@@ -166,7 +98,7 @@ class Game(object):
 		# yield matching player or yield None
 		return matchingPlayers[0] if matchingPlayers else None
 
-	#### message sending methods ####
+	### message sending methods ###
 
 	def sendMessageToPlayer(self, player, message):
 		player.socketHandler.write_message(message)
@@ -186,15 +118,3 @@ class Player:
 
 	def __init__(self, handler):
 		self.socketHandler = handler
-
-
-class Bump:
-
-	def __init__(self, player, items):
-		self.player = player
-		self.time = int(round(time.time() * 1000))
-		self.items = items
-
-	def closeTo(self, other):
-		return abs(self.time - other.time) < 100
-
