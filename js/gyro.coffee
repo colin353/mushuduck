@@ -22,4 +22,4 @@ $ ->
 			
 			setTimeout( ->
 				window.censor_gyroscope = false
-			,500)
+			,500) 

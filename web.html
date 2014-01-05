@@ -174,11 +174,42 @@
 		width: 90%;
 		height: 70%;
 		margin-top: 5%;
+		position:relative;
 		text-align:center;
 	}
 
 	.biddingstage-interface .card h1 {
 		margin: auto;
+	}
+
+	.biddingstage-interface .bid {
+		width: 40%;
+		display:table;
+		text-align: center;
+		vertical-align:middle;
+		background-color: white;
+		margin:auto;
+		margin-top: 20px;
+	}
+
+	.biddingstage-interface .winning {
+		position: absolute;
+		left: -3%;
+		top: -5%;
+		transform: rotate(7deg);
+		-webkit-transform: rotate(-10deg);
+		background-color: green;
+		padding: 1%;
+	}
+
+	.biddingstage-interface .losing {
+		position: absolute;
+		right: -3%;
+		top: -5%;
+		transform: rotate(7deg);
+		-webkit-transform: rotate(10deg);
+		background-color: red;
+		padding: 1%;
 	}
 
 	p {
@@ -320,11 +351,13 @@
 	<div class='biddingstage-interface'>
 
 		<div class='card'>
+			<div class='winning'>Winning!</div>
+			<div class='losing'>Losing!</div>
 			<h3>Blueberry Jam</h3>
 			<p>You can sell blueberries for 2x the price.</p>
 		</div>
 
-		<div class='bid'></div>
+		<div class='bid'><p>Bid $10</p></div>
 
 	</div>
 
