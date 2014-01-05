@@ -18,5 +18,8 @@ class window.Stage
 	end: ->
 		yes
 
+	new_bid: ->
+		yes
+
 	products_updated: ->
 		yes

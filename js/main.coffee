@@ -85,4 +85,7 @@ window.go = ->
 		console.log 'Event handled: ',stage
 		window.stage.timer_begin.call window.stage, data.duration
 
+	pycon.register_for_event 'NewBid', (data) ->
+		window.stage.new_bid.call window.stage, data
+
 	updateStatusBar()
