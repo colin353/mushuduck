@@ -176,9 +176,15 @@
     };
   });
 
-  $(window).bind('resize', function() {
+  window.handleResize = function() {
     $('.statusbar').css('font-size', (0.9 * $('.statusbar').height()) + 'px');
     return $(window).scrollTop(0);
+  };
+
+  $(window).bind('resize', window.handleResize);
+
+  $(function() {
+    return window.handleResize();
   });
 
   window.updateStatusBar = function() {
@@ -223,6 +229,8 @@
       return $('.playercount').html(data.count);
     });
     pycon.register_for_event('stageBegin', function(data) {
+      window.stage = new BiddingStage();
+      return false;
       if (typeof stage !== "undefined" && stage !== null) {
         window.stage.end();
       }
@@ -300,10 +308,10 @@
         this.products[p] = new Product(p);
         this.productionfacilities[p] = new ProductionFacility(this.products[p]);
       }
-      this.products['tomato'].color = 'red';
-      this.products['blueberry'].color = 'blue';
-      this.products['purple'].color = 'purple';
-      this.products['corn'].color = 'orange';
+      this.products['tomato'].color = '#DD514C';
+      this.products['blueberry'].color = '#0E90D2';
+      this.products['purple'].color = '#8058A5';
+      this.products['corn'].color = '#FAD232';
       true;
     }
 
@@ -323,7 +331,7 @@
   window.Product = (function() {
     function Product(name) {
       this.name = name;
-      this.amount = 5;
+      this.amount = 0;
       this.price = 0;
       this.color = "green";
       true;
@@ -345,26 +353,35 @@
     function ProductionFacility(product) {
       this.product = product;
       this.capacity = 1;
+      this.factory = false;
       this.level = 0;
       true;
     }
 
     ProductionFacility.prototype.run_factory = function() {
-      if (Math.random() < this.capacity * 0.02) {
-        this.product.amount += 1;
-        return true;
-      } else {
+      if (!this.factory) {
         return false;
       }
+      this.product.amount += this.capacity;
+      return true;
     };
 
     ProductionFacility.prototype.upgradeCost = function() {
-      return 5 * this.capacity;
+      if (this.factory) {
+        return this.level * window.config.upgrade_cost;
+      } else {
+        return window.config.factory_cost;
+      }
     };
 
     ProductionFacility.prototype.upgrade = function() {
-      this.capacity = this.capacity + 1;
-      return this.level += 1;
+      if (!this.factory) {
+        this.factory = true;
+        return this.level = 1;
+      } else {
+        this.capacity = this.capacity + 1;
+        return this.level += 1;
+      }
     };
 
     ProductionFacility.prototype.generateProduct = function() {
@@ -381,7 +398,7 @@
 
   window.player = new Player();
 
-  player.giveGold(5);
+  player.giveGold(window.config.starting_money);
 
   window.ProductionStage = (function(_super) {
     __extends(ProductionStage, _super);
@@ -404,7 +421,7 @@
         return me.ready();
       });
       $('.ready').show();
-      $('.ready').css('background-color', 'grey');
+      $('.ready').removeClass('active');
       ProductionStage.__super__.constructor.apply(this, arguments);
     }
 
@@ -416,7 +433,7 @@
     };
 
     ProductionStage.prototype.ready = function() {
-      $('.ready').css('background-color', 'green');
+      $('.ready').addClass('active');
       return pycon.transaction({
         'action': 'ready'
       }, function() {
@@ -456,7 +473,13 @@
     };
 
     Production.prototype.needsRefresh = function() {
-      this.dom_object.children('span').html("Level " + this.productionfacility.level);
+      if (this.productionfacility.factory) {
+        this.dom_object.css('opacity', '1');
+        this.dom_object.children('span').html("Level " + this.productionfacility.level);
+      } else {
+        this.dom_object.children('span').html("");
+        this.dom_object.css('opacity', '0.5');
+      }
       return true;
     };
 
@@ -530,6 +553,7 @@
 
     TradingStage.prototype.end = function() {
       $('.countdown').hide();
+      $('.tradingstage-interface').hide();
       return TradingStage.__super__.end.apply(this, arguments);
     };
 
@@ -650,7 +674,7 @@
           return;
         }
         me.yield_production.call(me);
-        return setTimeout(do_production, 2000);
+        return setTimeout(do_production, window.config.production_period * 1000);
       };
       setTimeout(count_down, 1000);
       setTimeout(do_production, 500);
@@ -715,5 +739,19 @@
     return TradingProduct;
 
   })();
+
+  window.BiddingStage = (function(_super) {
+    __extends(BiddingStage, _super);
+
+    function BiddingStage() {
+      this.type = "BiddingStage";
+      this.stage_name = ".biddingstage-interface";
+      $(this.stage_name).show();
+      true;
+    }
+
+    return BiddingStage;
+
+  })(Stage);
 
 }).call(this);

@@ -34,37 +34,7 @@
 		font-size: 50pt;
 	}
 
-	/* Mobile version */
-	@media all and (max-width: 1000px) {
-		html,body {
-			font-size: 30pt;
-		}
-		.tradecount {
-			margin: 10	px;
-		}
-
-		.square {
-			width: 25px;
-			height: 25px;
-		}
-	}
-
-	/* Desktop, ipad version */
-	@media all and (min-width: 600px) {
-		html,body {
-			font-size: 50pt;
-		}
-
-		.tradecount {
-			margin: 40px;
-		}
-
-		.square {
-			height: 50px;
-			width: 50px;
-		}
-
-	}
+	
 
 	/* Everybody */
 
@@ -126,23 +96,27 @@
 	}
 
 	.statusbar span.ready {
+		padding-left: 10px; padding-right: 10px;
 		background-color: grey;
 		float:right;
+		display:none;
 		height: 100%;
 	}
 
 	.statusbar span.countdown {
 		float: right;
+		display:none;
 		height: 100%;
 	}
 
 	.box.red {
-		background-color: red;
+		background-color: #DD514C;
 	}
 
-	.sell {
+	.powerups {
 		height:20%;
-		background-color: gold;
+		background-color: black;
+		color: white;
 	}
 
 	.trading {
@@ -167,6 +141,7 @@
 		padding: 5px;
 		display: inline-block;
 		margin-top: 0;
+		margin-right:20%;
 		min-width: 10%;
 		float:left;
 	}
@@ -178,15 +153,73 @@
 	.playercount {
 		background-color: black;
 		color: white;
+		padding-left: 10px; padding-right: 10px;
 	}
 
 	.tradecount {
 		display:inline-block;
 	}
 
-	.box.blue { background-color: blue; }
-	.box.purple { background-color: purple; }
-	.box.orange { background-color: orange; }
+	.ready.active {
+		background-color: #5EB95E !important
+	}
+
+	.box.blue { background-color: #0E90D2; }
+	.box.purple { background-color: #8058A5; }
+	.box.orange { background-color: #FAD232; }
+
+	.biddingstage-interface .card {
+		margin: auto;
+		background-color: white;
+		width: 90%;
+		height: 70%;
+		margin-top: 5%;
+		text-align:center;
+	}
+
+	.biddingstage-interface .card h1 {
+		margin: auto;
+	}
+
+	p {
+		font-size: 30pt;
+	}
+
+	/* Mobile version */
+	@media all and (max-width: 600px) {
+		html,body {
+			font-size: 30pt;
+		}
+		.tradecount {
+			margin: 10	px;
+		}
+
+		.box.amount {
+			font-size: 20px !important;
+		}
+
+		.square {
+			width: 25px;
+			height: 25px;
+		}
+	}
+
+	/* Desktop, ipad version */
+	@media all and (min-width: 600px) {
+		html,body {
+			font-size: 50pt;
+		}
+
+		.tradecount {
+			margin: 40px;
+		}
+
+		.square {
+			height: 50px;
+			width: 50px;
+		}
+
+	}
 
 </style>
 
@@ -238,30 +271,30 @@
 	<div class='tradingstage-interface'>
 
 
-		<div class='sell'>
-			<span>SELL</span>
+		<div class='powerups'>
+			<span>DECK</span>
 		</div>
 
 		<div class='inventory'>
 
 			<div data-production-type='tomato' class='box red'>
-				<span class='amount'>10</span>
-				<span class='price'>4</span>
+				<span class='amount'></span>
+				<span class='price'></span>
 			</div>
 
 			<div data-production-type='blueberry' class='box blue'>
-				<span class='amount'>1</span>
-				<span class='price'>4</span>
+				<span class='amount'></span>
+				<span class='price'></span>
 			</div>
 
 			<div data-production-type='purple' class='box purple'>
-				<span class='amount'>2</span>
-				<span class='price'>4</span>
+				<span class='amount'></span>
+				<span class='price'></span>
 			</div>
 
 			<div data-production-type='corn' class='box orange'>
-				<span class='amount'>4</span>
-				<span class='price'>4</span>
+				<span class='amount'></span>
+				<span class='price'></span>
 			</div>
 
 		</div>
@@ -275,6 +308,23 @@
 			<span data-production-type='purple' class='tradecount'></span>
 			<span data-production-type='corn' class='tradecount'></span>
 		</div>
+
+	</div>
+
+	<!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 
+	STAGE 3: BIDDING STAGE
+	In this stage, players can bid on cards that have
+	magical powers.
+	~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~!-->
+
+	<div class='biddingstage-interface'>
+
+		<div class='card'>
+			<h3>Blueberry Jam</h3>
+			<p>You can sell blueberries for 2x the price.</p>
+		</div>
+
+		<div class='bid'></div>
 
 	</div>
 

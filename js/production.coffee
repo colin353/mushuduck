@@ -8,7 +8,7 @@ class window.ProductionStage extends Stage
 		@stage_name = '.productionstage-interface'
 
 		$(@stage_name).show()
-
+		
 		$("#{@stage_name} .box").each ->
 			type = $(@).attr('data-production-type')
 			me.productions.push( new Production( $(@), me, player.productionfacilities[type] ) )
@@ -18,7 +18,7 @@ class window.ProductionStage extends Stage
 
 		# Reset the ready button and set it back to grey.
 		$('.ready').show()
-		$('.ready').css('background-color','grey')
+		$('.ready').removeClass('active')
 
 		super
 
@@ -31,7 +31,7 @@ class window.ProductionStage extends Stage
 
 	ready: ->
 		# Show the ready as GREEN instead of GRAY
-		$('.ready').css('background-color','green')
+		$('.ready').addClass('active')
 		pycon.transaction { 'action': 'ready' }, ->
 			yes
 
@@ -43,17 +43,25 @@ class Production
  			me.invest.call me,1
 
  		@needsRefresh()
- 		
+
 		yes
 
+	# This function gets run whenever a person taps to upgrade or build a factory.
+	# Both are handled similarly. 
 	invest: (amount) ->
 		cost = @productionfacility.upgradeCost.call @productionfacility
-		if cost <= player.gold 
-			player.giveGold -cost
+		if cost <= player.gold
+			player.giveGold(-cost)
 			@productionfacility.upgrade.call @productionfacility
 		@needsRefresh()
 		yes
 
 	needsRefresh: ->
-		@dom_object.children('span').html "Level " + @productionfacility.level
+		if @productionfacility.factory
+			@dom_object.css('opacity','1')
+			@dom_object.children('span').html "Level " + @productionfacility.level
+		else
+			@dom_object.children('span').html ""
+			@dom_object.css('opacity','0.5')
+
 		yes

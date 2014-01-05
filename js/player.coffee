@@ -12,10 +12,10 @@ class window.Player
 			@products[p] = new Product(p)
 			@productionfacilities[p] = new ProductionFacility(@products[p])
 
-		@products['tomato'].color = 'red'
-		@products['blueberry'].color = 'blue'
-		@products['purple'].color = 'purple'
-		@products['corn'].color = 'orange'
+		@products['tomato'].color 		= '#DD514C'
+		@products['blueberry'].color 	= '#0E90D2'
+		@products['purple'].color 		= '#8058A5'
+		@products['corn'].color 		= '#FAD232'
 
 		yes
 
@@ -28,7 +28,7 @@ class window.Player
 
 class window.Product
 	constructor: (@name) ->
-		@amount = 5
+		@amount = 0
 		@price = 0
 		@color = "green" 
 		yes
@@ -44,22 +44,29 @@ class window.Product
 class window.ProductionFacility 
 	constructor: (@product) ->
 		@capacity = 1
+		@factory = no
 		@level = 0
 		yes
 
 	run_factory: ->
-		if Math.random() < @capacity*0.02
-			@product.amount += 1
-			return yes
-		else 
-			return no
+		return no if !@factory
+
+		@product.amount += @capacity
+		yes
 
 	upgradeCost: ->
-		return 5*@capacity
+		if @factory
+			return @level * window.config.upgrade_cost
+		else 
+			return window.config.factory_cost
 
 	upgrade: ->
-		@capacity = @capacity + 1
-		@level += 1
+		if !@factory
+			@factory = yes
+			@level = 1
+		else
+			@capacity = @capacity + 1
+			@level += 1
 
 	# This function will presumably be called every time interval in order
 	# to cause production to occur.
@@ -70,4 +77,4 @@ class window.ProductionFacility
 			return no
 
 window.player = new Player()
-player.giveGold 5
+player.giveGold window.config.starting_money

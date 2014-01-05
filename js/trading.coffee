@@ -80,13 +80,14 @@ class window.TradingStage extends Stage
 		# Allow for clearing of the trading panel
 		$('.trading').on "taphold", ->
 			me.clearTrades.call me
-
+			
 		$('.countdown').show()
 
 		super
 
 	end: ->
 		$('.countdown').hide()
+		$('.tradingstage-interface').hide()
 		super
 
 	# The bump function is called when the accelerometer detects a big
@@ -168,7 +169,7 @@ class window.TradingStage extends Stage
 				# We don't want to worry about timing if the stage isn't trading.
 				return if stage.type != 'TradingStage'
 				me.yield_production.call me
-				setTimeout( do_production, 2000)
+				setTimeout( do_production, window.config.production_period*1000 )
 			
 			# Wait one second before starting so that everything lines up.
 			setTimeout count_down,1000
