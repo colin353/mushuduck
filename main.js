@@ -30,6 +30,10 @@
       return true;
     };
 
+    Stage.prototype.products_updated = function() {
+      return true;
+    };
+
     return Stage;
 
   })();
@@ -113,49 +117,6 @@
 
   })();
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-  window.Stage = (function() {
-    function Stage() {
-      this.time = 0;
-      true;
-    }
-
-    Stage.prototype.bump = function() {
-      return true;
-    };
-
-    Stage.prototype.trade_complete = function() {
-      return true;
-    };
-
-    Stage.prototype.price_updated = function() {
-      return true;
-    };
-
-    Stage.prototype.timer_begin = function() {
-      return true;
-    };
-
-    Stage.prototype.end = function() {
-      return true;
-    };
-
-    Stage.prototype.products_updated = function() {
-      return true;
-    };
-
-    return Stage;
-
-  })();
-
-=======
->>>>>>> 618a081ba6bffb762d8fba4b05b51633ab47a317
-=======
->>>>>>> 618a081ba6bffb762d8fba4b05b51633ab47a317
-=======
->>>>>>> 618a081ba6bffb762d8fba4b05b51633ab47a317
   window.jevents = [];
 
   window.jevent = function(eventName, eventAction) {
