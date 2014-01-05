@@ -4,7 +4,7 @@ class BiddingStage(stage.Stage):
 
 	def __init__(self, game):
 		super(BiddingStage, self).__init__(game)
-		
+
 	def type(self):
 		return 'Bidding'
 
@@ -15,8 +15,14 @@ class BiddingStage(stage.Stage):
 
 	def bid(self, sender, data):
 		
-		bidAmount = data['bidAmount'] if 'bidAmount' in data else return "the action 'bid' failed to include a string named 'bidAmount'"
-		bidIndex = data['bidIndex'] if 'bidIndex' in data else return "the action 'bid' failed to include a string named 'bidIndex'"
+		if 'bidAmount' in data:
+			bidAmount = data['bidAmount']
+		else return "the action 'bid' failed to include a string named 'bidAmount'"
+		
+		if 'bidIndex' in data:
+			bidIndex = data['bidIndex']
+		else return "the action 'bid' failed to include a string named 'bidIndex'"
+		
 		self.currentBidIndex = bidIndex
 
 		if bidAmount is self.topBids[bidIndex]:
