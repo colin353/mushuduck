@@ -17,6 +17,8 @@ class window.Player
 		@products['purple'].color 		= '#8058A5'
 		@products['corn'].color 		= '#FAD232'
 
+		@cards = []
+
 		yes
 
 	giveGold: (amount) ->
@@ -25,6 +27,9 @@ class window.Player
 
 	doYes: ->
 		yes
+
+	giveCard: (card_index) ->
+		@cards.push new window.card_deck[card_index]()
 
 class window.Product
 	constructor: (@name) ->

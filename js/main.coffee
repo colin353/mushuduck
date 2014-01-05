@@ -88,7 +88,14 @@ window.go = ->
 	pycon.register_for_event 'NewBid', (data) ->
 		window.stage.new_bid.call window.stage, data
 
+	# This event is triggered when a bid is won.
 	pycon.register_for_event 'YouWon', (data) ->
 		alert 'Nice work! You won!'
+		player.giveGold.call player, -data.winningBidAmount
+		player.giveCard data.winningBidIndex
+
+	pycon.register_for_event 'NewCard', (data) ->
+		if window.stage.type == 'BiddingStage'
+			stage.new_card.call stage, data.index
 
 	updateStatusBar()

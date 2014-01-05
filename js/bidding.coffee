@@ -44,6 +44,14 @@ class window.BiddingStage extends Stage
 	updateBidButton: ->
 		$('.bid').children('p').html "Bid $#{@current_bid}"
 
+	new_card: (index) ->
+		console.log 'Got a new card', @card
+		@card = new card_deck[index]()
+		$('.card').children('.title').html @card.title
+		$('.card').children('.subtitle').html @card.subtitle
+		@current_bid = @card.price
+		@updateBidButton()
+
 	new_bid: (data) ->
 		if data.winning
 			@winning()
@@ -63,7 +71,6 @@ class window.BiddingStage extends Stage
 			# Count down.
 			stage.time -= 1
 			if stage.time <= 0 
-				console.log 'Clearing interval'
 				# Set a timer to give us the next countdown
 				clearInterval me.interval
 			# Draw to the screen.
