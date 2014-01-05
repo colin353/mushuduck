@@ -70,7 +70,7 @@ class Game(object):
 		if callable(method):
 			return method(*args)
 		else:
-			return "%s does not respond to action %d" % (self.currentStage.type(), action)
+			return "%s does not respond to action %s" % (self.currentStage.type(), action)
 
 	### player management methods ###
 

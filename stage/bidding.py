@@ -1,6 +1,8 @@
 import stage
+import threading
 
 class BiddingStage(stage.Stage):
+	bidDuration = 5.0
 
 	def __init__(self, game):
 		super(BiddingStage, self).__init__(game)
@@ -47,9 +49,16 @@ class BiddingStage(stage.Stage):
 			for player in self.game.players:
 				winning = player is bidder
 				self.game.sendEventToPlayer(player, 'NewBid', {'winning':winning, 'winningBidAmount':bidAmount})
-			
+
+			# start bid timer and announce to players
+			threading.Timer(self.bidDuration, self.endBid).start()
+			self.game.sendEventToAllPlayers('TimerBegin', {'duration':self.bidDuration})
+
 			# return success
 			return {'success':True}
+
+	def endBid(self):
+		self.game.sendEventToAllPlayers('TimerEnd')
 
 class Bid(object):
 
