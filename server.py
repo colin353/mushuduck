@@ -86,6 +86,19 @@ class JActionableRequestHandler:
 			'version'		: VERSION
 		}
 
+	### production stage actions ###
+
+	def ready(self, sender):
+		staticGame.messageStage('markReady', sender)
+		return {}
+
+	### bidding stage actions ###
+	def bid(self, sender, data):
+		# note: I will handle everything inside BiddingStage
+		return staticGame.messageStage('bid', sender, data)
+
+	### trading stage actions ###
+
 	def sell(self, sender, data):
 		if 'productToSell' in data:
 			return staticGame.messageStage('sell', data['productToSell'])
@@ -99,11 +112,6 @@ class JActionableRequestHandler:
 			return {}
 		else:
 			return "the action 'bump' failed to include a dictionary named 'item'"
-
-
-	def ready(self, sender):
-		staticGame.messageStage('markReady', sender)
-		return {}
 
 # The global actionablrequesthandler: there is only one instance of this, 
 # even though there may be many instances of JHandlers for different clients.
