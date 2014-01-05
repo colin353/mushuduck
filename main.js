@@ -115,6 +115,7 @@
 
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
   window.Stage = (function() {
     function Stage() {
       this.time = 0;
@@ -149,6 +150,8 @@
 
   })();
 
+=======
+>>>>>>> 618a081ba6bffb762d8fba4b05b51633ab47a317
 =======
 >>>>>>> 618a081ba6bffb762d8fba4b05b51633ab47a317
 =======
