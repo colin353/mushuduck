@@ -46,8 +46,8 @@ window.go = ->
 	# When the program starts, the server will issue a "stageBegin" to me
 	# to indicate the current stage. Here's where I register for that.
 	pycon.register_for_event 'stageBegin', (data) ->
-		window.stage = new BiddingStage()
-		return false
+		#window.stage = new BiddingStage()
+		#return false
 		if stage? 
 			window.stage.end()
 
@@ -55,6 +55,8 @@ window.go = ->
 			window.stage = new ProductionStage()
 		else if data.stageType == 'Trading'
 			window.stage = new TradingStage()
+		else if data.stageType == 'Bidding'
+			window.stage = new BiddingStage()
 		else
 			throw 'illegal :('
 

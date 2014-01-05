@@ -223,8 +223,6 @@
       return $('.playercount').html(data.count);
     });
     pycon.register_for_event('stageBegin', function(data) {
-      window.stage = new BiddingStage();
-      return false;
       if (typeof stage !== "undefined" && stage !== null) {
         window.stage.end();
       }
@@ -232,6 +230,8 @@
         return window.stage = new ProductionStage();
       } else if (data.stageType === 'Trading') {
         return window.stage = new TradingStage();
+      } else if (data.stageType === 'Bidding') {
+        return window.stage = new BiddingStage();
       } else {
         throw 'illegal :(';
       }
@@ -718,11 +718,34 @@
     __extends(BiddingStage, _super);
 
     function BiddingStage() {
+      var me;
+      me = this;
       this.type = "BiddingStage";
       this.stage_name = ".biddingstage-interface";
       $(this.stage_name).show();
+      $('.losing').hide();
+      $('.winning').hide();
+      $('.bid').tap(function() {
+        return pycon.transaction({
+          action: 'bid',
+          data: {
+            bidIndex: 0,
+            bidAmount: 10
+          }
+        });
+      });
       true;
     }
+
+    BiddingStage.prototype.winning = function() {
+      $('.winning').show();
+      return $('.losing').hide();
+    };
+
+    BiddingStage.prototype.losing = function() {
+      $('.winning').hide();
+      return $('.losing').show();
+    };
 
     return BiddingStage;
 
