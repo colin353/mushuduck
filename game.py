@@ -1,9 +1,9 @@
-from stage import production, trading
+from stage import production, bidding, trading
 import json
 import time
 
 class Game(object):
-	stageSequence = [production.ProductionStage, trading.TradingStage]
+	stageSequence = [production.ProductionStage, bidding.BiddingStage, trading.TradingStage]
 
 	def __init__(self):
 		self._prices = None
