@@ -88,4 +88,7 @@ window.go = ->
 	pycon.register_for_event 'NewBid', (data) ->
 		window.stage.new_bid.call window.stage, data
 
+	pycon.register_for_event 'YouWon', (data) ->
+		alert 'Nice work! You won!'
+
 	updateStatusBar()

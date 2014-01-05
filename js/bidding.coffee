@@ -3,6 +3,7 @@ class window.BiddingStage extends Stage
 		me = @
 
 		@type = "BiddingStage"
+		@interval = null
 		@stage_name = ".biddingstage-interface"
 		@current_bid = 10
 		$(@stage_name).show()
@@ -28,6 +29,7 @@ class window.BiddingStage extends Stage
 		$('.losing').hide()
 		$('.winning').hide()
 		$('.countdown').hide()
+		clearInterval @interval
 
 	winning: ->
 		$('.winning').show()
@@ -51,17 +53,20 @@ class window.BiddingStage extends Stage
 			@updateBidButton()
 
 	timer_begin: (duration) ->
+		me = @
 		console.log 'Starting to count down: ',duration
+		clearInterval @interval
 		@time = duration
 		count_down = ->
 			# We don't want to worry about timing if the stage isn't trading.
 			return if stage.type != "BiddingStage"
 			# Count down.
 			stage.time -= 1
-			if stage.time > 0 
+			if stage.time <= 0 
+				console.log 'Clearing interval'
 				# Set a timer to give us the next countdown
-				setTimeout count_down, 1000 
+				clearInterval me.interval
 			# Draw to the screen.
 			updateCountdown()
-		setTimeout count_down,1000
+		@interval = setInterval count_down,1000
 		updateCountdown()
