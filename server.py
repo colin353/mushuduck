@@ -88,21 +88,21 @@ class JActionableRequestHandler:
 
 	def sell(self, sender, data):
 		if 'productToSell' in data:
-			return staticGame.sell(data['productToSell'])
+			return staticGame.messageStage('sell', data['productToSell'])
 		else:
 			return "the action 'sell' failed to include a string named 'productToSell'"
 			
 	def bump(self, sender, data):
 
 		if 'items' in data:
-			staticGame.bump(sender, data['items'])
+			staticGame.messageStage('bump', sender, data['items'])
 			return {}
 		else:
 			return "the action 'bump' failed to include a dictionary named 'item'"
 
 
 	def ready(self, sender):
-		staticGame.markReady(sender)
+		staticGame.messageStage('markReady', sender)
 		return {}
 
 # The global actionablrequesthandler: there is only one instance of this, 
