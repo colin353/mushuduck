@@ -2,7 +2,7 @@ import stage
 import threading
 import time
 
-class TradingStage(Stage):
+class TradingStage(stage.Stage):
 	duration = 60.0
 	def __init__(self, game):
 		super(TradingStage, self).__init__(game)

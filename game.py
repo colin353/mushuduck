@@ -28,14 +28,14 @@ class Game(object):
 	def prices(self, value):
 		print "-- prices being set!"
 
-		if self.currentStage.__class__ == stage.trading.TradingStage:
+		if self.currentStage.__class__ == trading.TradingStage:
 			oldRoundedPrices = self.roundedPrices
 
 		# update price ivar
 		self._prices = value
 
 		# if in trading stage, notify players of price update
-		if self.currentStage.__class__ == stage.trading.TradingStage:
+		if self.currentStage.__class__ == trading.TradingStage:
 			self.sendEventToAllPlayers('PriceUpdated', {'prices':self.roundedPrices, 'oldPrices':oldRoundedPrices})
 
 	@prices.deleter
@@ -82,7 +82,7 @@ class Game(object):
 	def sell(self, productToSell):
 
 		# deny if not in trading stage
-		if self.currentStage.__class__ is not stage.trading.TradingStage:
+		if self.currentStage.__class__ is not trading.TradingStage:
 			return "Illegal sale: not in trading stage"
 
 		# the player will receive money corresponding to the old price, before market value update
@@ -98,7 +98,7 @@ class Game(object):
 	def updatePrices(self):
 		print "...updating prices"
 		# needs to be in trading stage
-		if self.currentStage.__class__ is not stage.trading.TradingStage:
+		if self.currentStage.__class__ is not trading.TradingStage:
 			return
 
 		newPrices = {}
