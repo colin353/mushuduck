@@ -8,17 +8,20 @@ class window.BiddingStage extends Stage
 		$(@stage_name).show()
 
 		$('.losing').hide()
-		$('.winning').hide()
+		$('.winning').hide() 
 
 		$('.countdown').show()
 
 		$('.bid').show()
 
 		$('.bid').tap ->
-			if player.gold >= @current_bid
-				pycon.transaction {action: 'bid', data: { bidIndex:0, bidAmount:@current_bid }}, -> 
+			if player.gold >= me.current_bid
+				pycon.transaction {action: 'bid', data: { bidIndex:0, bidAmount:me.get_current_bid.call(me) }}, -> 
 					yes
 		yes
+
+	get_current_bid: ->
+		return @current_bid
 
 	end: ->
 		$(@stage_name).hide()
@@ -37,20 +40,22 @@ class window.BiddingStage extends Stage
 		$('.bid').show()
 
 	updateBidButton: ->
-		$('.bid').html "Bid $#{@current_bid}"
+		$('.bid').children('p').html "Bid $#{@current_bid}"
 
 	new_bid: (data) ->
 		if data.winning
 			@winning()
 		else
 			@losing()
-			@current_bid += window.config.minimum_bid
-			
+			@current_bid = data.winningBidAmount + window.config.minimum_bid
+			@updateBidButton()
 
-	timer_begin: (data) ->
+	timer_begin: (duration) ->
+		console.log 'Starting to count down: ',duration
+		@time = duration
 		count_down = ->
 			# We don't want to worry about timing if the stage isn't trading.
-			return if stage.type != 'BiddingStage'
+			return if stage.type != "BiddingStage"
 			# Count down.
 			stage.time -= 1
 			if stage.time > 0 
