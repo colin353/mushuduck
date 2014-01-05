@@ -117,6 +117,85 @@
 
   })();
 
+  window.BiddingStage = (function(_super) {
+    __extends(BiddingStage, _super);
+
+    function BiddingStage() {
+      var me;
+      me = this;
+      this.type = "BiddingStage";
+      this.stage_name = ".biddingstage-interface";
+      $(this.stage_name).show();
+      $('.losing').hide();
+      $('.winning').hide();
+      $('.bid').tap(function() {
+        return pycon.transaction({
+          action: 'bid',
+          data: {
+            bidIndex: 0,
+            bidAmount: 10
+          }
+        }, function() {
+          return true;
+        });
+      });
+      true;
+    }
+
+    BiddingStage.prototype.winning = function() {
+      $('.winning').show();
+      return $('.losing').hide();
+    };
+
+    BiddingStage.prototype.losing = function() {
+      $('.winning').hide();
+      return $('.losing').show();
+    };
+
+    BiddingStage.prototype.newBidAnnouncement = function(data) {
+      return true;
+    };
+
+    return BiddingStage;
+
+  })(Stage);
+
+  window.Card = (function() {
+    function Card() {
+      true;
+    }
+
+    Card.prototype.activate = function() {
+      return true;
+    };
+
+    return Card;
+
+  })();
+
+  window.ConversionCard = (function(_super) {
+    __extends(ConversionCard, _super);
+
+    function ConversionCard(item_from, from_number, item_to, to_number) {
+      this.item_from = item_from;
+      this.from_number = from_number;
+      this.item_to = item_to;
+      this.to_number = to_number;
+      ConversionCard.__super__.constructor.apply(this, arguments);
+    }
+
+    ConversionCard.prototype.activate = function() {
+      if (player.products[this.item_from].amount > this.from_number) {
+        player.products[this.item_from].amount -= this.from_number;
+        player.products[this.item_to].amount += this.to_number;
+        return window.stage.products_updated.call(stage);
+      }
+    };
+
+    return ConversionCard;
+
+  })(window.Card);
+
   window.jevents = [];
 
   window.jevent = function(eventName, eventAction) {
@@ -721,84 +800,5 @@
     return TradingProduct;
 
   })();
-
-  window.BiddingStage = (function(_super) {
-    __extends(BiddingStage, _super);
-
-    function BiddingStage() {
-      var me;
-      me = this;
-      this.type = "BiddingStage";
-      this.stage_name = ".biddingstage-interface";
-      $(this.stage_name).show();
-      $('.losing').hide();
-      $('.winning').hide();
-      $('.bid').tap(function() {
-        return pycon.transaction({
-          action: 'bid',
-          data: {
-            bidIndex: 0,
-            bidAmount: 10
-          }
-        }, function() {
-          return true;
-        });
-      });
-      true;
-    }
-
-    BiddingStage.prototype.winning = function() {
-      $('.winning').show();
-      return $('.losing').hide();
-    };
-
-    BiddingStage.prototype.losing = function() {
-      $('.winning').hide();
-      return $('.losing').show();
-    };
-
-    BiddingStage.prototype.newBidAnnouncement = function(data) {
-      return true;
-    };
-
-    return BiddingStage;
-
-  })(Stage);
-
-  window.Card = (function() {
-    function Card() {
-      true;
-    }
-
-    Card.prototype.activate = function() {
-      return true;
-    };
-
-    return Card;
-
-  })();
-
-  window.ConversionCard = (function(_super) {
-    __extends(ConversionCard, _super);
-
-    function ConversionCard(item_from, from_number, item_to, to_number) {
-      this.item_from = item_from;
-      this.from_number = from_number;
-      this.item_to = item_to;
-      this.to_number = to_number;
-      ConversionCard.__super__.constructor.apply(this, arguments);
-    }
-
-    ConversionCard.prototype.activate = function() {
-      if (player.products[this.item_from].amount > this.from_number) {
-        player.products[this.item_from].amount -= this.from_number;
-        player.products[this.item_to].amount += this.to_number;
-        return window.stage.products_updated.call(stage);
-      }
-    };
-
-    return ConversionCard;
-
-  })(window.Card);
 
 }).call(this);
