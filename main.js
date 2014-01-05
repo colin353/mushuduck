@@ -732,6 +732,8 @@
             bidIndex: 0,
             bidAmount: 10
           }
+        }, function() {
+          return true;
         });
       });
       true;
@@ -746,6 +748,8 @@
       $('.winning').hide();
       return $('.losing').show();
     };
+
+    BiddingStage.prototype.newBidAnnouncement = function(data) {};
 
     return BiddingStage;
 
