@@ -56,8 +56,8 @@ class JHandler(tornado.websocket.WebSocketHandler):
 		self.write_message( json.dumps ( {'data': response, 'transaction_id': message['transaction_id'] } ) )
 
 	def on_close(self):
-		staticGame.removePlayerWithHandler(self)
 		print "==> Player%s left" % staticGame.playerWithHandler(self).id
+		staticGame.removePlayerWithHandler(self)
 
 # The JActionableRequestHandler class basically completes actions that the browser
 # asks of it. It should be spoken to through the "invoke" function, which basically

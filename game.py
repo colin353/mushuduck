@@ -3,16 +3,18 @@ import json
 import time
 
 class Game(object):
-	stageSequence = [production.ProductionStage, bidding.BiddingStage, trading.TradingStage]
+	stageSequence = [production.ProductionStage, trading.TradingStage]
+	products = ['tomato', 'blueberry', 'purple', 'corn']
 
 	def __init__(self):
-		self._prices = None
+		self._prices = dict((product, 5.0) for product in self.products)
 		self.players = []
 		self.turnNumber = 1
 		self.currentStageNumber = 0
 		self.currentStage = None
 		self.nextStage()
-		self.effectiveNumberSoldLastRound = {'tomato':0.2, 'blueberry':0.2, 'purple':0.2, 'corn':0.2}
+		self.effectiveNumberOfSales = dict((p, 10) for p in self.products)
+		self.cumulativeTradingTimeUntilLastRound = 0.0
 
 	@property
 	def roundedPrices(self):

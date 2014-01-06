@@ -2,7 +2,7 @@ import stage
 import threading
 
 class BiddingStage(stage.Stage):
-	bidDuration = 10.0
+	bidDuration = 5.0
 
 	def __init__(self, game):
 		super(BiddingStage, self).__init__(game)
