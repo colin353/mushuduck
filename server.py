@@ -29,7 +29,7 @@ class JHandler(tornado.websocket.WebSocketHandler):
 
 	def on_message(self, msg):
 		message = json.loads(msg)
-		print "==> Message received with data:\n%s" % helpers.treeDict(message)
+		#print "==> Message received with data:\n%s" % helpers.treeDict(message)
 
 		# The default response: it should be overwritten, or else some
 		# kind of internal problem occured.

@@ -3,12 +3,15 @@ import threading
 import random
 
 class BiddingStage(stage.Stage):
-	remainingAuctions = range(5)
+	remainingAuctions = range(3)
 	bidDuration = 5.0
 
 	def __init__(self, game):
 		super(BiddingStage, self).__init__(game)
-		self.auctions = random.sample(BiddingStage.remainingAuctions, len(self.game.players))
+		remainingAuctions = BiddingStage.remainingAuctions
+		# get N random auctions, where N is at most the number of players
+		# when there is no players left the stage will end immediatedly
+		self.auctions = random.sample(remainingAuctions, min(len(self.game.players), len(remainingAuctions)))
 		self.currentAuction = iter(self.auctions)
 		# prepare auctions
 
@@ -78,6 +81,7 @@ class BiddingStage(stage.Stage):
 
 			# take auction out of the game
 			BiddingStage.remainingAuctions.remove(winningBid.index)
+			print BiddingStage.remainingAuctions
 		else:
 			# if no one bidded, nothing happens
 			pass
