@@ -34,7 +34,16 @@
 		font-size: 50pt;
 	}
 
-	
+	.overlay {
+		background-color: black;
+		opacity: 0.8;
+		position: absolute;
+		top: 0; left: 0;
+		width: 100%;
+		height: 100%;
+		z-index: 2;
+		display:none;
+	}
 
 	/* Everybody */
 
@@ -57,10 +66,13 @@
 	}
 
 	.message {
-		position: relative;
-		top: 20px;
-		height: 70px;
+		position: absolute;
+		text-align:center;
+		z-index: 10;
+		top: 10%;
+		left: 10%;
 		width: 80%;
+		height: 80%;
 		display:none;
 		margin-left: auto;
 		margin-right: auto;
@@ -212,6 +224,17 @@
 		padding: 1%;
 	}
 
+	.tradingstage-interface .card {
+		display: inline-block;
+		float: right;
+		text-align: center;
+		border: 2px solid white;
+		padding: .5%;
+		margin-left: .5%;
+		margin-top: .5%;
+		margin-right: .5%;
+	}
+
 	p {
 		font-size: 30pt;
 	}
@@ -261,10 +284,13 @@
 	<span class='countdown' style="display:none"></span>
 </div>
 
+<div class='overlay'></div>
+
 <div class='interface'>	
 
 	<div class='message'>
-		<span></span>
+		<h3 class='title'></h3>
+		<p class='text'></p>
 	</div>
 
 	<!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 
@@ -303,6 +329,7 @@
 
 
 		<div class='powerups'>
+			<div class='deck'></div>
 			<span>DECK</span>
 		</div>
 

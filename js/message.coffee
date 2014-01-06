@@ -6,16 +6,20 @@ class window.Message
 		@dom_selector = '.message'
 		@timeout = 5
 
-	display: (text) ->
+	display: (title,text) ->
 		me = @
 
-		$(@dom_selector).children('span').html text
-		$(@dom_selector).fadeIn 'slow'
-		setTimeout( ->
-			me.hide.call(me)
-		,@timeout*1000)
+		$('.overlay').show()
+		$(@dom_selector).children('.title').html title
+		$(@dom_selector).children('.text').html text
+		$(@dom_selector).show()
+		
+
+		$(@dom_selector).tap ->
+			me.hide.call me
 
 	hide: ->
-		$(@dom_selector).fadeOut 'slow'
+		$(@dom_selector).hide()
+		$('.overlay').hide()
 
 window.message = new Message()

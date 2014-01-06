@@ -69,6 +69,18 @@ class window.TradingStage extends Stage
 					$(@).sortable 'cancel'
 		}
 
+		# Set up the power cards. First, clear out the deck:
+		deck = $('.powerups .deck')
+		deck.html = ""
+		# Now, for each card the player owns,
+		for card in player.cards
+			console.log 'Adding card: ', card
+			# Add the card to the deck, using the render function, and register the tap
+			# event to the "action" trigger on the card itself.
+			$("<div class='card'>#{card.render.call card}</div>").appendTo(deck).tap ->
+				card.activate.call card
+
+
 		# Set up the trading window to show all of the appropriate things:
 		$('.tradingstage-interface .trading span.tradecount').each ->
 			$(@).html "<div class='square'></div> x <span class='count'>0</span>"

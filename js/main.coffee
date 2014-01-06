@@ -90,7 +90,7 @@ window.go = ->
 
 	# This event is triggered when a bid is won.
 	pycon.register_for_event 'YouWon', (data) ->
-		alert 'Nice work! You won!'
+		message.display 'Nice work!', 'You won the auction!'
 		player.giveGold.call player, -data.winningBidAmount
 		player.giveCard data.winningBidIndex
 
