@@ -3,7 +3,7 @@ import json
 import time
 
 class Game(object):
-	stageSequence = [production.ProductionStage, trading.TradingStage]
+	stageSequence = [production.ProductionStage, bidding.BiddingStage, trading.TradingStage]
 	products = ['tomato', 'blueberry', 'purple', 'corn']
 
 	def __init__(self):

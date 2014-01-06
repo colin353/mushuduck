@@ -6,14 +6,13 @@ class BiddingStage(stage.Stage):
 
 	def __init__(self, game):
 		super(BiddingStage, self).__init__(game)
-		self.bids = []
 
 	def type(self):
 		return 'Bidding'
 
 	def begin(self):
 		# todo: change to random
-		self.auctions = [1,0]
+		self.auctions = set(range(5))
 		self.currentAuction = iter(self.auctions)
 
 	def afterBegin(self):
@@ -22,6 +21,7 @@ class BiddingStage(stage.Stage):
 	def nextAuction(self):
 		try:
 			self.game.sendEventToAllPlayers('NewCard', {'index':self.currentAuction.next()})
+			self.bids = []
 			self.startBidTimer()
 		except StopIteration:
 			print "==> No more auctions"
@@ -80,6 +80,7 @@ class BiddingStage(stage.Stage):
 			pass
 
 		# go to next auction
+		self.bids = []
 		self.nextAuction()
 
 	def startBidTimer(self):
