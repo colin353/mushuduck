@@ -4,7 +4,7 @@ import time
 import helpers
 
 class Game(object):
-	#stageSequence = [production.ProductionStage, battle.BattleStage]
+	stageSequence = [bidding.BiddingStage]
 	stageSequence = [production.ProductionStage, bidding.BiddingStage, trading.TradingStage, battle.BattleStage]
 	products = ['tomato', 'blueberry', 'purple', 'corn']
 

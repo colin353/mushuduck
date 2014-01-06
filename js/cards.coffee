@@ -131,33 +131,36 @@ class window.BlueberryIceCream extends BlueberryJamCard
 
 class window.P_BT_ConversionCard extends P_CB_ConversionCard
 	constructor: ->
+		super
 		@title 		= "Eggplant"
 		@subtitle 	= "Convert three purple to a tomato and a blueberry"
 		@price 		= 20
 
 		@items_from 	= {purple:3}
 		@items_to 		= {blueberry:1, tomato:1}
-		super
+		
 
 class window.P_T_ConversionCard extends P_CB_ConversionCard
 	constructor: ->
+		super
 		@title 		= "Pomato"
 		@subtitle 	= "Convert two purple to a tomato"
 		@price 		= 20
 
 		@items_from 	= {purple:2}
 		@items_to 		= {tomato:1}
-		super
+		
 
 class window.P_B_ConversionCard extends P_CB_ConversionCard
 	constructor: ->
+		super
 		@title 		= "Purpleberry"
 		@subtitle 	= "Convert two purple to a blueberry"
 		@price 		= 20
 
 		@items_from 	= {purple:2}
 		@items_to 		= {blueberry:1}
-		super
+		
 
 window.card_deck = []
 

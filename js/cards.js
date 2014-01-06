@@ -224,6 +224,7 @@ window.P_BT_ConversionCard = (function(_super) {
   __extends(P_BT_ConversionCard, _super);
 
   function P_BT_ConversionCard() {
+    P_BT_ConversionCard.__super__.constructor.apply(this, arguments);
     this.title = "Eggplant";
     this.subtitle = "Convert three purple to a tomato and a blueberry";
     this.price = 20;
@@ -234,7 +235,6 @@ window.P_BT_ConversionCard = (function(_super) {
       blueberry: 1,
       tomato: 1
     };
-    P_BT_ConversionCard.__super__.constructor.apply(this, arguments);
   }
 
   return P_BT_ConversionCard;
@@ -245,6 +245,7 @@ window.P_T_ConversionCard = (function(_super) {
   __extends(P_T_ConversionCard, _super);
 
   function P_T_ConversionCard() {
+    P_T_ConversionCard.__super__.constructor.apply(this, arguments);
     this.title = "Pomato";
     this.subtitle = "Convert two purple to a tomato";
     this.price = 20;
@@ -254,7 +255,6 @@ window.P_T_ConversionCard = (function(_super) {
     this.items_to = {
       tomato: 1
     };
-    P_T_ConversionCard.__super__.constructor.apply(this, arguments);
   }
 
   return P_T_ConversionCard;
@@ -265,6 +265,7 @@ window.P_B_ConversionCard = (function(_super) {
   __extends(P_B_ConversionCard, _super);
 
   function P_B_ConversionCard() {
+    P_B_ConversionCard.__super__.constructor.apply(this, arguments);
     this.title = "Purpleberry";
     this.subtitle = "Convert two purple to a blueberry";
     this.price = 20;
@@ -274,7 +275,6 @@ window.P_B_ConversionCard = (function(_super) {
     this.items_to = {
       blueberry: 1
     };
-    P_B_ConversionCard.__super__.constructor.apply(this, arguments);
   }
 
   return P_B_ConversionCard;
