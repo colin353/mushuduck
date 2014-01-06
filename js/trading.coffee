@@ -106,6 +106,7 @@ class window.TradingStage extends Stage
 		$('.tradingstage-interface').hide()
 		$('.trading').unbind()
 		$('.card').unbind()
+		$('.tradingstage-interface .inventory').sortable('destroy')
 		@clearTrades()
 		super
 

@@ -1069,6 +1069,7 @@
       $('.tradingstage-interface').hide();
       $('.trading').unbind();
       $('.card').unbind();
+      $('.tradingstage-interface .inventory').sortable('destroy');
       this.clearTrades();
       return TradingStage.__super__.end.apply(this, arguments);
     };

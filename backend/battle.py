@@ -24,8 +24,9 @@ class BattleStage(stage.Stage):
 
 		# if all players have updated their inventory counts, tell clients to display battle stats
 		if all(self.playerInventoryCounts.values()):
-			winner = max(self.playerInventoryCounts.items(), key=lambda p:p[1])[0]
-			self.game.sendEventToAllPlayers('DisplayMessage', {'title':"Battle!", 'text':"player%s wins the tomato war!" % winner.id})
+			winner = max(self.playerInventoryCounts.items(), key=lambda p:p[1]['tomato'])[0]
+			for player in self.game.players:
+				self.game.sendEventToPlayer(player, 'DisplayMessage', {'title':"Battle!", 'text':"You %s the tomato war!" % ("won" if player is winner else "lost")})
 
 	def endStage(self):
 		self.game.nextStage()
