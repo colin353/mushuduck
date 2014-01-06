@@ -20,6 +20,18 @@ window.Player = (function() {
     true;
   }
 
+  Player.prototype.getInventoryCount = function() {
+    var inventory, name, p, _ref;
+
+    inventory = {};
+    _ref = this.products;
+    for (name in _ref) {
+      p = _ref[name];
+      inventory[name] = p.amount;
+    }
+    return inventory;
+  };
+
   Player.prototype.giveGold = function(amount) {
     this.gold += amount;
     return updateStatusBar();

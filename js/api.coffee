@@ -66,14 +66,15 @@ class @PyAPI
 
 	# This function executes a transaction by transmitting a message, then waiting for 
 	# a response, then executing the responder function on the response.
-	transaction: (message, responder) ->
+	transaction: (message, responder=null) ->
 		# First, generate a transaction ID that we can use later when 
 		# we receive a response from the system. 
 		transaction_id = @generate_transaction_id(message)
  		# Now register the responder as the next
 		# response handler, using the transaction ID 
-		@response_handlers[ transaction_id ] = (response) ->
-			responder.call( @, response )
+		if responder?
+			@response_handlers[ transaction_id ] = (response) ->
+				responder.call( @, response )
 
 		# Send out the actual data, and wait for the response! (actually this is 
 	 	# asynchronous so we don't wait)

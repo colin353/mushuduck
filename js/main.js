@@ -44,6 +44,8 @@ window.go = function() {
       return window.stage = new TradingStage();
     } else if (data.stageType === 'Bidding') {
       return window.stage = new BiddingStage();
+    } else if (data.stageType === 'Battle') {
+      return window.stage = new BattleStage();
     } else {
       throw 'illegal :(';
     }
@@ -54,6 +56,15 @@ window.go = function() {
     } else {
       return console.log('Received illegal trade...?');
     }
+  });
+  pycon.register_for_event('DisplayMessage', function(data) {
+    return message.display.call(message, data.title, data.text);
+  });
+  pycon.register_for_event('InventoryCountRequested', function(data) {
+    return pycon.transaction({
+      action: data.callback,
+      data: player.getInventoryCount.call(player)
+    });
   });
   pycon.register_for_event('PriceUpdated', function(data) {
     var name, price, _ref;

@@ -1,11 +1,11 @@
-import production, bidding, trading
+import production, bidding, trading, battle
 import json
 import time
 import helpers
 
 class Game(object):
-	#stageSequence = [production.ProductionStage, trading.TradingStage]
-	stageSequence = [production.ProductionStage, bidding.BiddingStage, trading.TradingStage]
+	#stageSequence = [production.ProductionStage, battle.BattleStage]
+	stageSequence = [production.ProductionStage, bidding.BiddingStage, trading.TradingStage, battle.BattleStage]
 	products = ['tomato', 'blueberry', 'purple', 'corn']
 
 	def __init__(self):

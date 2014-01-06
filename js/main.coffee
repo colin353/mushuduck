@@ -57,6 +57,8 @@ window.go = ->
 			window.stage = new TradingStage()
 		else if data.stageType == 'Bidding'
 			window.stage = new BiddingStage()
+		else if data.stageType == 'Battle'
+			window.stage = new BattleStage()
 		else
 			throw 'illegal :('
 
@@ -68,6 +70,13 @@ window.go = ->
 			window.stage.trade_complete.call stage,data
 		else 
 			console.log 'Received illegal trade...?'
+
+	# Is it possible
+	pycon.register_for_event 'DisplayMessage', (data) ->
+		message.display.call message,data.title, data.text
+
+	pycon.register_for_event 'InventoryCountRequested', (data) ->
+		pycon.transaction {action: data.callback, data: player.getInventoryCount.call player }
 
 	# When the prices are updated by the server (for any spontaneous reason)
 	# then this function is called. We update the prices immediately in the

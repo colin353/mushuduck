@@ -21,6 +21,12 @@ class window.Player
 
 		yes
 
+	getInventoryCount: ->
+		inventory = {}
+		for name,p of @products
+			inventory[name] = p.amount
+		return inventory
+
 	giveGold: (amount) ->
 		@gold += amount
 		updateStatusBar()

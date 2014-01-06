@@ -86,7 +86,6 @@ window.TradingStage = (function(_super) {
     $('.trading').unbind();
     $('.card').unbind();
     this.clearTrades();
-    player.products['tomato'].amount = 0;
     return TradingStage.__super__.end.apply(this, arguments);
   };
 

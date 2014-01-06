@@ -107,9 +107,6 @@ class window.TradingStage extends Stage
 		$('.trading').unbind()
 		$('.card').unbind()
 		@clearTrades()
-
-		# Tomatoes will rot now
-		player.products['tomato'].amount = 0
 		super
 
 	# The bump function is called when the accelerometer detects a big
