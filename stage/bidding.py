@@ -3,7 +3,7 @@ import threading
 import random
 
 class BiddingStage(stage.Stage):
-	remainingAuctions = range(3)
+	remainingAuctions = range(9)
 	bidDuration = 5.0
 
 	def __init__(self, game):

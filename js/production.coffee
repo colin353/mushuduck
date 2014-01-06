@@ -26,6 +26,8 @@ class window.ProductionStage extends Stage
 		$(@stage_name).hide()
 		$('.ready').unbind()
 		$('.ready').hide()
+		for p in @productions
+			p.unbind.call p
 
 		super
 
@@ -46,6 +48,9 @@ class Production
 
 		yes
 
+	unbind: ->
+		@dom_object.unbind()
+
 	# This function gets run whenever a person taps to upgrade or build a factory.
 	# Both are handled similarly. 
 	invest: (amount) ->
@@ -59,9 +64,11 @@ class Production
 	needsRefresh: ->
 		if @productionfacility.factory
 			@dom_object.css('opacity','1')
-			@dom_object.children('span').html "Level " + @productionfacility.level
+			@dom_object.html ""
+			@dom_object.append $("<span>Level #{@productionfacility.level}</span>")
+			@dom_object.append $("<p>$#{@productionfacility.upgradeCost.call @productionfacility} to upgrade</p>")
 		else
-			@dom_object.children('span').html ""
+			@dom_object.append "<span class='buy_factory_message'>$#{@productionfacility.upgradeCost.call @productionfacility} to <br /> start</span>"
 			@dom_object.css('opacity','0.5')
 
 		yes

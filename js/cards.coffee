@@ -6,34 +6,52 @@ class window.Card
 	activate: ->
 		yes
 
+	get_pay_bonus: ->
+		return 1.0
+
 	render: ->
 		"""
 			Invalid card!
 		"""
 
-class window.ConversionCard extends Card
+class window.P_CB_ConversionCard extends Card
 	constructor: ->
-		@title 		= "1-1 Conversion"
-		@subtitle 	= "Convert a blueberry to a corn"
+		@title 		= "Purple Pie"
+		@subtitle 	= "Convert three purple to a corn and a blueberry"
 		@price 		= 20
 
-		@item_to 	= 'corn'
-		@item_from 	= 'blueberry'
-
-		super
+		@items_from 	= {purple:3}
+		@items_to 		= {corn:1, blueberry:1}
 
 	render: ->
-		# The image for a conversion card is: block -> block.
-		"""
-			<span style='color:#0E90D2'>&#9632;</span> &rarr; <span style='color:#FAD232'>&#9632;</span>
-		"""
+
+		picture = "" 
+		for name,number of @items_from
+			for i in [1..number] 
+				picture += "<span style='color:#{player.products[name].color}'>&#9632;</span>"
+		picture += "&rarr;"
+
+		for name,number of @items_to
+			for i in [1..number]
+				picture += "<span style='color:#{player.products[name].color}'>&#9632;</span>"
+		return picture
 
 	activate: ->
-		if player.products[@item_from].amount >= 1
-			player.products[@item_from].amount -= 1
-			player.products[@item_to].amount += 1
-		
+		has_enough = true
+		for name,number of @items_from
+			has_enough = false if player.products[name].amount < number
+
+		if has_enough
+			for name,number of @items_from
+				player.products[name].amount -= number
+
+			for name,number of @items_to
+				player.products[name].amount += number
+
 			window.stage.products_updated.call stage
+			return yes
+		else
+			return false
 
 class window.BlueberryPieCard extends Card
 	constructor: ->
@@ -61,7 +79,7 @@ class window.BlueberryPieCard extends Card
 		if has_enough
 			for name in @items_from
 				player.products[name].amount -= 1
-			player.giveGold 25
+			player.giveGold @gold_reward
 
 		window.stage.products_updated.call stage
 
@@ -81,18 +99,65 @@ class window.CornocopiaCard extends BlueberryPieCard
 		@price			= 100
 
 		@items_from		= ['corn', 'tomato', 'blueberry', 'purple']
-		@gold_reward 	= 100
+		@gold_reward 	= 200
 
 class window.BlueberryJamCard extends Card
 	constructor: ->
-		@title 		= "Blueberry Jam"
-		@subtitle 	= "You can sell blueberries for 25% more gold"
-		@price 		= 50
+		@title 			= "Blueberry Jam"
+		@subtitle 		= "You can sell blueberries for 25% more gold"
+		@price 			= 50
+		@price_modifier = {blueberry: 1.25}
+
+	get_pay_bonus: (type) ->
+		if @price_modifier[type]?
+			return @price_modifier[type]
 
 	render: ->
 		"""
 			<p>Blueberry Jam</p>
 		"""		
+
+class window.BlueberryIceCream extends BlueberryJamCard
+	constructor: ->
+		@title 			= "Blueberry Icecream"
+		@subtitle 		= "You can sell blueberries for 50% more gold"
+		@price 			= 100
+		@price_modifier = {blueberry: 1.5}
+
+	render: ->
+		"""
+			<p>Blueberry Icecream</p>
+		"""		
+
+class window.P_BT_ConversionCard extends P_CB_ConversionCard
+	constructor: ->
+		@title 		= "Eggplant"
+		@subtitle 	= "Convert three purple to a tomato and a blueberry"
+		@price 		= 20
+
+		@items_from 	= {purple:3}
+		@items_to 		= {blueberry:1, tomato:1}
+		super
+
+class window.P_T_ConversionCard extends P_CB_ConversionCard
+	constructor: ->
+		@title 		= "Pomato"
+		@subtitle 	= "Convert two purple to a tomato"
+		@price 		= 20
+
+		@items_from 	= {purple:2}
+		@items_to 		= {tomato:1}
+		super
+
+class window.P_B_ConversionCard extends P_CB_ConversionCard
+	constructor: ->
+		@title 		= "Purpleberry"
+		@subtitle 	= "Convert two purple to a blueberry"
+		@price 		= 20
+
+		@items_from 	= {purple:2}
+		@items_to 		= {blueberry:1}
+		super
 
 window.card_deck = []
 
@@ -100,4 +165,8 @@ card_deck.push window.BlueberryPieCard
 card_deck.push window.BlueberryJamCard
 card_deck.push window.CornocopiaCard
 card_deck.push window.PizzaCard
-card_deck.push window.ConversionCard
+card_deck.push window.P_CB_ConversionCard
+card_deck.push window.P_B_ConversionCard
+card_deck.push window.P_T_ConversionCard
+card_deck.push window.P_BT_ConversionCard
+card_deck.push window.BlueberryIceCream

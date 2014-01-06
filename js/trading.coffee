@@ -102,6 +102,9 @@ class window.TradingStage extends Stage
 		$('.tradingstage-interface').hide()
 		$('.trading').unbind()
 		@clearTrades()
+
+		# Tomatoes will rot now
+		player.products['tomato'].amount = 0
 		super
 
 	# The bump function is called when the accelerometer detects a big
@@ -220,7 +223,9 @@ class window.TradingProduct
 			@product.amount -= 1
 			me = @
 			pycon.transaction {action: 'sell', data: { productToSell: @product.name } }, (data) ->
-				player.giveGold data.pay
+				card_bonus = 1
+				card_bonus *= card.get_pay_bonus.call(card,me.product.name) for card in player.cards;
+				player.giveGold Math.round( data.pay * card_bonus ,0)
 				me.needsRefresh.call me
 			return yes
 		else
