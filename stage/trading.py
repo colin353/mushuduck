@@ -34,8 +34,13 @@ class TradingStage(stage.Stage):
 
 	### action handling
 
-	def sell(self, productToSell):
-	
+	def sell(self, sender, data):
+
+		if 'productToSell' in data:
+			productToSell = data['productToSell']
+		else:
+			return "the action 'sell' failed to include a string named 'productToSell'"
+		
 		# the player will receive gold corresponding to the old price, before market value update
 		pay = self.game.roundedPrices[productToSell]
 
@@ -48,6 +53,33 @@ class TradingStage(stage.Stage):
 
 		# return pay (old price) to player
 		return {'pay': pay}
+
+	def bump(self, sender, data):
+		
+		if 'items' in data:
+			items = data['items']
+		else:
+			return "the action 'bump' failed to include a dictionary named 'item'"
+
+		# create new bump
+		newBump = Bump(sender, items)
+
+		# if there is already a recorded bump with similar time, then zomg trade
+		if self.lastRecordedBump and newBump.closeTo(self.lastRecordedBump):
+
+			# facilitate trading
+			# send items to respective players
+			self.game.sendEventToPlayer(newBump.player, 'TradeCompleted', {'items':self.lastRecordedBump.items})
+			self.game.sendEventToPlayer(self.lastRecordedBump.player, 'TradeCompleted', {'items':newBump.items})
+
+		# otherwise, record as first bump
+		else:
+			print "First bump by %s." % newBump.player
+			self.lastRecordedBump = newBump
+
+		return {}
+
+	### inner working function
 
 	def updatePrices(self, productToSell=None):
 
@@ -71,34 +103,11 @@ class TradingStage(stage.Stage):
 			self.game.effectiveNumberOfSales[product] = newEffN
 			s = math.sqrt(1/(4*(T**2)) + 0.1*(newEffN/T)**2)
 			newPrices[product] = A/s
-			print "product=%s: dt=%f, newN=%f, s=%f" % (product, dt, newEffN, s)
+			#print "product=%s: dt=%f, newN=%f, s=%f" % (product, dt, newEffN, s)
 		self.game.prices = newPrices
 
 		# record time for future calculations
 		self.lastPriceUpdateTime = time.time()
-
-	def bump(self, playerHandler, items):
-
-		# create new bump
-		newBump = Bump(self.game.playerWithHandler(playerHandler), items)
-
-		# if there is already a recorded bump with similar time, then zomg trade
-		if self.lastRecordedBump and newBump.closeTo(self.lastRecordedBump):
-
-			# facilitate trading
-			self.facilitateTradeWithBumps(newBump, self.lastRecordedBump)
-
-		# otherwise, record as first bump
-		else:
-			print "First bump by %s." % newBump.player
-			self.lastRecordedBump = newBump
-
-	def facilitateTradeWithBumps(self, bump1, bump2):
-		print "ZOMG trading!"
-
-		# send items to respective players
-		self.game.sendEventToPlayer(bump1.player, 'TradeCompleted', {'items':bump2.items})
-		self.game.sendEventToPlayer(bump2.player, 'TradeCompleted', {'items':bump1.items})
 
 	### timer handling
 

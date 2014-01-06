@@ -50,13 +50,12 @@ class BiddingStage(stage.Stage):
 			return {'success':False}
 		else:
 			# otherwise, record top bid
-			bidder = self.game.playerWithHandler(sender)
-			newBid = Bid(bidder, bidIndex, bidAmount)
+			newBid = Bid(sender, bidIndex, bidAmount)
 			self.bids.append(newBid)
 
 			# announce new bid
 			for player in self.game.players:
-				winning = player is bidder
+				winning = player is sender
 				self.game.sendEventToPlayer(player, 'NewBid', {'winning':winning, 'winningBidAmount':bidAmount})
 
 			# start bid timer and announce to players

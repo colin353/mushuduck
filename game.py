@@ -67,13 +67,6 @@ class Game(object):
 		# hack?: run afterbegin
 		self.currentStage.afterBegin()
 
-	def messageStage(self, action, *args):
-		method = getattr(self.currentStage, action, None)
-		if callable(method):
-			return method(*args)
-		else:
-			return "%s does not respond to action %s" % (self.currentStage.type(), action)
-
 	### player management methods ###
 
 	def addPlayerWithHandler(self, handler):
@@ -81,7 +74,7 @@ class Game(object):
 		self.players.append(newPlayer)
 		## hack: todo: need to get all players before first round begins
 		self.sendEventToPlayer(newPlayer, 'stageBegin', {'stageType':self.currentStage.type()})
-		self.sendEventToPlayer(newPlayer, 'PriceUpdated', {'prices':self.prices})
+		self.sendEventToPlayer(newPlayer, 'PriceUpdated', {'prices':self.roundedPrices})
 
 		# notify players that player count has increased
 		self.sendEventToAllPlayers('playerCountChanged', {'count':len(self.players)})

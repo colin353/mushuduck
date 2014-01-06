@@ -66,15 +66,17 @@ class JHandler(tornado.websocket.WebSocketHandler):
 # functions, and then the system will JSON your return value.
 class JActionableRequestHandler:
 
-	def invoke(self, action, sender, data):
-		senderId = staticGame.playerWithHandler(sender).id
-		print "==> Action '%s' received from player%s with data:\n%s" % (action, senderId, helpers.treeDict(data))
+	def invoke(self, action, senderHandler, data):
+		sender = staticGame.playerWithHandler(senderHandler)
+		print "==> Action '%s' received from player%s with data:\n%s" % (action, sender.id, helpers.treeDict(data))
 
 		# create dictionary of arguments to be passed into the corresponding function call of the action
 		args = {'sender':sender, 'data':data}
 		args = dict((arg,value) for arg,value in args.iteritems() if value is not None)
-		if hasattr(self, action):
-			return getattr(self, action)(**args)
+		for receiver in [self, staticGame, staticGame.currentStage]:
+			method = getattr(receiver, action, None)
+			if callable(method):
+				return method(**args)
 		else:
 			return "Invalid action: action %s is not implemented." % action
 
@@ -85,34 +87,6 @@ class JActionableRequestHandler:
 			'start_date'	: "Program started: %s " % RUN_DATE,
 			'version'		: VERSION
 		}
-
-	### production stage actions ###
-
-	def ready(self, sender):
-		staticGame.messageStage('markReady', sender)
-		return {}
-
-	### bidding stage actions ###
-
-	def bid(self, sender, data):
-		# note: I will handle everything inside BiddingStage
-		return staticGame.messageStage('bid', sender, data)
-
-	### trading stage actions ###
-
-	def sell(self, sender, data):
-		if 'productToSell' in data:
-			return staticGame.messageStage('sell', data['productToSell'])
-		else:
-			return "the action 'sell' failed to include a string named 'productToSell'"
-			
-	def bump(self, sender, data):
-
-		if 'items' in data:
-			staticGame.messageStage('bump', sender, data['items'])
-			return {}
-		else:
-			return "the action 'bump' failed to include a dictionary named 'item'"
 
 # The global actionablrequesthandler: there is only one instance of this, 
 # even though there may be many instances of JHandlers for different clients.
