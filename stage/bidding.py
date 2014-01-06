@@ -1,9 +1,11 @@
 import stage
 import threading
+import time
 import random
 
 class BiddingStage(stage.Stage):
 	remainingAuctions = range(9)
+	previewDuration = 1.5
 	bidDuration = 5.0
 
 	def __init__(self, game):
@@ -25,6 +27,7 @@ class BiddingStage(stage.Stage):
 		try:
 			self.game.sendEventToAllPlayers('NewCard', {'index':self.currentAuction.next()})
 			self.bids = []
+			time.sleep(self.previewDuration)
 			self.startBidTimer()
 		except StopIteration:
 			print "==> No more auctions"
