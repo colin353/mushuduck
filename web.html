@@ -141,14 +141,14 @@
 	}
 
 	.trading {
-		height: 40%;
+		height: 30%;
 		background-color: gray;
 		display: block;
 	}
 
 	.inventory {
 		position:relative;
-		height: 33%;
+		height: 40%;
 		display: block;
 	}
 
@@ -180,8 +180,9 @@
 	.tradecount {
 		display:inline-block;
 		width: 20%;
-		margin-left: 2%;
-		margin-right: 2%;
+		min-width:64px;
+		font-size:0.7em;
+		margin: 0.5%;
 	}
 
 	.ready.active {
@@ -197,6 +198,7 @@
 		background-color: white;
 		width: 90%;
 		height: 70%;
+		padding: 1%;
 		margin-top: 5%;
 		position:relative;
 		text-align:center;
@@ -241,7 +243,7 @@
 		text-align: center;
 		border: 2px solid white;
 		padding: .5%;
-		width: 25%;
+		width: 30%;
 		height: 80%;
 		overflow:hidden;
 		margin-left: .5%;
@@ -258,13 +260,12 @@
 		font-size: 0.6em;
 	}
 
+	
+
 	/* Mobile version */
 	@media all and (max-width: 600px) {
 		html,body {
 			font-size: 30pt !important
-		}
-		.tradecount {
-			margin: 10px;
 		}
 
 		.box.amount {
@@ -275,16 +276,20 @@
 			width: 25px;
 			height: 25px;
 		}
+
+		
+	}
+
+	@media all and (max-width: 320px) {
+		.tradecount {
+			font-size: 0.5em;
+		}
 	}
 
 	/* Desktop, ipad version */
 	@media all and (min-width: 600px) {
 		html,body {
 			font-size: 50pt;
-		}
-
-		.tradecount {
-			margin: 40px;
 		}
 
 		.square {

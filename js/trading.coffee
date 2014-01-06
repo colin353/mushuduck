@@ -100,6 +100,8 @@ class window.TradingStage extends Stage
 	end: ->
 		$('.countdown').hide()
 		$('.tradingstage-interface').hide()
+		$('.trading').unbind()
+		@clearTrades()
 		super
 
 	# The bump function is called when the accelerometer detects a big

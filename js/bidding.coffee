@@ -30,6 +30,7 @@ class window.BiddingStage extends Stage
 		$('.losing').hide()
 		$('.winning').hide()
 		$('.countdown').hide()
+		$('.bid').unbind()
 		clearInterval @interval
 
 	winning: ->
