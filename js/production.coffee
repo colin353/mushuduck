@@ -62,9 +62,10 @@ class Production
 		yes
 
 	needsRefresh: ->
+		# Clear everything out
+		@dom_object.html ""
 		if @productionfacility.factory
 			@dom_object.css('opacity','1')
-			@dom_object.html ""
 			@dom_object.append $("<span>Level #{@productionfacility.level}</span>")
 			@dom_object.append $("<p>$#{@productionfacility.upgradeCost.call @productionfacility} to upgrade</p>")
 		else
