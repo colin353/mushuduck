@@ -71,7 +71,7 @@ class window.TradingStage extends Stage
 
 		# Set up the power cards. First, clear out the deck:
 		deck = $('.powerups .deck')
-		deck.html = ""
+		deck.html ""
 		# Now, for each card the player owns,
 		for card in player.cards
 			console.log 'Adding card: ', card
@@ -83,10 +83,10 @@ class window.TradingStage extends Stage
 
 		# Set up the trading window to show all of the appropriate things:
 		$('.tradingstage-interface .trading span.tradecount').each ->
-			$(@).html "<div class='square'></div> x <span class='count'>0</span>"
+			$(@).html "<span class='block'>&#9632;</span> x <span class='count'>0</span>"
 			type = $(@).attr('data-production-type')
 			color = player.products[type].color
-			$(@).children('.square').css('background-color',color)
+			$(@).children('.block').css('color',color)
 			$(@).hide()
 
 		# Allow for clearing of the trading panel

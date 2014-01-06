@@ -29,6 +29,8 @@ class window.Player
 		yes
 
 	giveCard: (card_index) ->
+		if @cards.length >= 2
+			@cards.pop()
 		@cards.push new window.card_deck[card_index]()
 
 class window.Product

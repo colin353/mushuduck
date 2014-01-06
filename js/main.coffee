@@ -49,6 +49,8 @@ window.go = ->
 		#window.stage = new BiddingStage()
 		#return false
 		if stage? 
+			if stage.type == 'TradingStage'
+				return no
 			window.stage.end()
 
 		if data.stageType == 'Production'

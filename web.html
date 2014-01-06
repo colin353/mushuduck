@@ -51,6 +51,8 @@
 		display: inline-block;
 	}
 
+	
+
 	.box {
 		width: 50%;
 		height: 50%;
@@ -76,6 +78,8 @@
 		display:none;
 		margin-left: auto;
 		margin-right: auto;
+		padding-left:1%;
+		padding-right:1%;
 		margin-bottom: -70px;
 		background-color: white;
 		z-index: 10;
@@ -126,9 +130,14 @@
 	}
 
 	.powerups {
-		height:20%;
+		height:30%;
 		background-color: black;
 		color: white;
+		position:relative;
+	}
+
+	.deck {
+		height: 100%;
 	}
 
 	.trading {
@@ -170,6 +179,9 @@
 
 	.tradecount {
 		display:inline-block;
+		width: 20%;
+		margin-left: 2%;
+		margin-right: 2%;
 	}
 
 	.ready.active {
@@ -226,26 +238,33 @@
 
 	.tradingstage-interface .card {
 		display: inline-block;
-		float: right;
 		text-align: center;
 		border: 2px solid white;
 		padding: .5%;
+		width: 25%;
+		height: 80%;
+		overflow:hidden;
 		margin-left: .5%;
 		margin-top: .5%;
 		margin-right: .5%;
+		font-size: 0.8em;
+	}
+
+	h3 { 
+		font-size: 1.3em;
 	}
 
 	p {
-		font-size: 30pt;
+		font-size: 0.6em;
 	}
 
 	/* Mobile version */
 	@media all and (max-width: 600px) {
 		html,body {
-			font-size: 30pt;
+			font-size: 30pt !important
 		}
 		.tradecount {
-			margin: 10	px;
+			margin: 10px;
 		}
 
 		.box.amount {
@@ -272,6 +291,8 @@
 			height: 50px;
 			width: 50px;
 		}
+
+
 
 	}
 
@@ -329,8 +350,7 @@
 
 
 		<div class='powerups'>
-			<div class='deck'></div>
-			<span>DECK</span>
+			<div class='deck'></div>	
 		</div>
 
 		<div class='inventory'>

@@ -6,6 +6,7 @@ class window.BiddingStage extends Stage
 		@interval = null
 		@stage_name = ".biddingstage-interface"
 		@current_bid = 10
+		@card_index = 0
 		$(@stage_name).show()
 
 		$('.losing').hide()
@@ -17,7 +18,7 @@ class window.BiddingStage extends Stage
 
 		$('.bid').tap ->
 			if player.gold >= me.current_bid
-				pycon.transaction {action: 'bid', data: { bidIndex:0, bidAmount:me.get_current_bid.call(me) }}, -> 
+				pycon.transaction {action: 'bid', data: { bidIndex:me.card_index, bidAmount:me.get_current_bid.call(me) }}, -> 
 					yes
 		yes
 
@@ -52,6 +53,7 @@ class window.BiddingStage extends Stage
 		$('.losing').hide()
 		$('.winning').hide()
 		$('.bid').show()
+		@card_index = index
 		@current_bid = @card.price
 		@updateBidButton()
 

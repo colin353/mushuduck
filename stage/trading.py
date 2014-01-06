@@ -51,7 +51,7 @@ class TradingStage(stage.Stage):
 
 	def updatePrices(self, productToSell=None):
 
-		A = 1.0
+		A = 0.33333
 		T = 30.0
 		dt = time.time() - self.lastPriceUpdateTime if self.lastPriceUpdateTime else 0
 		if productToSell:
