@@ -1,0 +1,9 @@
+{
+	"websocket_url": "ws://192.168.0.106:8888/json",
+	"server_version": 0,
+	"starting_money": 200,
+	"factory_cost": 150,
+	"upgrade_cost": 60,
+	"production_period":10,
+	"minimum_bid":20
+} 
