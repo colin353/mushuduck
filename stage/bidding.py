@@ -1,19 +1,19 @@
 import stage
 import threading
+import random
 
 class BiddingStage(stage.Stage):
+	remainingAuctions = range(5)
 	bidDuration = 5.0
 
 	def __init__(self, game):
 		super(BiddingStage, self).__init__(game)
+		self.auctions = random.sample(BiddingStage.remainingAuctions, len(self.game.players))
+		self.currentAuction = iter(self.auctions)
+		# prepare auctions
 
 	def type(self):
 		return 'Bidding'
-
-	def begin(self):
-		# todo: change to random
-		self.auctions = set(range(5))
-		self.currentAuction = iter(self.auctions)
 
 	def afterBegin(self):
 		self.nextAuction()
@@ -75,6 +75,9 @@ class BiddingStage(stage.Stage):
 			winner = winningBid.bidder
 			eventData = {'winningBidAmount':winningBid.amount, 'winningBidIndex':winningBid.index}
 			self.game.sendEventToPlayer(winner, 'YouWon', eventData)
+
+			# take auction out of the game
+			BiddingStage.remainingAuctions.remove(winningBid.index)
 		else:
 			# if no one bidded, nothing happens
 			pass
