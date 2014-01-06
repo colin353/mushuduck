@@ -1,7 +1,8 @@
 import stage
-import threading
 import time
 import random
+import helpers
+from helpers import printHeader
 
 class BiddingStage(stage.Stage):
 	remainingAuctions = range(9)
@@ -30,7 +31,6 @@ class BiddingStage(stage.Stage):
 			time.sleep(self.previewDuration)
 			self.startBidTimer()
 		except StopIteration:
-			print "==> No more auctions"
 			self.game.nextStage()
 
 	def bid(self, sender, data):
@@ -83,7 +83,7 @@ class BiddingStage(stage.Stage):
 
 			# take auction out of the game
 			BiddingStage.remainingAuctions.remove(winningBid.index)
-			print BiddingStage.remainingAuctions
+			print "==> remaining auctions: ", BiddingStage.remainingAuctions
 		else:
 			# if no one bidded, nothing happens
 			pass
@@ -94,7 +94,7 @@ class BiddingStage(stage.Stage):
 
 	def startBidTimer(self):
 		# start and announce to players
-		self.bidTimer = threading.Timer(self.bidDuration, self.bidEnded)
+		self.bidTimer = helpers.timer(self.bidDuration, self.bidEnded)
 		self.bidTimer.start()
 		self.game.sendEventToAllPlayers('TimerBegin', {'duration':self.bidDuration})
 

@@ -1,8 +1,10 @@
-from stage import production, bidding, trading
+import production, bidding, trading
 import json
 import time
+import helpers
 
 class Game(object):
+	#stageSequence = [production.ProductionStage, trading.TradingStage]
 	stageSequence = [production.ProductionStage, bidding.BiddingStage, trading.TradingStage]
 	products = ['tomato', 'blueberry', 'purple', 'corn']
 
@@ -28,6 +30,7 @@ class Game(object):
 	def prices(self, value):
 		#print "-- prices being set!"
 
+		# todo: need to remove trading stage dependence
 		if self.currentStage.__class__ == trading.TradingStage:
 			oldRoundedPrices = self.roundedPrices
 
@@ -103,11 +106,19 @@ class Game(object):
 			self.sendMessageToPlayer(player, message)
 
 	def sendEventToPlayer(self, player, eventName, data=None):
+		# logging
+		if data:
+			helpers.cprint("<== sending event '%s' to player%d with data:" % (eventName, player.id), helpers.lcolors.OUTGOING)
+			print helpers.treeDict(data)
+		else:
+			helpers.cprint("<== sending event '%s' to player%d" % (eventName, player.id), helpers.lcolors.OUTGOING)
+
 		self.sendMessageToPlayer(player, json.dumps({'eventName':eventName, 'data':data}))
 
 	def sendEventToAllPlayers(self, eventName, data=None):
 		for player in self.players:
 			self.sendEventToPlayer(player, eventName, data)
+
 
 class Player:
 	cur_id = 0

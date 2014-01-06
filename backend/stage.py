@@ -1,5 +1,3 @@
-import game
-
 class Stage(object):
 
 	def __init__(self, game):

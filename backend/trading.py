@@ -1,7 +1,7 @@
 import stage
-import threading
 import time
 import math
+import helpers
 
 class TradingStage(stage.Stage):
 	duration = 60.0
@@ -10,8 +10,6 @@ class TradingStage(stage.Stage):
 	def __init__(self, game):
 		super(TradingStage, self).__init__(game)
 		self.lastRecordedBump = None
-		# sales is a dictionary of lists of sales indexed by product name
-		self.sales = dict((p, []) for p in self.game.products)
 		self.lastPriceUpdateTime = None
 
 	def begin(self):
@@ -21,7 +19,8 @@ class TradingStage(stage.Stage):
 		# record current time for price calculation purposes (must come before price update is called)
 		self.startTime = time.time()
 		# start timers
-		threading.Timer(self.duration, self.timerEnd).start()
+		helpers.timer(self.duration, self.timerEnd).start()
+
 		self.handlePriceUpdateTimer()
 		# notify players that timer started
 		self.game.sendEventToAllPlayers('TimerBegin', {'duration':self.duration})
@@ -43,10 +42,6 @@ class TradingStage(stage.Stage):
 		
 		# the player will receive gold corresponding to the old price, before market value update
 		pay = self.game.roundedPrices[productToSell]
-
-		# record sale
-		sale = Sale(productToSell)
-		self.sales[productToSell].append(sale)
 
 		# calculate new price
 		self.updatePrices(productToSell)
@@ -117,7 +112,7 @@ class TradingStage(stage.Stage):
 		# restart timer if there is enough time
 		# todo: can remove? 
 		if self.duration - self.timeElapsed() > 1.1:
-			threading.Timer(self.market_tick_period, self.handlePriceUpdateTimer).start()
+			helpers.timer(self.market_tick_period, self.handlePriceUpdateTimer).start()
 
 	def timerEnd(self):
 		# clean up recorded time
@@ -125,21 +120,11 @@ class TradingStage(stage.Stage):
 		# notify players that timer ended
 		self.game.sendEventToAllPlayers('TimerEnd')
 		# wait 2s before changing stage
-		self.game.cumulativeTradingTimeUntilLastRound += self.duration
 		time.sleep(2)
 		self.game.nextStage()
 
 	def timeElapsed(self):
 		return time.time() - self.startTime
-
-	def cumulativeTradingTime(self):
-		return self.timeElapsed() + self.game.cumulativeTradingTimeUntilLastRound
-
-class Sale(object):
-
-	def __init__(self, product):
-		self.product = product
-		self.time = time.time()
 
 class Bump:
 

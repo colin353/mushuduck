@@ -1,5 +1,5 @@
 import stage
-import threading
+import helpers
 
 class BattleStage(stage.Stage):
 	duration = 5.0
@@ -13,7 +13,7 @@ class BattleStage(stage.Stage):
 		return 'Battle'
 
 	def begin(self):
-		threading.Timer(self.duration, self.endStage).start()
+		helpers.timer(self.duration, self.endStage).start()
 
 	def afterBegin(self):
 		self.game.sendEventToAllPlayer('InventoryCountRequested', {'callback':'updateInventory'})

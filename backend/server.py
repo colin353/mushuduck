@@ -6,6 +6,7 @@ import inspect
 import json
 import game
 import helpers
+from helpers import printHeader
 
 # Configurable parameters for the server:
 # -------------------------------------- #
@@ -25,7 +26,7 @@ RESPONSE 	= 1
 class JHandler(tornado.websocket.WebSocketHandler):
 	def open(self):
 		staticGame.addPlayerWithHandler(self)
-		print "==> Player%s joined" % staticGame.playerWithHandler(self).id
+		printHeader("==> Player%s joined" % staticGame.playerWithHandler(self).id)
 
 	def on_message(self, msg):
 		message = json.loads(msg)
@@ -56,7 +57,7 @@ class JHandler(tornado.websocket.WebSocketHandler):
 		self.write_message( json.dumps ( {'data': response, 'transaction_id': message['transaction_id'] } ) )
 
 	def on_close(self):
-		print "==> Player%s left" % staticGame.playerWithHandler(self).id
+		printHeader("==> Player%s left" % staticGame.playerWithHandler(self).id)
 		staticGame.removePlayerWithHandler(self)
 
 # The JActionableRequestHandler class basically completes actions that the browser
@@ -68,11 +69,18 @@ class JActionableRequestHandler:
 
 	def invoke(self, action, senderHandler, data):
 		sender = staticGame.playerWithHandler(senderHandler)
-		print "==> Action '%s' received from player%s with data:\n%s" % (action, sender.id, helpers.treeDict(data))
+		if data:
+			printHeader("==> Action '%s' received from player%s with data:" % (action, sender.id))
+			print helpers.treeDict(data)
+		else:
+			printHeader("==> Action '%s' received from player%s" % (action, sender.id))
+
 
 		# create dictionary of arguments to be passed into the corresponding function call of the action
 		args = {'sender':sender, 'data':data}
 		args = dict((arg,value) for arg,value in args.iteritems() if value is not None)
+
+		# attepmt to invoke action on following receivers, in order: server, game, and current stage. 
 		for receiver in [self, staticGame, staticGame.currentStage]:
 			method = getattr(receiver, action, None)
 			if callable(method):
