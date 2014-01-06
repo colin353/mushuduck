@@ -73,12 +73,16 @@ class window.TradingStage extends Stage
 		deck = $('.powerups .deck')
 		deck.html ""
 		# Now, for each card the player owns,
+		index = 0
 		for card in player.cards
 			console.log 'Adding card: ', card
 			# Add the card to the deck, using the render function, and register the tap
 			# event to the "action" trigger on the card itself.
-			$("<div class='card'>#{card.render.call card}</div>").appendTo(deck).tap ->
+			element = $("<div class='card' data-card-index='#{index}'>#{card.render.call card}</div>").tap ->
+				card = player.cards[$(@).attr('data-card-index')]
 				card.activate.call card
+			element.appendTo(deck)
+			index += 1
 
 
 		# Set up the trading window to show all of the appropriate things:
@@ -101,6 +105,7 @@ class window.TradingStage extends Stage
 		$('.countdown').hide()
 		$('.tradingstage-interface').hide()
 		$('.trading').unbind()
+		$('.card').unbind()
 		@clearTrades()
 
 		# Tomatoes will rot now
