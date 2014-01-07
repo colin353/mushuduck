@@ -215,10 +215,10 @@
       $('.card').children('.subtitle').html(this.card.subtitle);
       $('.losing').hide();
       $('.winning').hide();
-      $('.bid').show();
       this.card_index = index;
       this.current_bid = this.card.price;
-      return this.updateBidButton();
+      this.updateBidButton();
+      return $('.bid').hide();
     };
 
     BiddingStage.prototype.new_bid = function(data) {
@@ -234,6 +234,7 @@
     BiddingStage.prototype.timer_begin = function(duration) {
       var count_down, me;
 
+      $('.bid').show();
       me = this;
       console.log('Starting to count down: ', duration);
       clearInterval(this.interval);
@@ -747,7 +748,7 @@
       var me;
 
       if (clickable == null) {
-        clickable = false;
+        clickable = true;
       }
       me = this;
       $('.overlay').show();

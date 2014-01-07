@@ -71,10 +71,10 @@ window.BiddingStage = (function(_super) {
     $('.card').children('.subtitle').html(this.card.subtitle);
     $('.losing').hide();
     $('.winning').hide();
-    $('.bid').show();
     this.card_index = index;
     this.current_bid = this.card.price;
-    return this.updateBidButton();
+    this.updateBidButton();
+    return $('.bid').hide();
   };
 
   BiddingStage.prototype.new_bid = function(data) {
@@ -90,6 +90,7 @@ window.BiddingStage = (function(_super) {
   BiddingStage.prototype.timer_begin = function(duration) {
     var count_down, me;
 
+    $('.bid').show();
     me = this;
     console.log('Starting to count down: ', duration);
     clearInterval(this.interval);

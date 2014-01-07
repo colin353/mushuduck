@@ -53,10 +53,10 @@ class window.BiddingStage extends Stage
 		$('.card').children('.subtitle').html @card.subtitle
 		$('.losing').hide()
 		$('.winning').hide()
-		$('.bid').show()
 		@card_index = index
 		@current_bid = @card.price
 		@updateBidButton()
+		$('.bid').hide()
 
 	new_bid: (data) ->
 		if data.winning
@@ -67,6 +67,7 @@ class window.BiddingStage extends Stage
 			@updateBidButton()
 
 	timer_begin: (duration) ->
+		$('.bid').show()
 		me = @
 		console.log 'Starting to count down: ',duration
 		clearInterval @interval

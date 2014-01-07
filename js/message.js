@@ -9,7 +9,7 @@ window.Message = (function() {
     var me;
 
     if (clickable == null) {
-      clickable = false;
+      clickable = true;
     }
     me = this;
     $('.overlay').show();
