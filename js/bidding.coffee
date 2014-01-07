@@ -14,6 +14,8 @@ class window.BiddingStage extends Stage
 
 		$('.countdown').show()
 
+		#$("#{@stage_name} .card").fitText()
+
 		$('.bid').show()
 
 		$('.bid').tap ->
@@ -44,7 +46,7 @@ class window.BiddingStage extends Stage
 		$('.bid').show()
 
 	updateBidButton: ->
-		$('.bid').children('p').html "Bid $#{@current_bid}"
+		$('.bid').children('p').html "Bid #{@current_bid}#{window.config.gold}"
 
 	new_card: (index) ->
 		console.log 'Got a new card', @card

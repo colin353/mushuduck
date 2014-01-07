@@ -35,8 +35,10 @@
         console.log('Received transaction data: ', message.data);
         return this.response_handlers[message.transaction_id].call(this, message.data);
       } else if (message.eventName != null) {
-        console.log('Received event message: ', message.eventName);
-        console.log('Event data: ', message.data);
+        if (message.eventName !== 'PriceUpdated') {
+          console.log('Received event message: ', message.eventName);
+          console.log('Event data: ', message.data);
+        }
         return this.trigger_event(message.eventName, message.data);
       } else {
         return console.log('Received invalid message: ', message);
@@ -205,7 +207,7 @@
     };
 
     BiddingStage.prototype.updateBidButton = function() {
-      return $('.bid').children('p').html("Bid $" + this.current_bid);
+      return $('.bid').children('p').html("Bid " + this.current_bid + window.config.gold);
     };
 
     BiddingStage.prototype.new_card = function(index) {
@@ -268,6 +270,40 @@
 
     Card.prototype.get_pay_bonus = function() {
       return 1.0;
+    };
+
+    Card.prototype.on_production = function() {
+      return true;
+    };
+
+    Card.prototype.on_factory = function() {
+      return true;
+    };
+
+    Card.prototype.destroy = function() {
+      var i, _i, _ref, _results;
+
+      _results = [];
+      for (i = _i = 0, _ref = player.cards.length - 1; 0 <= _ref ? _i <= _ref : _i >= _ref; i = 0 <= _ref ? ++_i : --_i) {
+        if (this === player.cards[i]) {
+          player.cards.splice(i, 1);
+          if (stage.refreshCards != null) {
+            window.stage.refreshCards();
+          }
+          break;
+        } else {
+          _results.push(void 0);
+        }
+      }
+      return _results;
+    };
+
+    Card.prototype.on_trade_start = function(items_to_trade) {
+      return items_to_trade;
+    };
+
+    Card.prototype.on_trade_end = function(items_received) {
+      return true;
     };
 
     Card.prototype.render = function() {
@@ -536,6 +572,255 @@
 
   })(P_CB_ConversionCard);
 
+  window.QuantumFluctuationCard = (function(_super) {
+    __extends(QuantumFluctuationCard, _super);
+
+    function QuantumFluctuationCard() {
+      QuantumFluctuationCard.__super__.constructor.apply(this, arguments);
+      this.title = "Quantum Fluctuation";
+      this.subtitle = "Creates a chance for a random fruit to appear";
+      this.price = 50;
+      this.amplitude = 0.20;
+    }
+
+    QuantumFluctuationCard.prototype.render = function() {
+      return "<p>Quantum Fluctuation</p>";
+    };
+
+    QuantumFluctuationCard.prototype.on_production = function() {
+      var fruit, fruits, index, name, p, _ref;
+
+      if (Math.random() < this.amplitude) {
+        fruits = [];
+        _ref = player.products;
+        for (name in _ref) {
+          p = _ref[name];
+          fruits.push(name);
+        }
+        index = Math.floor(Math.random() * fruits.length);
+        fruit = fruits[index];
+        player.products[fruit].amount += 1;
+        return console.log('A quantum fluctuation has occurred! ', fruit);
+      }
+    };
+
+    return QuantumFluctuationCard;
+
+  })(Card);
+
+  window.GMCornCard = (function(_super) {
+    __extends(GMCornCard, _super);
+
+    function GMCornCard() {
+      GMCornCard.__super__.constructor.apply(this, arguments);
+      this.title = "Genetically modified corn";
+      this.subtitle = "Production of all fruits increases with the amount of corn you have.";
+      this.price = 50;
+      this.yield_per = 10;
+    }
+
+    GMCornCard.prototype.render = function() {
+      return "<p>GM Corn</p>";
+    };
+
+    GMCornCard.prototype.on_factory = function(factory) {
+      if (player.products['corn'].amount > this.yield_per) {
+        factory.product.amount += 1;
+        return console.log('Experienced boost: thanks to GM Corn!');
+      }
+    };
+
+    return GMCornCard;
+
+  })(Card);
+
+  window.TomatoWarCard = (function(_super) {
+    __extends(TomatoWarCard, _super);
+
+    function TomatoWarCard() {
+      TomatoWarCard.__super__.constructor.apply(this, arguments);
+      this.title = "Tomato War";
+      this.subtitle = "The person with the most tomatoes wins a lot of money at the end of the round.";
+      this.price = 50;
+    }
+
+    TomatoWarCard.prototype.render = function() {
+      return "<p>Tomato War</p>";
+    };
+
+    TomatoWarCard.prototype.activate = function() {
+      pycon.transaction({
+        action: "tomatoWarCardActivated"
+      });
+      return this.destroy();
+    };
+
+    return TomatoWarCard;
+
+  })(Card);
+
+  window.CornTheMovieCard = (function(_super) {
+    __extends(CornTheMovieCard, _super);
+
+    function CornTheMovieCard() {
+      CornTheMovieCard.__super__.constructor.apply(this, arguments);
+      this.title = "Corn: The Movie";
+      this.subtitle = "All of your trades involving corn will give both players gold.";
+      this.price = 20;
+      this.primary_reward = 15;
+      this.secondary_reward = 5;
+      this.max_trades = 10;
+      this.give_gold = false;
+    }
+
+    CornTheMovieCard.prototype.render = function() {
+      return "<p>Corn Movie</p>";
+    };
+
+    CornTheMovieCard.prototype.on_trade_end = function(items_received) {
+      if (this.give_gold) {
+        player.giveGold(this.primary_reward);
+      }
+      this.max_trades -= 1;
+      if (this.max_trades === 0) {
+        return this.destroy();
+      }
+    };
+
+    CornTheMovieCard.prototype.on_trade_start = function(items_to_trade) {
+      if ((items_to_trade['corn'] != null) && items_to_trade['corn'] > 0) {
+        this.give_gold = true;
+        if (items_to_trade['gold'] == null) {
+          items_to_trade['gold'] = 0;
+        }
+        items_to_trade['gold'] += this.secondary_reward;
+        console.log('Corn: The Movie royalties paid');
+      }
+      return items_to_trade;
+    };
+
+    return CornTheMovieCard;
+
+  })(Card);
+
+  window.CornFamine = (function(_super) {
+    __extends(CornFamine, _super);
+
+    function CornFamine() {
+      CornFamine.__super__.constructor.apply(this, arguments);
+      this.title = "Corn Famine";
+      this.subtitle = "All corn production will be reduced for one round.";
+      this.price = 75;
+      this.product = 'corn';
+    }
+
+    CornFamine.prototype.render = function() {
+      return "<p>A " + this.product + " famine</p>";
+    };
+
+    CornFamine.prototype.activate = function() {
+      pycon.transaction({
+        action: 'famineActivated',
+        data: {
+          productAffected: this.product
+        }
+      });
+      return this.destroy();
+    };
+
+    return CornFamine;
+
+  })(Card);
+
+  window.BlueberryFamine = (function(_super) {
+    __extends(BlueberryFamine, _super);
+
+    function BlueberryFamine() {
+      BlueberryFamine.__super__.constructor.apply(this, arguments);
+      this.title = "Blueberry Famine";
+      this.subtitle = "All blueberry production will be reduced for one round.";
+      this.price = 75;
+      this.product = 'blueberry';
+    }
+
+    return BlueberryFamine;
+
+  })(CornFamine);
+
+  window.PurpleFamine = (function(_super) {
+    __extends(PurpleFamine, _super);
+
+    function PurpleFamine() {
+      PurpleFamine.__super__.constructor.apply(this, arguments);
+      this.title = "Purple Famine";
+      this.subtitle = "All purple production will be reduced for one round.";
+      this.price = 75;
+      this.product = 'purple';
+    }
+
+    return PurpleFamine;
+
+  })(CornFamine);
+
+  window.TomatoFamine = (function(_super) {
+    __extends(TomatoFamine, _super);
+
+    function TomatoFamine() {
+      TomatoFamine.__super__.constructor.apply(this, arguments);
+      this.title = "Tomato Famine";
+      this.subtitle = "All tomato production will be reduced for one round.";
+      this.price = 75;
+      this.product = 'tomato';
+    }
+
+    return TomatoFamine;
+
+  })(CornFamine);
+
+  window.CornTheMovieCard = (function(_super) {
+    __extends(CornTheMovieCard, _super);
+
+    function CornTheMovieCard() {
+      CornTheMovieCard.__super__.constructor.apply(this, arguments);
+      this.title = "Corn: The Movie";
+      this.subtitle = "All of your trades involving corn will give both players gold.";
+      this.price = 20;
+      this.primary_reward = 15;
+      this.secondary_reward = 5;
+      this.max_trades = 10;
+      this.give_gold = false;
+    }
+
+    CornTheMovieCard.prototype.render = function() {
+      return "<p>Corn Movie</p>";
+    };
+
+    CornTheMovieCard.prototype.on_trade_end = function(items_received) {
+      if (this.give_gold) {
+        player.giveGold(this.primary_reward);
+      }
+      this.max_trades -= 1;
+      if (this.max_trades === 0) {
+        return this.destroy();
+      }
+    };
+
+    CornTheMovieCard.prototype.on_trade_start = function(items_to_trade) {
+      if ((items_to_trade['corn'] != null) && items_to_trade['corn'] > 0) {
+        this.give_gold = true;
+        if (items_to_trade['gold'] == null) {
+          items_to_trade['gold'] = 0;
+        }
+        items_to_trade['gold'] += this.secondary_reward;
+        console.log('Corn: The Movie royalties paid');
+      }
+      return items_to_trade;
+    };
+
+    return CornTheMovieCard;
+
+  })(Card);
+
   window.card_deck = [];
 
   card_deck.push(window.BlueberryPieCard);
@@ -555,6 +840,22 @@
   card_deck.push(window.P_BT_ConversionCard);
 
   card_deck.push(window.BlueberryIceCream);
+
+  card_deck.push(window.QuantumFluctuationCard);
+
+  card_deck.push(window.GMCornCard);
+
+  card_deck.push(window.CornTheMovieCard);
+
+  card_deck.push(window.TomatoWarCard);
+
+  card_deck.push(window.TomatoFamine);
+
+  card_deck.push(window.CornFamine);
+
+  card_deck.push(window.BlueberryFamine);
+
+  card_deck.push(window.PurpleFamine);
 
   window.jevents = [];
 
@@ -689,13 +990,15 @@
     });
     pycon.register_for_event('TradeCompleted', function(data) {
       if (typeof stage !== "undefined" && stage !== null) {
-        window.navigator.vibrate(200);
         return window.stage.trade_complete.call(stage, data);
       } else {
         return console.log('Received illegal trade...?');
       }
     });
     pycon.register_for_event('DisplayMessage', function(data) {
+      if (data.clickable == null) {
+        data.clickable = true;
+      }
       return message.display.call(message, data.title, data.text, data.clickable);
     });
     pycon.register_for_event('InventoryCountRequested', function(data) {
@@ -726,6 +1029,12 @@
     pycon.register_for_event('GoldGranted', function(data) {
       return player.giveGold(data.amount);
     });
+    pycon.register_for_event('FamineBegin', function(data) {
+      return player.productionfacilities[data.productAffected].famine = true;
+    });
+    pycon.register_for_event('FamineEnd', function(data) {
+      return player.productionfacilities[data.productAffected].famine = false;
+    });
     pycon.register_for_event('YouWon', function(data) {
       message.display('Nice work!', 'You won the auction!');
       player.giveGold.call(player, -data.winningBidAmount);
@@ -745,11 +1054,14 @@
       this.timeout = 5;
     }
 
-    Message.prototype.display = function(title, text, clickable) {
+    Message.prototype.display = function(title, text, clickable, duration) {
       var me;
 
       if (clickable == null) {
         clickable = true;
+      }
+      if (duration == null) {
+        duration = null;
       }
       me = this;
       $('.overlay').show();
@@ -757,9 +1069,14 @@
       $(this.dom_selector).children('.text').html(text);
       $(this.dom_selector).show();
       if (clickable) {
-        return $(this.dom_selector).tap(function() {
+        $(this.dom_selector).tap(function() {
           return me.hide.call(me);
         });
+      }
+      if (duration != null) {
+        return setTimeout(function() {
+          return window.message.hide.call(message);
+        }, duration * 1000);
       }
     };
 
@@ -855,14 +1172,25 @@
       this.capacity = 1;
       this.factory = false;
       this.level = 0;
+      this.famine = false;
       true;
     }
 
     ProductionFacility.prototype.run_factory = function() {
+      var card, _i, _len, _ref;
+
       if (!this.factory) {
         return false;
       }
+      if (this.famine && Math.random() > 0.5) {
+        return true;
+      }
       this.product.amount += this.capacity;
+      _ref = player.cards;
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        card = _ref[_i];
+        card.on_factory.call(card, this);
+      }
       return true;
     };
 
@@ -984,13 +1312,17 @@
     };
 
     Production.prototype.needsRefresh = function() {
+      var span;
+
       this.dom_object.html("");
       if (this.productionfacility.factory) {
         this.dom_object.css('opacity', '1');
-        this.dom_object.append($("<span>Level " + this.productionfacility.level + "</span>"));
-        this.dom_object.append($("<p>" + (this.productionfacility.upgradeCost.call(this.productionfacility)) + window.config.gold + " to upgrade</p>"));
+        this.dom_object.append($("<span class='buy_factory_message'></span>"));
+        span = this.dom_object.children('span');
+        span.append($("<span>Level " + this.productionfacility.level + "</span>"));
+        span.append($("<p>" + (this.productionfacility.upgradeCost.call(this.productionfacility)) + window.config.gold + "<br /> to upgrade</p>"));
       } else {
-        this.dom_object.append("<span class='buy_factory_message'>" + (this.productionfacility.upgradeCost.call(this.productionfacility)) + window.config.gold + " to <br /> start</span>");
+        this.dom_object.append("<span class='buy_factory_message'>" + (this.productionfacility.upgradeCost.call(this.productionfacility)) + window.config.gold + "<br /> to start</span>");
         this.dom_object.css('opacity', '0.5');
       }
       return true;
@@ -1004,7 +1336,7 @@
     __extends(TradingStage, _super);
 
     function TradingStage() {
-      var card, deck, element, index, me, _i, _len, _ref;
+      var me;
 
       me = this;
       this.type = 'TradingStage';
@@ -1016,9 +1348,6 @@
         type = $(this).attr('data-production-type');
         return me.products[type] = new TradingProduct($(this), player.products[type]);
       });
-      player.giveCard(2);
-      player.giveCard(3);
-      player.giveCard(4);
       $('.tradingstage-interface .inventory').sortable({
         helper: function(e, ui) {
           var type;
@@ -1051,23 +1380,7 @@
           return $(this).sortable('cancel');
         }
       });
-      deck = $('.powerups .deck');
-      deck.html("");
-      index = 0;
-      _ref = player.cards;
-      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-        card = _ref[_i];
-        console.log('Adding card: ', card);
-        element = $("<div class='card' data-card-index='" + index + "'>" + (card.render.call(card)) + "</div>").tap(function() {
-          card = player.cards[$(this).attr('data-card-index')];
-          return card.activate.call(card);
-        });
-        element.appendTo(deck);
-        index += 1;
-      }
-      $('.tradingstage-interface .card').fitText(1, {
-        minFontSize: '25px'
-      });
+      this.refreshCards();
       $('.tradingstage-interface .trading span.tradecount').each(function() {
         var color, type;
 
@@ -1095,7 +1408,7 @@
     };
 
     TradingStage.prototype.bump = function() {
-      var items, name, p, _ref;
+      var card, items, name, p, _i, _len, _ref, _ref1;
 
       items = {};
       _ref = this.products;
@@ -1104,6 +1417,11 @@
         if (p.for_trade > 0) {
           items[name] = p.for_trade;
         }
+      }
+      _ref1 = player.cards;
+      for (_i = 0, _len = _ref1.length; _i < _len; _i++) {
+        card = _ref1[_i];
+        items = card.on_trade_start.call(card, items);
       }
       return pycon.transaction({
         action: 'bump',
@@ -1131,17 +1449,24 @@
     };
 
     TradingStage.prototype.trade_complete = function(data) {
-      var amount, name, p, _ref, _ref1;
+      var amount, card, name, p, _i, _len, _ref, _ref1, _ref2;
 
       _ref = this.products;
       for (name in _ref) {
         p = _ref[name];
         p.for_trade = 0;
       }
-      _ref1 = data.items;
-      for (name in _ref1) {
-        amount = _ref1[name];
-        if (this.products[name] != null) {
+      _ref1 = player.cards;
+      for (_i = 0, _len = _ref1.length; _i < _len; _i++) {
+        card = _ref1[_i];
+        card.on_trade_end.call(card, data.items);
+      }
+      _ref2 = data.items;
+      for (name in _ref2) {
+        amount = _ref2[name];
+        if (name === 'gold') {
+          player.giveGold(amount);
+        } else if (this.products[name] != null) {
           this.products[name].for_trade = amount;
           this.products[name].needsRefresh.call(this.products[name]);
         }
@@ -1182,17 +1507,44 @@
     };
 
     TradingStage.prototype.yield_production = function() {
-      var facility, name, p, _ref, _results;
+      var card, facility, name, p, _i, _len, _ref, _ref1, _results;
 
       _ref = this.products;
-      _results = [];
       for (name in _ref) {
         p = _ref[name];
         facility = player.productionfacilities[name];
         facility.run_factory.call(facility);
-        _results.push(p.needsRefresh.call(p));
+        p.needsRefresh.call(p);
+      }
+      _ref1 = player.cards;
+      _results = [];
+      for (_i = 0, _len = _ref1.length; _i < _len; _i++) {
+        card = _ref1[_i];
+        _results.push(card.on_production.call(card));
       }
       return _results;
+    };
+
+    TradingStage.prototype.refreshCards = function() {
+      var card, deck, element, index, _i, _len, _ref;
+
+      deck = $('.powerups .deck');
+      deck.html("");
+      index = 0;
+      _ref = player.cards;
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        card = _ref[_i];
+        console.log('Adding card: ', card);
+        element = $("<div class='card' data-card-index='" + index + "'>" + (card.render.call(card)) + "</div>").tap(function() {
+          card = player.cards[$(this).attr('data-card-index')];
+          return card.activate.call(card);
+        });
+        element.appendTo(deck);
+        index += 1;
+      }
+      return $('.tradingstage-interface .card').fitText(1, {
+        minFontSize: '25px'
+      });
     };
 
     TradingStage.prototype.timer_begin = function(countdown) {

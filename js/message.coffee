@@ -6,7 +6,7 @@ class window.Message
 		@dom_selector = '.message'
 		@timeout = 5
 
-	display: (title,text, clickable=true) ->
+	display: (title,text,clickable=true,duration=null) ->
 		me = @
 
 		$('.overlay').show()
@@ -17,6 +17,11 @@ class window.Message
 		if clickable
 			$(@dom_selector).tap ->
 				me.hide.call me
+
+		if duration?
+			setTimeout(->
+				window.message.hide.call message
+			,duration*1000)
 
 	hide: ->
 		$(@dom_selector).unbind()

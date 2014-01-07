@@ -61,7 +61,7 @@ window.BiddingStage = (function(_super) {
   };
 
   BiddingStage.prototype.updateBidButton = function() {
-    return $('.bid').children('p').html("Bid $" + this.current_bid);
+    return $('.bid').children('p').html("Bid " + this.current_bid + window.config.gold);
   };
 
   BiddingStage.prototype.new_card = function(index) {

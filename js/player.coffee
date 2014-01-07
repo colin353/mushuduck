@@ -59,12 +59,17 @@ class window.ProductionFacility
 		@capacity = 1
 		@factory = no
 		@level = 0
+		@famine = no
 		yes
 
 	run_factory: ->
 		return no if !@factory
 
+		return yes if @famine && Math.random() > 0.5
+
 		@product.amount += @capacity
+
+		card.on_factory.call(card,@) for card in player.cards
 		yes
 
 	upgradeCost: ->

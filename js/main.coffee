@@ -67,13 +67,13 @@ window.go = ->
 	# with that information.
 	pycon.register_for_event 'TradeCompleted', (data) ->
 		if stage?
-			window.navigator.vibrate 200
 			window.stage.trade_complete.call stage,data
 		else 
 			console.log 'Received illegal trade...?'
 
 	# Is it possible
 	pycon.register_for_event 'DisplayMessage', (data) ->
+		data.clickable = yes if !data.clickable?
 		message.display.call message,data.title, data.text, data.clickable
 
 	pycon.register_for_event 'InventoryCountRequested', (data) ->
@@ -101,6 +101,13 @@ window.go = ->
 	# Get money, get paid
 	pycon.register_for_event 'GoldGranted', (data) ->
 		player.giveGold data.amount
+
+	pycon.register_for_event 'FamineBegin', (data) ->
+		player.productionfacilities[data.productAffected].famine = yes
+		#message.display.call message,'Oh no!', "A famine has begun on #{data.productAffected}"
+
+	pycon.register_for_event 'FamineEnd', (data) ->
+		player.productionfacilities[data.productAffected].famine = no
 
 	# This event is triggered when a bid is won.
 	pycon.register_for_event 'YouWon', (data) ->

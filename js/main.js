@@ -52,13 +52,15 @@ window.go = function() {
   });
   pycon.register_for_event('TradeCompleted', function(data) {
     if (typeof stage !== "undefined" && stage !== null) {
-      window.navigator.vibrate(200);
       return window.stage.trade_complete.call(stage, data);
     } else {
       return console.log('Received illegal trade...?');
     }
   });
   pycon.register_for_event('DisplayMessage', function(data) {
+    if (data.clickable == null) {
+      data.clickable = true;
+    }
     return message.display.call(message, data.title, data.text, data.clickable);
   });
   pycon.register_for_event('InventoryCountRequested', function(data) {
@@ -88,6 +90,12 @@ window.go = function() {
   });
   pycon.register_for_event('GoldGranted', function(data) {
     return player.giveGold(data.amount);
+  });
+  pycon.register_for_event('FamineBegin', function(data) {
+    return player.productionfacilities[data.productAffected].famine = true;
+  });
+  pycon.register_for_event('FamineEnd', function(data) {
+    return player.productionfacilities[data.productAffected].famine = false;
   });
   pycon.register_for_event('YouWon', function(data) {
     message.display('Nice work!', 'You won the auction!');

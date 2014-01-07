@@ -18,10 +18,6 @@ class window.TradingStage extends Stage
 			type = $(@).attr('data-production-type')
 			me.products[type] = new TradingProduct( $(@), player.products[type] )
 
-		player.giveCard 2
-		player.giveCard 3
-		player.giveCard 4
-
 		# Create a sortable with the trading objects. This sortable is not actually sortable
 		# (because when sorting completes, see the "stop" event, the thing is cancelled) but
 		# when the sorting is over, if the player has moved the placeholder around the screen
@@ -72,23 +68,7 @@ class window.TradingStage extends Stage
 					$(@).sortable 'cancel'
 		}
 
-		# Set up the power cards. First, clear out the deck:
-		deck = $('.powerups .deck')
-		deck.html ""
-		# Now, for each card the player owns,
-		index = 0
-		for card in player.cards
-			console.log 'Adding card: ', card
-			# Add the card to the deck, using the render function, and register the tap
-			# event to the "action" trigger on the card itself.
-			element = $("<div class='card' data-card-index='#{index}'>#{card.render.call card}</div>").tap ->
-				card = player.cards[$(@).attr('data-card-index')]
-				card.activate.call card
-			element.appendTo(deck)
-			index += 1
-
-		$('.tradingstage-interface .card').fitText(1, {minFontSize: '25px'})
-
+		@refreshCards()
 
 		# Set up the trading window to show all of the appropriate things:
 		$('.tradingstage-interface .trading span.tradecount').each ->
@@ -124,6 +104,8 @@ class window.TradingStage extends Stage
 			if p.for_trade > 0
 				items[name] = p.for_trade
 
+		items = card.on_trade_start.call(card,items) for card in player.cards
+
 		pycon.transaction {action: 'bump', data: { items:items } }, ->
 			yes
 
@@ -145,9 +127,14 @@ class window.TradingStage extends Stage
 		for name,p of @products
 			p.for_trade = 0
 
+		# Let the cards have a hay-day
+		card.on_trade_end.call(card, data.items) for card in player.cards
+
 		# Enter in the new data which was received during the trade.
 		for name,amount of data.items
-			if @products[name]?
+			if name == 'gold'
+				player.giveGold amount
+			else if @products[name]?
 				@products[name].for_trade = amount
 				@products[name].needsRefresh.call @products[name]
 
@@ -178,7 +165,25 @@ class window.TradingStage extends Stage
 			facility.run_factory.call facility
 			p.needsRefresh.call p
 
+		card.on_production.call card for card in player.cards
 
+	refreshCards: ->
+		# Set up the power cards. First, clear out the deck:
+		deck = $('.powerups .deck')
+		deck.html ""
+		# Now, for each card the player owns,
+		index = 0
+		for card in player.cards
+			console.log 'Adding card: ', card
+			# Add the card to the deck, using the render function, and register the tap
+			# event to the "action" trigger on the card itself.
+			element = $("<div class='card' data-card-index='#{index}'>#{card.render.call card}</div>").tap ->
+				card = player.cards[$(@).attr('data-card-index')]
+				card.activate.call card
+			element.appendTo(deck)
+			index += 1
+
+		$('.tradingstage-interface .card').fitText(1, {minFontSize: '25px'})
 
 	timer_begin: (countdown) ->
 			me = @

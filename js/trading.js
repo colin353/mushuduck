@@ -6,7 +6,7 @@ window.TradingStage = (function(_super) {
   __extends(TradingStage, _super);
 
   function TradingStage() {
-    var card, deck, element, index, me, _i, _len, _ref;
+    var me;
 
     me = this;
     this.type = 'TradingStage';
@@ -18,9 +18,6 @@ window.TradingStage = (function(_super) {
       type = $(this).attr('data-production-type');
       return me.products[type] = new TradingProduct($(this), player.products[type]);
     });
-    player.giveCard(2);
-    player.giveCard(3);
-    player.giveCard(4);
     $('.tradingstage-interface .inventory').sortable({
       helper: function(e, ui) {
         var type;
@@ -53,23 +50,7 @@ window.TradingStage = (function(_super) {
         return $(this).sortable('cancel');
       }
     });
-    deck = $('.powerups .deck');
-    deck.html("");
-    index = 0;
-    _ref = player.cards;
-    for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-      card = _ref[_i];
-      console.log('Adding card: ', card);
-      element = $("<div class='card' data-card-index='" + index + "'>" + (card.render.call(card)) + "</div>").tap(function() {
-        card = player.cards[$(this).attr('data-card-index')];
-        return card.activate.call(card);
-      });
-      element.appendTo(deck);
-      index += 1;
-    }
-    $('.tradingstage-interface .card').fitText(1, {
-      minFontSize: '25px'
-    });
+    this.refreshCards();
     $('.tradingstage-interface .trading span.tradecount').each(function() {
       var color, type;
 
@@ -97,7 +78,7 @@ window.TradingStage = (function(_super) {
   };
 
   TradingStage.prototype.bump = function() {
-    var items, name, p, _ref;
+    var card, items, name, p, _i, _len, _ref, _ref1;
 
     items = {};
     _ref = this.products;
@@ -106,6 +87,11 @@ window.TradingStage = (function(_super) {
       if (p.for_trade > 0) {
         items[name] = p.for_trade;
       }
+    }
+    _ref1 = player.cards;
+    for (_i = 0, _len = _ref1.length; _i < _len; _i++) {
+      card = _ref1[_i];
+      items = card.on_trade_start.call(card, items);
     }
     return pycon.transaction({
       action: 'bump',
@@ -133,17 +119,24 @@ window.TradingStage = (function(_super) {
   };
 
   TradingStage.prototype.trade_complete = function(data) {
-    var amount, name, p, _ref, _ref1;
+    var amount, card, name, p, _i, _len, _ref, _ref1, _ref2;
 
     _ref = this.products;
     for (name in _ref) {
       p = _ref[name];
       p.for_trade = 0;
     }
-    _ref1 = data.items;
-    for (name in _ref1) {
-      amount = _ref1[name];
-      if (this.products[name] != null) {
+    _ref1 = player.cards;
+    for (_i = 0, _len = _ref1.length; _i < _len; _i++) {
+      card = _ref1[_i];
+      card.on_trade_end.call(card, data.items);
+    }
+    _ref2 = data.items;
+    for (name in _ref2) {
+      amount = _ref2[name];
+      if (name === 'gold') {
+        player.giveGold(amount);
+      } else if (this.products[name] != null) {
         this.products[name].for_trade = amount;
         this.products[name].needsRefresh.call(this.products[name]);
       }
@@ -184,17 +177,44 @@ window.TradingStage = (function(_super) {
   };
 
   TradingStage.prototype.yield_production = function() {
-    var facility, name, p, _ref, _results;
+    var card, facility, name, p, _i, _len, _ref, _ref1, _results;
 
     _ref = this.products;
-    _results = [];
     for (name in _ref) {
       p = _ref[name];
       facility = player.productionfacilities[name];
       facility.run_factory.call(facility);
-      _results.push(p.needsRefresh.call(p));
+      p.needsRefresh.call(p);
+    }
+    _ref1 = player.cards;
+    _results = [];
+    for (_i = 0, _len = _ref1.length; _i < _len; _i++) {
+      card = _ref1[_i];
+      _results.push(card.on_production.call(card));
     }
     return _results;
+  };
+
+  TradingStage.prototype.refreshCards = function() {
+    var card, deck, element, index, _i, _len, _ref;
+
+    deck = $('.powerups .deck');
+    deck.html("");
+    index = 0;
+    _ref = player.cards;
+    for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+      card = _ref[_i];
+      console.log('Adding card: ', card);
+      element = $("<div class='card' data-card-index='" + index + "'>" + (card.render.call(card)) + "</div>").tap(function() {
+        card = player.cards[$(this).attr('data-card-index')];
+        return card.activate.call(card);
+      });
+      element.appendTo(deck);
+      index += 1;
+    }
+    return $('.tradingstage-interface .card').fitText(1, {
+      minFontSize: '25px'
+    });
   };
 
   TradingStage.prototype.timer_begin = function(countdown) {

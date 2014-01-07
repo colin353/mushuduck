@@ -9,6 +9,25 @@ class window.Card
 	get_pay_bonus: ->
 		return 1.0
 
+	on_production: ->
+		yes
+
+	on_factory: ->
+		yes
+
+	destroy: ->
+		for i in [0..(player.cards.length-1)] 
+			if @ == player.cards[i]
+				player.cards.splice i,1
+				window.stage.refreshCards() if stage.refreshCards?
+				break
+
+	on_trade_start: (items_to_trade) ->
+		return items_to_trade
+
+	on_trade_end: (items_received) ->
+		yes
+
 	render: ->
 		"""
 			Invalid card!
@@ -161,6 +180,172 @@ class window.P_B_ConversionCard extends P_CB_ConversionCard
 		@items_from 	= {purple:2}
 		@items_to 		= {blueberry:1}
 		
+class window.QuantumFluctuationCard extends Card
+	constructor: ->
+		super
+		@title 		= "Quantum Fluctuation"
+		@subtitle	= "Creates a chance for a random fruit to appear"
+		@price 		= 50
+		@amplitude	= 0.20
+
+	render: ->
+		"""
+			<p>Quantum Fluctuation</p>
+		"""	
+
+	on_production: ->
+		# There is a small chance (~amplitude) that
+		# the player will receive a random, extra item.
+		if Math.random() < @amplitude
+			fruits = []
+			fruits.push name for name,p of player.products
+			index = Math.floor(Math.random() * fruits.length)
+			fruit = fruits[index]
+			player.products[fruit].amount += 1
+			console.log 'A quantum fluctuation has occurred! ', fruit
+
+class window.GMCornCard extends Card 
+	constructor: ->
+		super
+		@title 		= "Genetically modified corn"
+		@subtitle	= "Production of all fruits increases with the amount of corn you have."
+		@price 		= 50
+		@yield_per	= 10
+
+	render: ->
+		"""
+			<p>GM Corn</p>
+		"""		
+
+	on_factory: (factory) ->
+		if player.products['corn'].amount > @yield_per
+			factory.product.amount += 1
+			console.log 'Experienced boost: thanks to GM Corn!'
+
+class window.TomatoWarCard extends Card 
+	constructor: ->
+		super
+		@title 		= "Tomato War"
+		@subtitle	= "The person with the most tomatoes wins a lot of money at the end of the round."
+		@price 		= 50
+
+	render: ->
+		"""
+			<p>Tomato War</p>
+		"""		
+
+	activate: ->
+		pycon.transaction { action:"tomatoWarCardActivated" }
+		@destroy()
+
+class window.CornTheMovieCard extends Card
+	constructor: ->
+		super
+		@title 		= "Corn: The Movie"
+		@subtitle	= "All of your trades involving corn will give both players gold."
+		@price 		= 20
+
+		@primary_reward 	= 15
+		@secondary_reward 	= 5
+		@max_trades = 10
+
+		@give_gold = no
+
+	render: ->
+		"""
+			<p>Corn Movie</p>
+		"""	
+
+	on_trade_end: (items_received) ->
+		player.giveGold @primary_reward if @give_gold
+		@max_trades -= 1
+		if @max_trades == 0
+				@destroy()
+
+	on_trade_start: (items_to_trade) ->
+		if items_to_trade['corn']? && items_to_trade['corn'] > 0
+			@give_gold = yes
+			items_to_trade['gold'] = 0 if !items_to_trade['gold']?
+			items_to_trade['gold'] += @secondary_reward 
+			console.log 'Corn: The Movie royalties paid'
+
+		return items_to_trade
+
+class window.CornFamine extends Card
+	constructor: ->
+		super
+		@title 		= "Corn Famine"
+		@subtitle	= "All corn production will be reduced for one round."
+		@price  	= 75
+		@product 	= 'corn'
+
+	render: ->
+		"""
+			<p>A #{@product} famine</p>
+		"""	
+
+	activate: ->
+		pycon.transaction { action: 'famineActivated', data: { productAffected:@product } }
+		@destroy()
+
+class window.BlueberryFamine extends CornFamine
+	constructor: ->
+		super
+		@title 		= "Blueberry Famine"
+		@subtitle	= "All blueberry production will be reduced for one round."
+		@price 		= 75
+		@product 	= 'blueberry'
+
+class window.PurpleFamine extends CornFamine
+	constructor: ->
+		super
+		@title 		= "Purple Famine"
+		@subtitle	= "All purple production will be reduced for one round."
+		@price 		= 75
+		@product 	= 'purple'
+
+class window.TomatoFamine extends CornFamine
+	constructor: ->
+		super
+		@title 		= "Tomato Famine"
+		@subtitle	= "All tomato production will be reduced for one round."
+		@price 		= 75
+		@product 	= 'tomato'
+
+class window.CornTheMovieCard extends Card
+	constructor: ->
+		super
+		@title 		= "Corn: The Movie"
+		@subtitle	= "All of your trades involving corn will give both players gold."
+		@price 		= 20
+
+		@primary_reward 	= 15
+		@secondary_reward 	= 5
+		@max_trades = 10
+
+		@give_gold = no
+
+	render: ->
+		"""
+			<p>Corn Movie</p>
+		"""	
+
+	on_trade_end: (items_received) ->
+		player.giveGold @primary_reward if @give_gold
+		@max_trades -= 1
+		if @max_trades == 0
+				@destroy()
+
+	on_trade_start: (items_to_trade) ->
+		if items_to_trade['corn']? && items_to_trade['corn'] > 0
+			@give_gold = yes
+			items_to_trade['gold'] = 0 if !items_to_trade['gold']?
+			items_to_trade['gold'] += @secondary_reward 
+			console.log 'Corn: The Movie royalties paid'
+
+		return items_to_trade
+
+
 
 window.card_deck = []
 
@@ -173,11 +358,16 @@ card_deck.push window.P_B_ConversionCard
 card_deck.push window.P_T_ConversionCard
 card_deck.push window.P_BT_ConversionCard
 card_deck.push window.BlueberryIceCream
+card_deck.push window.QuantumFluctuationCard
+card_deck.push window.GMCornCard
+card_deck.push window.CornTheMovieCard
+card_deck.push window.TomatoWarCard
+card_deck.push window.TomatoFamine
+card_deck.push window.CornFamine
+card_deck.push window.BlueberryFamine
+card_deck.push window.PurpleFamine
 
 # More cards:
-# Quantum Fluctuation: you have a small chance of getting extra stuff each production cycle
-# GM Corn:	production scales with number of corns
-# Tomato War: causes tomato wars
 # Tomato Bomb: kills off the stocks of other people
 # Blueberry freeze: freeze the price of blueberries for 10 seconds (per round)
 # Corn The Movie: royalties for every corn trade, up to 10 trades 

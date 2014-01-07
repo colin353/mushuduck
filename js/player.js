@@ -79,14 +79,25 @@ window.ProductionFacility = (function() {
     this.capacity = 1;
     this.factory = false;
     this.level = 0;
+    this.famine = false;
     true;
   }
 
   ProductionFacility.prototype.run_factory = function() {
+    var card, _i, _len, _ref;
+
     if (!this.factory) {
       return false;
     }
+    if (this.famine && Math.random() > 0.5) {
+      return true;
+    }
     this.product.amount += this.capacity;
+    _ref = player.cards;
+    for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+      card = _ref[_i];
+      card.on_factory.call(card, this);
+    }
     return true;
   };
 

@@ -1,5 +1,5 @@
 {
-	"websocket_url": "ws://192.168.0.109:8888/json",
+	"websocket_url": "ws://192.168.0.106:8888/json",
 	"server_version": 0,
 	"starting_money": 200,
 	"factory_cost": 150,

@@ -66,10 +66,12 @@ class Production
 		@dom_object.html ""
 		if @productionfacility.factory
 			@dom_object.css('opacity','1')
-			@dom_object.append $("<span>Level #{@productionfacility.level}</span>")
-			@dom_object.append $("<p>#{@productionfacility.upgradeCost.call @productionfacility}#{window.config.gold} to upgrade</p>")
+			@dom_object.append $("<span class='buy_factory_message'></span>")
+			span = @dom_object.children('span')
+			span.append $("<span>Level #{@productionfacility.level}</span>")
+			span.append $("<p>#{@productionfacility.upgradeCost.call @productionfacility}#{window.config.gold}<br /> to upgrade</p>")
 		else
-			@dom_object.append "<span class='buy_factory_message'>#{@productionfacility.upgradeCost.call @productionfacility}#{window.config.gold} to <br /> start</span>"
+			@dom_object.append "<span class='buy_factory_message'>#{@productionfacility.upgradeCost.call @productionfacility}#{window.config.gold}<br /> to start</span>"
 			@dom_object.css('opacity','0.5')
 
 		yes

@@ -38,8 +38,9 @@ class @PyAPI
 			@response_handlers[ message.transaction_id ].call @, message.data
 		else if message.eventName?
 			# This must be an event message!
-			console.log 'Received event message: ', message.eventName
-			console.log 'Event data: ', message.data
+			if message.eventName != 'PriceUpdated'
+				console.log 'Received event message: ', message.eventName
+				console.log 'Event data: ', message.data
 			@trigger_event message.eventName, message.data
 		else
 			console.log 'Received invalid message: ', message

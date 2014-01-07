@@ -87,13 +87,17 @@ Production = (function() {
   };
 
   Production.prototype.needsRefresh = function() {
+    var span;
+
     this.dom_object.html("");
     if (this.productionfacility.factory) {
       this.dom_object.css('opacity', '1');
-      this.dom_object.append($("<span>Level " + this.productionfacility.level + "</span>"));
-      this.dom_object.append($("<p>" + (this.productionfacility.upgradeCost.call(this.productionfacility)) + window.config.gold + " to upgrade</p>"));
+      this.dom_object.append($("<span class='buy_factory_message'></span>"));
+      span = this.dom_object.children('span');
+      span.append($("<span>Level " + this.productionfacility.level + "</span>"));
+      span.append($("<p>" + (this.productionfacility.upgradeCost.call(this.productionfacility)) + window.config.gold + "<br /> to upgrade</p>"));
     } else {
-      this.dom_object.append("<span class='buy_factory_message'>" + (this.productionfacility.upgradeCost.call(this.productionfacility)) + window.config.gold + " to <br /> start</span>");
+      this.dom_object.append("<span class='buy_factory_message'>" + (this.productionfacility.upgradeCost.call(this.productionfacility)) + window.config.gold + "<br /> to start</span>");
       this.dom_object.css('opacity', '0.5');
     }
     return true;
