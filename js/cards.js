@@ -383,7 +383,7 @@ window.TomatoWarCard = (function(_super) {
   function TomatoWarCard() {
     TomatoWarCard.__super__.constructor.apply(this, arguments);
     this.title = "Tomato War";
-    this.subtitle = "The person with the most tomatoes wins a lot of money at the end of the round.";
+    this.subtitle = "The person with the most tomatoes wins a lot of money at the end of the round. Click to activate.";
     this.price = 20;
   }
 
@@ -393,7 +393,7 @@ window.TomatoWarCard = (function(_super) {
 
   TomatoWarCard.prototype.activate = function() {
     pycon.transaction({
-      action: "tomatoWarCardActivated"
+      action: "tomatoWarActivated"
     });
     return this.destroy();
   };

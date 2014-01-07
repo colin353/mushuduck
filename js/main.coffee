@@ -59,7 +59,7 @@ window.go = ->
 			window.stage = new BiddingStage()
 		else if data.stageType == 'Battle'
 			window.stage = new BattleStage()
-		else if data.stageType == 'Notification'
+		else if data.stageType == 'Notification' or data.stageType == 'Title'
 			window.stage = new NotificationStage()
 		else
 			throw 'illegal :('

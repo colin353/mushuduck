@@ -226,7 +226,7 @@ class window.TomatoWarCard extends Card
 	constructor: ->
 		super
 		@title 		= "Tomato War"
-		@subtitle	= "The person with the most tomatoes wins a lot of money at the end of the round."
+		@subtitle	= "The person with the most tomatoes wins a lot of money at the end of the round. Click to activate."
 		@price 		= 20
 
 	render: ->

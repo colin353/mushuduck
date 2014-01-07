@@ -9,6 +9,8 @@ class window.TradingStage extends Stage
 
 		$('.tradingstage-interface').show()
 
+		@timers = []
+
 		# Register all of the trading products boxes. They are instances
 		# of the class TradingProduct, which handles the visual behavior
 		# of the trading boxes. They are connected to the player's set of
@@ -32,7 +34,7 @@ class window.TradingStage extends Stage
 					else
 						# Although the helper has class 'square', the size is forced by sortable to
 						# match the size of the thing being sorted, which is in this case the trading product.
-						return $("<div class='square'></div>").css('background-color', player.products[ui.attr('data-production-type')].color)
+						return $("<div class='square placeholder'></div>").css('background-color', player.products[ui.attr('data-production-type')].color)
 				,
 
 				# This is called when sorting starts (i.e. somebody drags a trading product). 
@@ -67,7 +69,8 @@ class window.TradingStage extends Stage
 					# from getting re-ordered.
 					$(@).sortable 'cancel'
 		}
-
+		
+		player.giveCard 12
 		@refreshCards()
 
 		# Set up the trading window to show all of the appropriate things:
@@ -92,7 +95,12 @@ class window.TradingStage extends Stage
 		$('.trading').unbind()
 		$('.card').unbind()
 		$('.tradingstage-interface .inventory').sortable('destroy')
+		if $('.placeholder').length > 0
+			$('.placeholder').remove()
 		@clearTrades()
+
+		clearInterval interval for interval in @timers
+
 		super
 
 	# The bump function is called when the accelerometer detects a big
@@ -190,25 +198,18 @@ class window.TradingStage extends Stage
 			# Record the time in the countdown.
 			@time = countdown 
 			count_down = ->
-				# We don't want to worry about timing if the stage isn't trading.
-				return if stage.type != 'TradingStage'
 				# Count down.
-				stage.time -= 1
-				if stage.time > 0 
-					# Set a timer to give us the next countdown
-					setTimeout count_down, 1000 
+				stage.time -= 1 if stage.time > 0
 				# Draw to the screen.
 				updateCountdown()
 
 			do_production = ->
 				# We don't want to worry about timing if the stage isn't trading.
-				return if stage.type != 'TradingStage'
 				me.yield_production.call me
-				setTimeout( do_production, window.config.production_period*1000 )
 			
 			# Wait one second before starting so that everything lines up.
-			setTimeout count_down,1000
-			setTimeout do_production, 500
+			@timers.push setInterval count_down,1000
+			@timers.push setInterval do_production, window.config.production_period*1000
 			updateCountdown()
 
 class window.TradingProduct

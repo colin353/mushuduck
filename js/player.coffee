@@ -39,7 +39,7 @@ class window.Player
 
 	giveCard: (card_index) ->
 		if @cards.length > 2
-			@cards.pop()
+			@cards.splice(0,1)
 		@cards.push new window.card_deck[card_index]()
 
 class window.Product
