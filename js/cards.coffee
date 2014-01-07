@@ -235,7 +235,7 @@ class window.TomatoWarCard extends Card
 		"""		
 
 	activate: ->
-		pycon.transaction { action:"tomatoWarCardActivated" }
+		pycon.transaction { action:"tomatoWarActivated" }
 		@destroy()
 
 class window.CornTheMovieCard extends Card

@@ -3,12 +3,13 @@ import helpers
 
 class BattleStage(stage.Stage):
 	duration = 5.0
-	battlePrizePerOpponent = 100.0
+	battlePrizePerOpponent = [50.0, 100.0, 200.0]
+	battleLostPayment = -50.0
 
 	def __init__(self, game):
 		super(BattleStage, self).__init__(game)
 		# dictionary of inventory counts indexed by player
-		self.playerInventoryCounts = dict((p, None) for p in self.game.players)
+		self.playerTomatoCounts = dict((p, None) for p in self.game.players)
 
 	def type(self):
 		return 'Battle'
@@ -17,28 +18,48 @@ class BattleStage(stage.Stage):
 		helpers.timer(self.duration, self.endStage).start()
 
 	def afterBegin(self):
-		self.game.sendEventToAllPlayers('InventoryCountRequested', {'callback':'updateInventory'})
+		self.game.sendEventToAllPlayers('InventoryCountRequested', {'callback':'updateTomatoCount'})
 
-	def updateInventory(self, sender, data):
+	def updateTomatoCount(self, sender, data):
+		print "==> in updateTomatoCount"
 		# data should be a dictionary of inventory counts
-		self.playerInventoryCounts[sender] = data
+		try:
+			self.playerTomatoCounts[sender] = data['tomato']
+		except KeyError:
+			return "the action 'updateTomatoCount' failed to include a dictionary with key 'tomato'"
+
+		print self.playerTomatoCounts
 
 		# if all players have updated their inventory counts, display winning/losing messages on clients
-		if all(self.playerInventoryCounts.values()):
+		if all([v is not None for v in self.playerTomatoCounts.values()]):
 			# determine winner
-			winner = max(self.playerInventoryCounts.items(), key=lambda p:p[1]['tomato'])[0]
+			maxCount = max(self.playerTomatoCounts.values())
+			winners = [player for player, count in self.playerTomatoCounts.iteritems() if count==maxCount and count>0]
 
-			# give winner money (must do before notifying winner)
-			prizeAmount = self.battlePrizePerOpponent*(len(self.game.players)-1)
-			self.game.sendEventToPlayer(winner, 'GoldGranted', {'amount':prizeAmount})
+			if winners:
+				print "we have winners"
+				# calculate amount of gold each winner get (must do before notifying winner)
+				prizeAmount = self.battlePrizePerOpponent[self.game.currentAgeNumber]*(len(self.game.players)-1)/len(winners)
 
-			# notify each player that he or she either won or lost
-			for player in self.game.players:
-				if player is winner:
-					msg = "You won the tomato war!\nPrize: %d <i class='gold'>&nbsp;&nbsp;&nbsp;</i>" % prizeAmount
-				else:
-					msg = "You lost the tomato war!"
-				self.game.sendEventToPlayer(player, 'DisplayMessage', {'title':"Battle!", 'text':msg, 'clickable':False})
+				# notify each player that he or she either won or lost, and give/remove appropriate amount of gold
+				for player in self.game.players:
+					if player in winners:
+						msg = "You won the tomato war!\nPrize: %d <i class='gold'>&nbsp;&nbsp;&nbsp;</i>" % prizeAmount
+						goldGranted = prizeAmount
+					else:
+						msg = "You lost the tomato war!"
+						goldGranted = self.battleLostPayment
+					self.game.sendEventToPlayer(player, 'DisplayMessage', {'title':"Battle!", 'text':msg, 'clickable':False})
+					self.game.sendEventToPlayer(player, 'GoldGranted', {'amount':goldGranted})
+			else:
+				print "no winners!"
+				# no one wins
+				self.game.sendEventToAllPlayers('DisplayMessage', {'title':"Battle!", 'text':"No one has any tomatoes to battle!", 'clickable':False})
+
+		return {}
+
 
 	def endStage(self):
+		# reset tomato war flag
+		self.game.tomatoWar = False
 		self.game.nextStage()

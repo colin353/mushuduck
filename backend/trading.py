@@ -6,7 +6,7 @@ import battle
 import string
 
 class TradingStage(stage.Stage):
-	duration = 60.0
+	duration = 5.0
 	market_tick_period = 1.0
 
 	def __init__(self, game):
@@ -136,7 +136,7 @@ class TradingStage(stage.Stage):
 
 	def tomatoWarActivated(self, sender):
 		# remove upcoming tomato war from stageSequence
-		self.game.stageSequence.remove(battle.BattleStage)
+		self.game.tomatoWar = True
 		return {}
 
 	def famineActivated(self, sender, data):
@@ -154,6 +154,9 @@ class TradingStage(stage.Stage):
 		self.game.sendEventToAllPlayers('FamineBegin', {'productAffected':productAffected})
 
 		return {}
+
+	def tomatoInfectionActivated(self, sender, data):
+		pass
 
 
 class Bump:

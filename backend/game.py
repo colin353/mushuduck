@@ -19,10 +19,12 @@ class Game(object):
 		self.effectiveNumberOfSales = dict((p, 10) for p in self.products)
 		self.cumulativeTradingTimeUntilLastRound = 0.0
 
+		# variable for battle stage
+		self.tomatoWar = False
+
 		# variables
 		self.stageSequence = self.numberOfAges*([production.ProductionStage] + self.numberOfRoundsPerAge*[bidding.BiddingStage, trading.TradingStage] + [battle.BattleStage])
-		self.currentAgeNumber = 0
-		self.currentRoundNumber = 0
+		self.currentAgeNumber = -1
 		self.currentStage = None
 		self.nextStage()
 
@@ -66,21 +68,26 @@ class Game(object):
 
 		# retrieve new stage
 		try:
-			self.currentStage = self.stageSequence.pop(0)(self)
+			nextStage = self.stageSequence.pop(0)
+			# keep going if battle stage is next but there is no tomato war
+			while not self.tomatoWar and nextStage is battle.BattleStage:
+				nextStage = self.stageSequence.pop(0)
+			self.currentStage = nextStage(self)
 		except IndexError:
 			self.currentStage = None
 			return
 
 		# if at start of new age, increment age counters
 		if self.currentStage.__class__ is self.firstStageInAge:
-			helpers.printHeader(u"\u00A1\u00A1\u00A1 ===== AGE %d ===== !!!" % self.currentAgeNumber)
 			self.currentAgeNumber += 1
-			self.currentRoundNumber = 0
+			self.currentRoundNumber = -1
+			helpers.printHeader(u"\u00A1\u00A1\u00A1 ===== AGE %d ===== !!!" % self.currentAgeNumber)
+
 
 		# if at start of round
 		if self.currentStage.__class__ is self.firstStageInRound:
-			helpers.printHeader(u"\u00A1\u00A1\u00A1 ===== round %d ===== !!!" % self.currentRoundNumber)
 			self.currentRoundNumber += 1
+			helpers.printHeader(u"\u00A1\u00A1\u00A1 ===== round %d ===== !!!" % self.currentRoundNumber)
 
 		# begin new stage
 		self.currentStage.begin()
