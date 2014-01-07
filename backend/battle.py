@@ -1,8 +1,8 @@
-import stage
-import helpers
+import notification
 
-class BattleStage(stage.Stage):
-	duration = 5.0
+class BattleStage(notification.NotificationStage):
+	stageType = 'Battle'
+	resquiresTitle = False
 	battlePrizePerOpponent = [50.0, 100.0, 200.0]
 	battleLostPayment = -50.0
 
@@ -10,12 +10,7 @@ class BattleStage(stage.Stage):
 		super(BattleStage, self).__init__(game)
 		# dictionary of inventory counts indexed by player
 		self.playerTomatoCounts = dict((p, None) for p in self.game.players)
-
-	def type(self):
-		return 'Battle'
-
-	def begin(self):
-		helpers.timer(self.duration, self.endStage).start()
+		self.duration = 5.0 # overrides default duration
 
 	def afterBegin(self):
 		self.game.sendEventToAllPlayers('InventoryCountRequested', {'callback':'updateTomatoCount'})
@@ -58,8 +53,7 @@ class BattleStage(stage.Stage):
 
 		return {}
 
-
 	def endStage(self):
 		# reset tomato war flag
 		self.game.tomatoWar = False
-		self.game.nextStage()
+		super(BattleStage, self).endStage()

@@ -1,13 +1,12 @@
 import stage
 
 class ProductionStage(stage.Stage):
+	stageType = 'Production'
+	requiresTitle = True
 
 	def __init__(self, game):
 		super(ProductionStage, self).__init__(game)
 		self.readyList = []
-
-	def type(self):
-		return 'Production'
 
 	def ready(self, sender):
 		if sender:
