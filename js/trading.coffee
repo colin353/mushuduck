@@ -54,7 +54,7 @@ class window.TradingStage extends Stage
 				stop: (e,ui) ->
 					# Where is the position of the thing? Look at the ending position and use that as a key
 					offset = ui.originalPosition.top - ui.position.top 
-					console.log 'moved to position: ', offset
+					#console.log 'moved to position: ', offset
 					# Find out which item we are actually moving
 					item = me.products[ ui.item.attr('data-production-type') ]
 					# Moving up corresponds to a "sell"

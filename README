@@ -22,8 +22,21 @@ CONFIGURING IT BEFORE RUNNING
 You need:
 
 1. Tornado
-2. Edit the configuration parameters in main.coffee
+2. Edit the configuration parameteres in configuration.json
 3. Edit the configuration parameters in server.py
+
+----------------------------------------------------
+ADDING GIT ATTRIBUTE FILTER
+----------------------------------------------------
+
+To automate the editing of configuration.json when pushing to and pulling from the server, add the following code to your .git/config file, replacing <<host>> and <<port>> with the appropriate values:
+
+[filter "config"]
+	clean = sed -e 's/<<host>>:<<port>>/HOST_IP_HERE/'
+	smudge = sed -e 's/HOST_IP_HERE/<<host>>:<<port>>/'
+	required
+
+For this to work, you must also keep the .gitattributes file in the top level of this repo. 
 
 ----------------------------------------------------
 COMPILING THE COFFEESCRIPT

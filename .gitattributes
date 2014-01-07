@@ -1,3 +1,6 @@
+# Change config files to include server data
+configuration.json	filter=config
+
 # Auto detect text files and perform LF normalization
 * text=auto
 

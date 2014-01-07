@@ -28,6 +28,8 @@ class window.Player
 		return inventory
 
 	giveGold: (amount) ->
+		if isNaN(amount)
+			console.log '========> gold is NaN!'
 		@gold += amount
 		updateStatusBar()
 
