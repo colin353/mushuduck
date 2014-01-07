@@ -1,10 +1,6 @@
-class BattleStage extends Stage 
-	constructor: ->
-		super
-		yes
+class BattleStage extends NotificationStage 
 
-	end: ->
-		message.hide.call message
-		
+	end: ->	
 		# Tomatoes will rot now
 		player.products['tomato'].amount = 0
+		super

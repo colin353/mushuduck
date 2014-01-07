@@ -12,7 +12,7 @@ $(window).bind 'resize', window.handleResize
 
 $ ->
 	window.handleResize()
-
+	
 
 	# Check for CDN failure and refresh if yes
 	if !$.ui? or !$.mobile?

@@ -30,6 +30,7 @@ class window.Player
 	giveGold: (amount) ->
 		if isNaN(amount)
 			console.log '========> gold is NaN!'
+			return
 		@gold += amount
 		updateStatusBar()
 
