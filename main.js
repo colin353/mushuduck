@@ -689,6 +689,7 @@
     });
     pycon.register_for_event('TradeCompleted', function(data) {
       if (typeof stage !== "undefined" && stage !== null) {
+        window.navigator.vibrate(200);
         return window.stage.trade_complete.call(stage, data);
       } else {
         return console.log('Received illegal trade...?');
@@ -1064,7 +1065,7 @@
         element.appendTo(deck);
         index += 1;
       }
-      $('.card').fitText(1, {
+      $('.tradingstage-interface .card').fitText(1, {
         minFontSize: '25px'
       });
       $('.tradingstage-interface .trading span.tradecount').each(function() {

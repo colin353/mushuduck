@@ -67,6 +67,7 @@ window.go = ->
 	# with that information.
 	pycon.register_for_event 'TradeCompleted', (data) ->
 		if stage?
+			window.navigator.vibrate 200
 			window.stage.trade_complete.call stage,data
 		else 
 			console.log 'Received illegal trade...?'

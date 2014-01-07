@@ -87,7 +87,7 @@ class window.TradingStage extends Stage
 			element.appendTo(deck)
 			index += 1
 
-		$('.card').fitText(1, {minFontSize: '25px'})
+		$('.tradingstage-interface .card').fitText(1, {minFontSize: '25px'})
 
 
 		# Set up the trading window to show all of the appropriate things:

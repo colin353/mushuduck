@@ -67,7 +67,7 @@ window.TradingStage = (function(_super) {
       element.appendTo(deck);
       index += 1;
     }
-    $('.card').fitText(1, {
+    $('.tradingstage-interface .card').fitText(1, {
       minFontSize: '25px'
     });
     $('.tradingstage-interface .trading span.tradecount').each(function() {

@@ -52,6 +52,7 @@ window.go = function() {
   });
   pycon.register_for_event('TradeCompleted', function(data) {
     if (typeof stage !== "undefined" && stage !== null) {
+      window.navigator.vibrate(200);
       return window.stage.trade_complete.call(stage, data);
     } else {
       return console.log('Received illegal trade...?');
