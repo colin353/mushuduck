@@ -6,6 +6,8 @@ import battle
 import string
 
 class TradingStage(stage.Stage):
+	stageType = 'Trading'
+	requiresTitle = True
 	duration = 5.0
 	market_tick_period = 1.0
 
@@ -33,9 +35,6 @@ class TradingStage(stage.Stage):
 		for product in self.productsAffectedByFamine:
 			self.game.sendEventToAllPlayers('FamineEnd', {'productAffected':product})
 		pass
-
-	def type(self):
-		return 'Trading'
 
 	### trading action handling
 

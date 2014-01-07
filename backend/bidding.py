@@ -5,6 +5,8 @@ import helpers
 from helpers import printHeader
 
 class BiddingStage(stage.Stage):
+	stageType = 'Bidding'
+	requiresTitle = True
 	#remainingAuctions = range(17)
 	# test
 	remainingAuctions = [12]
@@ -19,9 +21,6 @@ class BiddingStage(stage.Stage):
 		self.auctions = random.sample(remainingAuctions, min(len(self.game.players), len(remainingAuctions)))
 		self.currentAuction = iter(self.auctions)
 		# prepare auctions
-
-	def type(self):
-		return 'Bidding'
 
 	def afterBegin(self):
 		self.nextAuction()
