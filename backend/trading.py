@@ -2,6 +2,8 @@ import stage
 import time
 import math
 import helpers
+import battle
+import string
 
 class TradingStage(stage.Stage):
 	duration = 60.0
@@ -11,6 +13,7 @@ class TradingStage(stage.Stage):
 		super(TradingStage, self).__init__(game)
 		self.lastRecordedBump = None
 		self.lastPriceUpdateTime = None
+		self.productsAffectedByFamine = set([])
 
 	def begin(self):
 		pass
@@ -26,12 +29,15 @@ class TradingStage(stage.Stage):
 		self.game.sendEventToAllPlayers('TimerBegin', {'duration':self.duration})
 
 	def end(self):
+		# notify players of end of famines
+		for product in self.productsAffectedByFamine:
+			self.game.sendEventToAllPlayers('FamineEnd', {'productAffected':product})
 		pass
 
 	def type(self):
 		return 'Trading'
 
-	### action handling
+	### trading action handling
 
 	def sell(self, sender, data):
 
@@ -125,6 +131,30 @@ class TradingStage(stage.Stage):
 
 	def timeElapsed(self):
 		return time.time() - self.startTime
+
+	#### card action handling ####
+
+	def tomatoWarActivated(self, sender):
+		# remove upcoming tomato war from stageSequence
+		self.game.stageSequence.remove(battle.BattleStage)
+		return {}
+
+	def famineActivated(self, sender, data):
+		# get product affected
+		if 'productAffected' in data:
+			productAffected = data['productAffected'] 
+		else:
+			return "the action 'famineActivated' failed to include a string named 'productAffected'"
+
+		# add to list of products affected by famine
+		self.productsAffectedByFamine.add(productAffected)
+
+		# notify all players of the famine, and display message
+		self.game.sendEventToAllPlayers('DisplayMessage', {'title':"%s famine!" % string.capitalize(productAffected), 'text':"Oh no! All production of %s is slowed until the end of this round" % productAffected, 'duration':1.0})
+		self.game.sendEventToAllPlayers('FamineBegin', {'productAffected':productAffected})
+
+		return {}
+
 
 class Bump:
 

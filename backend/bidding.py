@@ -5,7 +5,7 @@ import helpers
 from helpers import printHeader
 
 class BiddingStage(stage.Stage):
-	remainingAuctions = range(9)
+	remainingAuctions = range(17)
 	previewDuration = 1.5
 	bidDuration = 5.0
 
