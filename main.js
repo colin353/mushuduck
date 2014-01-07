@@ -623,7 +623,10 @@
   $(window).bind('resize', window.handleResize);
 
   $(function() {
-    return window.handleResize();
+    window.handleResize();
+    if (($.ui == null) || ($.mobile == null)) {
+      return location.reload(true);
+    }
   });
 
   window.updateStatusBar = function() {
@@ -691,7 +694,7 @@
       }
     });
     pycon.register_for_event('DisplayMessage', function(data) {
-      return message.display.call(message, data.title, data.text);
+      return message.display.call(message, data.title, data.text, data.clickable);
     });
     pycon.register_for_event('InventoryCountRequested', function(data) {
       return pycon.transaction({
@@ -718,6 +721,9 @@
     pycon.register_for_event('NewBid', function(data) {
       return window.stage.new_bid.call(window.stage, data);
     });
+    pycon.register_for_event('GoldGranted', function(data) {
+      return player.giveGold(data.amount);
+    });
     pycon.register_for_event('YouWon', function(data) {
       message.display('Nice work!', 'You won the auction!');
       player.giveGold.call(player, -data.winningBidAmount);
@@ -737,20 +743,26 @@
       this.timeout = 5;
     }
 
-    Message.prototype.display = function(title, text) {
+    Message.prototype.display = function(title, text, clickable) {
       var me;
 
+      if (clickable == null) {
+        clickable = false;
+      }
       me = this;
       $('.overlay').show();
       $(this.dom_selector).children('.title').html(title);
       $(this.dom_selector).children('.text').html(text);
       $(this.dom_selector).show();
-      return $(this.dom_selector).tap(function() {
-        return me.hide.call(me);
-      });
+      if (clickable) {
+        return $(this.dom_selector).tap(function() {
+          return me.hide.call(me);
+        });
+      }
     };
 
     Message.prototype.hide = function() {
+      $(this.dom_selector).unbind();
       $(this.dom_selector).hide();
       return $('.overlay').hide();
     };

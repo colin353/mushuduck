@@ -11,6 +11,10 @@ $(window).bind 'resize', window.handleResize
 $ ->
 	window.handleResize()
 
+	# Check for CDN failure and refresh if yes
+	if !$.ui? or !$.mobile?
+		location.reload true
+
 window.updateStatusBar = ->
 	# Push the current amount of gold to the status bar.
 	$('.money').html '$' + player.gold

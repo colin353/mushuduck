@@ -58,7 +58,7 @@ window.go = function() {
     }
   });
   pycon.register_for_event('DisplayMessage', function(data) {
-    return message.display.call(message, data.title, data.text);
+    return message.display.call(message, data.title, data.text, data.clickable);
   });
   pycon.register_for_event('InventoryCountRequested', function(data) {
     return pycon.transaction({
@@ -84,6 +84,9 @@ window.go = function() {
   });
   pycon.register_for_event('NewBid', function(data) {
     return window.stage.new_bid.call(window.stage, data);
+  });
+  pycon.register_for_event('GoldGranted', function(data) {
+    return player.giveGold(data.amount);
   });
   pycon.register_for_event('YouWon', function(data) {
     message.display('Nice work!', 'You won the auction!');

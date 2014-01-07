@@ -6,7 +6,7 @@ class window.Message
 		@dom_selector = '.message'
 		@timeout = 5
 
-	display: (title,text) ->
+	display: (title,text, clickable=false) ->
 		me = @
 
 		$('.overlay').show()
@@ -14,11 +14,12 @@ class window.Message
 		$(@dom_selector).children('.text').html text
 		$(@dom_selector).show()
 		
-
-		$(@dom_selector).tap ->
-			me.hide.call me
+		if clickable
+			$(@dom_selector).tap ->
+				me.hide.call me
 
 	hide: ->
+		$(@dom_selector).unbind()
 		$(@dom_selector).hide()
 		$('.overlay').hide()
 

@@ -7,7 +7,10 @@ window.handleResize = function() {
 $(window).bind('resize', window.handleResize);
 
 $(function() {
-  return window.handleResize();
+  window.handleResize();
+  if (($.ui == null) || ($.mobile == null)) {
+    return location.reload(true);
+  }
 });
 
 window.updateStatusBar = function() {

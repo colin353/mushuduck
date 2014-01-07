@@ -73,7 +73,7 @@ window.go = ->
 
 	# Is it possible
 	pycon.register_for_event 'DisplayMessage', (data) ->
-		message.display.call message,data.title, data.text
+		message.display.call message,data.title, data.text, data.clickable
 
 	pycon.register_for_event 'InventoryCountRequested', (data) ->
 		pycon.transaction {action: data.callback, data: player.getInventoryCount.call player }
@@ -96,6 +96,10 @@ window.go = ->
 
 	pycon.register_for_event 'NewBid', (data) ->
 		window.stage.new_bid.call window.stage, data
+
+	# Get money, get paid
+	pycon.register_for_event 'GoldGranted', (data) ->
+		player.giveGold data.amount
 
 	# This event is triggered when a bid is won.
 	pycon.register_for_event 'YouWon', (data) ->

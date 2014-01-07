@@ -5,20 +5,26 @@ window.Message = (function() {
     this.timeout = 5;
   }
 
-  Message.prototype.display = function(title, text) {
+  Message.prototype.display = function(title, text, clickable) {
     var me;
 
+    if (clickable == null) {
+      clickable = false;
+    }
     me = this;
     $('.overlay').show();
     $(this.dom_selector).children('.title').html(title);
     $(this.dom_selector).children('.text').html(text);
     $(this.dom_selector).show();
-    return $(this.dom_selector).tap(function() {
-      return me.hide.call(me);
-    });
+    if (clickable) {
+      return $(this.dom_selector).tap(function() {
+        return me.hide.call(me);
+      });
+    }
   };
 
   Message.prototype.hide = function() {
+    $(this.dom_selector).unbind();
     $(this.dom_selector).hide();
     return $('.overlay').hide();
   };
