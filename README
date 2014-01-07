@@ -22,7 +22,7 @@ CONFIGURING IT BEFORE RUNNING
 You need:
 
 1. Tornado
-2. Edit the configuration.json
+2. Edit the configuration parameteres in configuration.json
 3. Edit the configuration parameters in server.py
 
 ----------------------------------------------------
