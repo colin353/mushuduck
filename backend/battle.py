@@ -35,7 +35,7 @@ class BattleStage(stage.Stage):
 			# notify each player that he or she either won or lost
 			for player in self.game.players:
 				if player is winner:
-					msg = "You won the tomato war!\nPrize: %d <i class='gold'></i>" % prizeAmount
+					msg = "You won the tomato war!\nPrize: %d <i class='gold'>&nbsp;&nbsp;&nbsp;</i>" % prizeAmount
 				else:
 					msg = "You lost the tomato war!"
 				self.game.sendEventToPlayer(player, 'DisplayMessage', {'title':"Battle!", 'text':msg, 'clickable':False})
