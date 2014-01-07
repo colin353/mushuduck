@@ -5,16 +5,23 @@ import helpers
 
 class Game(object):
 	stageSequence = [bidding.BiddingStage]
-	stageSequence = [production.ProductionStage, bidding.BiddingStage, trading.TradingStage, battle.BattleStage]
 	products = ['tomato', 'blueberry', 'purple', 'corn']
+	numberOfAges = 3
+	numberOfRoundsPerAge = 3
+	stageSequence = numberOfAges*([production.ProductionStage] + numberOfRoundsPerAge*[bidding.BiddingStage, trading.TradingStage] + [battle.BattleStage])
+	firstStageInAge = production.ProductionStage
+	firstStageInRound = bidding.BiddingStage
 
 	def __init__(self):
 		self._prices = dict((product, 5.0) for product in self.products)
 		self.players = []
-		self.turnNumber = 1
+
 		self.currentStageNumber = 0
+		self.currentAgeNumber = 0
+		self.currentRoundNumber = 0
 		self.currentStage = None
 		self.nextStage()
+
 		self.effectiveNumberOfSales = dict((p, 10) for p in self.products)
 		self.cumulativeTradingTimeUntilLastRound = 0.0
 
@@ -49,24 +56,36 @@ class Game(object):
 
 	def nextStage(self):
 
+		# end current stage if it exists
 		if self.currentStage:
 			# clean up stage
 			self.currentStage.end()
-
 			# notify players
 			self.sendEventToAllPlayers('stageEnd', {'stageType':self.currentStage.type()})
-
 			# increment stage number
-			self.currentStageNumber = (self.currentStageNumber + 1) % len(self.stageSequence)
-			
-		self.currentStage = self.stageSequence[self.currentStageNumber](self)
+			self.currentStageNumber += 1
+
+		# retrieve new stage
+		try:
+			self.currentStage = self.stageSequence[self.currentStageNumber](self)
+		except IndexError:
+			self.currentStage = None
+			return
+
+		# if at start of new age, increment age counters
+		if self.currentStage.__class__ is self.firstStageInAge:
+			helpers.printHeader(u"\u00A1\u00A1\u00A1 ===== AGE %d ===== !!!" % self.currentAgeNumber)
+			self.currentAgeNumber += 1
+
+		# if at start of round, increment round count
+		if self.currentStage.__class__ is self.firstStageInRound:
+			helpers.printHeader(u"\u00A1\u00A1\u00A1 ===== stage %d ===== !!!" % self.currentRoundNumber)
+			self.currentRoundNumber += 1
 		
 		# begin new stage
 		self.currentStage.begin()
-
 		# notify player
 		self.sendEventToAllPlayers('stageBegin', {'stageType':self.currentStage.type()})
-
 		# hack?: run afterbegin
 		self.currentStage.afterBegin()
 

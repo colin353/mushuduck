@@ -30,15 +30,15 @@ class BattleStage(stage.Stage):
 
 			# give winner money (must do before notifying winner)
 			prizeAmount = self.battlePrizePerOpponent*(len(self.game.players)-1)
-			self.game.sendEventToPlayer(winner, 'GoldGranted', {'amount':prize})
+			self.game.sendEventToPlayer(winner, 'GoldGranted', {'amount':prizeAmount})
 
 			# notify each player that he or she either won or lost
 			for player in self.game.players:
 				if player is winner:
-					msg = "You won the tomato war!\nPrize: %d <span class='gold'></span>" % prizeAmount
+					msg = "You won the tomato war!\nPrize: %d <i class='gold'></i>" % prizeAmount
 				else:
 					msg = "You lost the tomato war!"
-				self.game.sendEventToPlayer(player, 'DisplayMessage', {'title':"Battle!", 'text':msg})
+				self.game.sendEventToPlayer(player, 'DisplayMessage', {'title':"Battle!", 'text':msg, 'clickable':False})
 
 	def endStage(self):
 		self.game.nextStage()
