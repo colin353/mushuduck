@@ -67,7 +67,7 @@ class window.BlueberryPieCard extends Card
 		for name in @items_from
 			picture += "<span style='color:#{player.products[name].color}'>&#9632;</span>"
 
-		picture += "&rarr; $#{@gold_reward}"
+		picture += "&rarr; #{@gold_reward}#{window.config.gold}"
 		return picture
 
 	activate: ->
@@ -173,3 +173,12 @@ card_deck.push window.P_B_ConversionCard
 card_deck.push window.P_T_ConversionCard
 card_deck.push window.P_BT_ConversionCard
 card_deck.push window.BlueberryIceCream
+
+# More cards:
+# Quantum Fluctuation: you have a small chance of getting extra stuff each production cycle
+# GM Corn:	production scales with number of corns
+# Tomato War: causes tomato wars
+# Tomato Bomb: kills off the stocks of other people
+# Blueberry freeze: freeze the price of blueberries for 10 seconds (per round)
+# Corn The Movie: royalties for every corn trade, up to 10 trades 
+# Famine(s)

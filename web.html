@@ -6,7 +6,9 @@
 	<script src="/lib/gyro.js"></script>
 	<script src="//code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
 	<script src="/lib/touch-punch.js"></script>
-
+	<script src='/lib/jquery.fittext.js'></script>
+	<script src='/lib/jquery.backstretch.min.js'></script>
+		
 	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
 	<meta name="apple-mobile-web-app-capable" content="yes">
 
@@ -246,14 +248,27 @@
 		padding: 1%;
 	}
 
+	.gold {
+		background-position:center; 
+		background-repeat: no-repeat;
+		display: inline-block;
+		width: 50px;
+		margin-left: 10px;
+		background-image: url('/assets/gold.png');
+		background-size: contain;
+	}
+
 	.tradingstage-interface .card {
 		display: inline-block;
 		text-align: center;
 		border: 2px solid white;
 		padding: .5%;
 		width: 30%;
+		word-break:break-word;
 		height: 80%;
 		overflow:hidden;
+		vertical-align: top
+		float:left;
 		margin-left: .5%;
 		margin-top: .5%;
 		margin-right: .5%;
@@ -291,12 +306,20 @@
 			height: 25px;
 		}
 
+		.gold {
+			width: 30px;
+		}
+
 		
 	}
-
+	/* Bigger phone */
 	@media all and (max-width: 320px) {
 		.tradecount {
 			font-size: 0.5em;
+		}
+
+		.gold {
+			width: 30px;
 		}
 	}
 

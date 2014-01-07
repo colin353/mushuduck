@@ -369,7 +369,7 @@
         name = _ref[_i];
         picture += "<span style='color:" + player.products[name].color + "'>&#9632;</span>";
       }
-      picture += "&rarr; $" + this.gold_reward;
+      picture += "&rarr; " + this.gold_reward + window.config.gold;
       return picture;
     };
 
@@ -631,7 +631,7 @@
   });
 
   window.updateStatusBar = function() {
-    return $('.money').html('$' + player.gold);
+    return $('.money').html(player.gold + window.config.gold);
   };
 
   window.updateCountdown = function() {
@@ -987,9 +987,9 @@
       if (this.productionfacility.factory) {
         this.dom_object.css('opacity', '1');
         this.dom_object.append($("<span>Level " + this.productionfacility.level + "</span>"));
-        this.dom_object.append($("<p>$" + (this.productionfacility.upgradeCost.call(this.productionfacility)) + " to upgrade</p>"));
+        this.dom_object.append($("<p>" + (this.productionfacility.upgradeCost.call(this.productionfacility)) + window.config.gold + " to upgrade</p>"));
       } else {
-        this.dom_object.append("<span class='buy_factory_message'>$" + (this.productionfacility.upgradeCost.call(this.productionfacility)) + " to <br /> start</span>");
+        this.dom_object.append("<span class='buy_factory_message'>" + (this.productionfacility.upgradeCost.call(this.productionfacility)) + window.config.gold + " to <br /> start</span>");
         this.dom_object.css('opacity', '0.5');
       }
       return true;
@@ -1015,6 +1015,9 @@
         type = $(this).attr('data-production-type');
         return me.products[type] = new TradingProduct($(this), player.products[type]);
       });
+      player.giveCard(2);
+      player.giveCard(3);
+      player.giveCard(4);
       $('.tradingstage-interface .inventory').sortable({
         helper: function(e, ui) {
           var type;
@@ -1061,6 +1064,9 @@
         element.appendTo(deck);
         index += 1;
       }
+      $('.card').fitText(1, {
+        minFontSize: '25px'
+      });
       $('.tradingstage-interface .trading span.tradecount').each(function() {
         var color, type;
 
@@ -1275,7 +1281,7 @@
 
     TradingProduct.prototype.needsRefresh = function() {
       this.dom_element.children('.amount').html(this.product.amount);
-      return this.dom_element.children('.price').html("$" + this.product.price);
+      return this.dom_element.children('.price').html(this.product.price + ("" + window.config.gold));
     };
 
     return TradingProduct;

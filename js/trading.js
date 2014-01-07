@@ -18,6 +18,9 @@ window.TradingStage = (function(_super) {
       type = $(this).attr('data-production-type');
       return me.products[type] = new TradingProduct($(this), player.products[type]);
     });
+    player.giveCard(2);
+    player.giveCard(3);
+    player.giveCard(4);
     $('.tradingstage-interface .inventory').sortable({
       helper: function(e, ui) {
         var type;
@@ -64,6 +67,9 @@ window.TradingStage = (function(_super) {
       element.appendTo(deck);
       index += 1;
     }
+    $('.card').fitText(1, {
+      minFontSize: '25px'
+    });
     $('.tradingstage-interface .trading span.tradecount').each(function() {
       var color, type;
 
@@ -278,7 +284,7 @@ window.TradingProduct = (function() {
 
   TradingProduct.prototype.needsRefresh = function() {
     this.dom_element.children('.amount').html(this.product.amount);
-    return this.dom_element.children('.price').html("$" + this.product.price);
+    return this.dom_element.children('.price').html(this.product.price + ("" + window.config.gold));
   };
 
   return TradingProduct;

@@ -114,7 +114,7 @@ window.BlueberryPieCard = (function(_super) {
       name = _ref[_i];
       picture += "<span style='color:" + player.products[name].color + "'>&#9632;</span>";
     }
-    picture += "&rarr; $" + this.gold_reward;
+    picture += "&rarr; " + this.gold_reward + window.config.gold;
     return picture;
   };
 

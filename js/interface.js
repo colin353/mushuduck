@@ -14,7 +14,7 @@ $(function() {
 });
 
 window.updateStatusBar = function() {
-  return $('.money').html('$' + player.gold);
+  return $('.money').html(player.gold + window.config.gold);
 };
 
 window.updateCountdown = function() {

@@ -18,6 +18,9 @@ class window.TradingStage extends Stage
 			type = $(@).attr('data-production-type')
 			me.products[type] = new TradingProduct( $(@), player.products[type] )
 
+		player.giveCard 2
+		player.giveCard 3
+		player.giveCard 4
 
 		# Create a sortable with the trading objects. This sortable is not actually sortable
 		# (because when sorting completes, see the "stop" event, the thing is cancelled) but
@@ -83,6 +86,8 @@ class window.TradingStage extends Stage
 				card.activate.call card
 			element.appendTo(deck)
 			index += 1
+
+		$('.card').fitText(1, {minFontSize: '25px'})
 
 
 		# Set up the trading window to show all of the appropriate things:
@@ -239,4 +244,4 @@ class window.TradingProduct
 		# 	1. The quantity of the product
 		# 	2. The price of the product
 		@dom_element.children('.amount').html @product.amount
-		@dom_element.children('.price').html "$" + @product.price
+		@dom_element.children('.price').html @product.price + "#{window.config.gold}"
