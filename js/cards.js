@@ -384,7 +384,7 @@ window.TomatoWarCard = (function(_super) {
     TomatoWarCard.__super__.constructor.apply(this, arguments);
     this.title = "Tomato War";
     this.subtitle = "The person with the most tomatoes wins a lot of money at the end of the round.";
-    this.price = 50;
+    this.price = 20;
   }
 
   TomatoWarCard.prototype.render = function() {
