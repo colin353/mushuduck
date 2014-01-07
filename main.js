@@ -1083,6 +1083,12 @@
       }
       me = this;
       $('.overlay').show();
+      if (text == null) {
+        text = '';
+      }
+      if (title == null) {
+        title = '';
+      }
       $(this.dom_selector).children('.title').html(title);
       $(this.dom_selector).children('.text').html(text);
       $(this.dom_selector).show();

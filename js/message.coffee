@@ -10,6 +10,10 @@ class window.Message
 		me = @
 
 		$('.overlay').show()
+
+		text = '' if !text? 
+		title = '' if !title?
+		
 		$(@dom_selector).children('.title').html title
 		$(@dom_selector).children('.text').html text
 		$(@dom_selector).show()
