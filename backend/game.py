@@ -16,14 +16,14 @@ class Game(object):
 		self._prices = dict((product, 5.0) for product in self.products)
 		self.players = []
 
+		self.effectiveNumberOfSales = dict((p, 10) for p in self.products)
+		self.cumulativeTradingTimeUntilLastRound = 0.0
+
 		self.currentStageNumber = 0
 		self.currentAgeNumber = 0
 		self.currentRoundNumber = 0
 		self.currentStage = None
 		self.nextStage()
-
-		self.effectiveNumberOfSales = dict((p, 10) for p in self.products)
-		self.cumulativeTradingTimeUntilLastRound = 0.0
 
 	@property
 	def roundedPrices(self):
